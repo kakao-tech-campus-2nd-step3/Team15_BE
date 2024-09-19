@@ -31,6 +31,15 @@ public class Member extends BaseEntity {
     protected Member() {
     }
 
+    public Member(String username, String imageUrl, String bio, Role role, Integer point, String kakaoToken) {
+        this.username = username;
+        this.imageUrl = imageUrl;
+        this.bio = bio;
+        this.role = role;
+        this.point = point;
+        this.kakaoToken = kakaoToken;
+    }
+
     public Long getId() {
         return id;
     }
