@@ -6,9 +6,11 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import kakao.rebit.common.persistence.BaseEntity;
 
 @Entity
+@Table(name = "member")
 public class Member extends BaseEntity {
 
     @Id
