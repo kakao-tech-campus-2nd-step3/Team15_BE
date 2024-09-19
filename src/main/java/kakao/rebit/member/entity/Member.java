@@ -28,6 +28,9 @@ public class Member extends BaseEntity {
 
     private String kakaoToken;
 
+    protected Member() {
+    }
+
     public Long getId() {
         return id;
     }
