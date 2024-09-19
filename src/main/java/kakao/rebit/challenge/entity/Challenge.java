@@ -2,6 +2,7 @@ package kakao.rebit.challenge.entity;
 
 import jakarta.persistence.AttributeOverride;
 import jakarta.persistence.AttributeOverrides;
+import jakarta.persistence.Basic;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
@@ -17,6 +18,7 @@ import jakarta.persistence.Table;
 import java.time.LocalDateTime;
 import kakao.rebit.common.persistence.BaseEntity;
 import kakao.rebit.member.entity.Member;
+import org.hibernate.annotations.Formula;
 
 @Entity
 @Table(name = "challenge")
@@ -57,6 +59,10 @@ public class Challenge extends BaseEntity {
 
     @Embedded
     private HeadcountLimit headcountLimit;
+
+    @Basic(fetch = FetchType.LAZY)
+    @Formula("(SELECT COUNT(1) FROM challenge_participant cp WHERE cp.challenge_id = id)")
+    private int currentHeadcount;
 
     protected Challenge() {
     }
@@ -113,6 +119,10 @@ public class Challenge extends BaseEntity {
 
     public HeadcountLimit getHeadcountLimit() {
         return headcountLimit;
+    }
+
+    public int getCurrentHeadcount() {
+        return currentHeadcount;
     }
 
     public boolean isRecruiting(LocalDateTime now) {
