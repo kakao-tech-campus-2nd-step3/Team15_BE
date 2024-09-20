@@ -44,3 +44,4 @@ public class BookWishlist extends BaseEntity {
         return isbn;
     }
 }
+
