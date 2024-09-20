@@ -5,7 +5,7 @@ import jakarta.persistence.Entity;
 import kakao.rebit.member.entity.Member;
 
 @Entity
-@DiscriminatorValue("FB")
+@DiscriminatorValue("S")
 public class Story extends Feed {
 
     private String imageUrl;
