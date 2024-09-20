@@ -29,6 +29,9 @@ public class ChallengeCertification extends BaseEntity {
     @JoinColumn(name = "challenge_id")
     private Challenge challenge;
 
+    protected ChallengeCertification() {
+    }
+
     public ChallengeCertification(String title, String imageUrl, String content, Challenge challenge) {
         this.title = title;
         this.imageUrl = imageUrl;
