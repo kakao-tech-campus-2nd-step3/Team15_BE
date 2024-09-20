@@ -35,9 +35,10 @@ public class Diary extends BaseEntity {
     protected Diary() {
     }
 
-    public Diary(String content, Member member) {
+    public Diary(String content, Member member, Book book) {
         this.content = content;
         this.member = member;
+        this.book = book;
     }
 
     public Long getId() { return id; }
