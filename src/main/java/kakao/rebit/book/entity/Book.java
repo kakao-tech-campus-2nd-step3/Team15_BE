@@ -36,15 +36,27 @@ public class Book extends BaseEntity {
         this.imageUrl = imageUrl;
     }
 
-    public String getIsbn() { return isbn; }
+    public String getIsbn() {
+        return isbn;
+    }
 
-    public String getTitle() { return title; }
+    public String getTitle() {
+        return title;
+    }
 
-    public String getDescription() { return description; }
+    public String getDescription() {
+        return description;
+    }
 
-    public String getAuthor() { return author; }
+    public String getAuthor() {
+        return author;
+    }
 
-    public String getPublisher() { return publisher; }
+    public String getPublisher() {
+        return publisher;
+    }
 
-    public String getImageUrl() { return imageUrl; }
+    public String getImageUrl() {
+        return imageUrl;
+    }
 }

@@ -41,11 +41,19 @@ public class Diary extends BaseEntity {
         this.book = book;
     }
 
-    public Long getId() { return id; }
+    public Long getId() {
+        return id;
+    }
 
-    public String getContent() { return content; }
+    public String getContent() {
+        return content;
+    }
 
-    public Member getMember() { return member; }
+    public Member getMember() {
+        return member;
+    }
 
-    public Book getBook() { return book; }
+    public Book getBook() {
+        return book;
+    }
 }
