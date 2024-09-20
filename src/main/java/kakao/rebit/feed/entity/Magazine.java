@@ -18,9 +18,9 @@ public class Magazine extends Feed {
 
     }
 
-    public Magazine(Member member, int likes, Book book, String name, String imageUrl,
+    public Magazine(Member member, Book book, String name, String imageUrl,
             String content) {
-        super(member, likes, book);
+        super(member, book);
         this.name = name;
         this.imageUrl = imageUrl;
         this.content = content;

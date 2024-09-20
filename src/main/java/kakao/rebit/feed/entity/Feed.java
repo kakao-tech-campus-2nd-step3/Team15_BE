@@ -1,5 +1,6 @@
 package kakao.rebit.feed.entity;
 
+import jakarta.persistence.Basic;
 import jakarta.persistence.DiscriminatorColumn;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -13,6 +14,7 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import kakao.rebit.common.persistence.BaseEntity;
 import kakao.rebit.member.entity.Member;
+import org.hibernate.annotations.Formula;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -28,6 +30,8 @@ public abstract class Feed extends BaseEntity {
     @JoinColumn(name = "member_id")
     private Member member;
 
+    @Basic(fetch = FetchType.LAZY)
+    @Formula("(SELECT COUNT(1) FROM likes l WHERE l.feed_id = id)")
     private int likes;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -37,9 +41,8 @@ public abstract class Feed extends BaseEntity {
     protected Feed() {
     }
 
-    protected Feed(Member member, int likes, Book book) {
+    protected Feed(Member member, Book book) {
         this.member = member;
-        this.likes = likes;
         this.book = book;
     }
 
