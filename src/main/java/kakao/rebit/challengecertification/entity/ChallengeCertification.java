@@ -28,7 +28,7 @@ public class ChallengeCertification extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "challenge_id")
     private Challenge challenge;
-    
+
     public ChallengeCertification(String title, String imageUrl, String content, Challenge challenge) {
         this.title = title;
         this.imageUrl = imageUrl;
