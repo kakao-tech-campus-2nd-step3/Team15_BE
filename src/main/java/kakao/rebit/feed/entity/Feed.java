@@ -30,6 +30,10 @@ public abstract class Feed extends BaseEntity {
 
     private int likes;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "isbn")
+    private Book book;
+
     protected Feed() {
     }
 
@@ -38,11 +42,6 @@ public abstract class Feed extends BaseEntity {
         this.likes = likes;
         this.book = book;
     }
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "isbn")
-    private Book book;
-
 
     public Long getId() {
         return id;
