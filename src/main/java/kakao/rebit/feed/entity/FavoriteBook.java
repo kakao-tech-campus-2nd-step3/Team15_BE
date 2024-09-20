@@ -6,16 +6,18 @@ import kakao.rebit.member.entity.Member;
 
 @Entity
 @DiscriminatorValue("FB")
-public class FavoriteBook extends Feed{
+public class FavoriteBook extends Feed {
+
     private String brief_review;
 
     private String full_review;
 
-    protected FavoriteBook(){
+    protected FavoriteBook() {
     }
 
-    public FavoriteBook(Long id, Member member, int likes, Book book, String brief_review, String full_review) {
-        super(id, member, likes, book);
+    public FavoriteBook(Member member, int likes, Book book, String brief_review,
+            String full_review) {
+        super(member, likes, book);
         this.brief_review = brief_review;
         this.full_review = full_review;
     }

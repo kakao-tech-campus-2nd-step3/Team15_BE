@@ -16,7 +16,7 @@ import kakao.rebit.member.entity.Member;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
-@DiscriminatorColumn(name="type")
+@DiscriminatorColumn(name = "type")
 @Table(name = "feed")
 public abstract class Feed extends BaseEntity {
 
@@ -30,11 +30,10 @@ public abstract class Feed extends BaseEntity {
 
     private int likes;
 
-    protected  Feed(){
+    protected Feed() {
     }
 
-    protected Feed(Long id, Member member, int likes, Book book) {
-        this.id = id;
+    protected Feed(Member member, int likes, Book book) {
         this.member = member;
         this.likes = likes;
         this.book = book;

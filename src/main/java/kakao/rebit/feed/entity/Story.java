@@ -6,16 +6,17 @@ import kakao.rebit.member.entity.Member;
 
 @Entity
 @DiscriminatorValue("FB")
-public class Story extends Feed{
+public class Story extends Feed {
+
     private String imageUrl;
 
     private String content;
 
-    protected Story(){
+    protected Story() {
     }
 
-    public Story(Long id, Member member, int likes, Book book, String imageUrl, String content) {
-        super(id, member, likes, book);
+    public Story(Member member, int likes, Book book, String imageUrl, String content) {
+        super(member, likes, book);
         this.imageUrl = imageUrl;
         this.content = content;
     }
