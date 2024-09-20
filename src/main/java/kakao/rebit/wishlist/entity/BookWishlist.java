@@ -2,7 +2,11 @@ package kakao.rebit.wishlist.entity;
 
 import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import java.awt.print.Book;
 import kakao.rebit.member.entity.Member;
 
 @Entity
@@ -10,18 +14,20 @@ import kakao.rebit.member.entity.Member;
 @Table(name = "book_wishes")
 public class BookWishlist extends Wishlist {
 
-    private String isbn;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "isbn")
+    private Book book;
 
     protected BookWishlist() {
     }
 
-    public BookWishlist(Member member, String isbn) {
+    public BookWishlist(Member member, Book book) {
         super(member);
-        this.isbn = isbn;
+        this.book = book;
     }
 
-    public String getIsbn() {
-        return isbn;
+    public Book getBook() {
+        return book;
     }
 }
 
