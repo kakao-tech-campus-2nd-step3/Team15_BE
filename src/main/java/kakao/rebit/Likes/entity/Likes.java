@@ -31,6 +31,11 @@ public class Likes {
 
     }
 
+    public Likes(Member member, Feed feed) {
+        this.member = member;
+        this.feed = feed;
+    }
+
     public Long getId() {
         return id;
     }
