@@ -22,7 +22,6 @@ public class Book extends BaseEntity {
 
     private String publisher;
 
-    @Column(name = "image_url")
     private String imageUrl;
 
     protected Book() {
