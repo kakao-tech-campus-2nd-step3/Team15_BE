@@ -9,6 +9,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import kakao.rebit.book.entity.Book;
 import kakao.rebit.common.persistence.BaseEntity;
 import kakao.rebit.member.entity.Member;
 
@@ -26,6 +27,10 @@ public class Diary extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
     private Member member;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "isbn")
+    private Book book;
 
     protected Diary() {
     }
