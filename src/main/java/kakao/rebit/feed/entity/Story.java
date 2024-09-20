@@ -15,8 +15,8 @@ public class Story extends Feed {
     protected Story() {
     }
 
-    public Story(Member member, int likes, Book book, String imageUrl, String content) {
-        super(member, likes, book);
+    public Story(Member member, Book book, String imageUrl, String content) {
+        super(member, book);
         this.imageUrl = imageUrl;
         this.content = content;
     }
