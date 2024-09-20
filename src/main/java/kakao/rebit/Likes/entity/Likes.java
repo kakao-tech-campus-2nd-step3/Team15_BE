@@ -27,6 +27,10 @@ public class Likes {
     @JoinColumn(name = "feed_id")
     private Feed feed;
 
+    protected Likes() {
+
+    }
+
     public Long getId() {
         return id;
     }
