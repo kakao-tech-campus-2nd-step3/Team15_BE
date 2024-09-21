@@ -6,7 +6,7 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
-import java.awt.print.Book;
+import kakao.rebit.book.entity.Book;
 import kakao.rebit.member.entity.Member;
 
 @Entity
