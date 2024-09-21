@@ -31,7 +31,7 @@ public class Wishlist extends BaseEntity {
     protected Wishlist() {
     }
 
-    public Wishlist(Member member) {
+    protected Wishlist(Member member) {
         this.member = member;
     }
 
