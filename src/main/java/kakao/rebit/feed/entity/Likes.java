@@ -27,7 +27,6 @@ public class Likes {
     private Feed feed;
 
     protected Likes() {
-
     }
 
     public Likes(Member member, Feed feed) {
