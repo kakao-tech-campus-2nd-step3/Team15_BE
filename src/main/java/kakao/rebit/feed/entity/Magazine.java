@@ -16,7 +16,6 @@ public class Magazine extends Feed {
     private String content;
 
     protected Magazine() {
-
     }
 
     public Magazine(Member member, Book book, String name, String imageUrl,

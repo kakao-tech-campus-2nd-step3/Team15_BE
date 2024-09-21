@@ -30,4 +30,3 @@ public class BookWishlist extends Wishlist {
         return book;
     }
 }
-
