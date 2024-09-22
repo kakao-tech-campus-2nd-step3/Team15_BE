@@ -2,9 +2,9 @@ package kakao.rebit.wishlist.entity;
 
 import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.Table;
 import kakao.rebit.challenge.entity.Challenge;
 import kakao.rebit.member.entity.Member;
