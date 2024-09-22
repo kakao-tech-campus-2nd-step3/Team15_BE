@@ -1,14 +1,13 @@
-package kakao.rebit.challengecertification.entity;
+package kakao.rebit.challenge.entity;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.Table;
-import kakao.rebit.challenge.entity.Challenge;
 import kakao.rebit.common.persistence.BaseEntity;
 
 @Entity

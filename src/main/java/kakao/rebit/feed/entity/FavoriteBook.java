@@ -2,31 +2,32 @@ package kakao.rebit.feed.entity;
 
 import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;
+import kakao.rebit.book.entity.Book;
 import kakao.rebit.member.entity.Member;
 
 @Entity
 @DiscriminatorValue("FB")
 public class FavoriteBook extends Feed {
 
-    private String brief_review;
+    private String briefReview;
 
-    private String full_review;
+    private String fullReview;
 
     protected FavoriteBook() {
     }
 
-    public FavoriteBook(Member member, Book book, String brief_review,
-            String full_review) {
+    public FavoriteBook(Member member, Book book, String briefReview,
+            String fullReview) {
         super(member, book);
-        this.brief_review = brief_review;
-        this.full_review = full_review;
+        this.briefReview = briefReview;
+        this.fullReview = fullReview;
     }
 
-    public String getBrief_review() {
-        return brief_review;
+    public String getBriefReview() {
+        return briefReview;
     }
 
-    public String getFull_review() {
-        return full_review;
+    public String getFullReview() {
+        return fullReview;
     }
 }
