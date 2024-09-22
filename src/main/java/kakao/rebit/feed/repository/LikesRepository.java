@@ -1,6 +1,6 @@
-package kakao.rebit.Likes.repository;
+package kakao.rebit.feed.repository;
 
-import kakao.rebit.Likes.entity.Likes;
+import kakao.rebit.feed.entity.Likes;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
