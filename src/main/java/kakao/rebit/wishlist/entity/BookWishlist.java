@@ -11,7 +11,7 @@ import kakao.rebit.member.entity.Member;
 
 @Entity
 @DiscriminatorValue("BOOK")
-@Table(name = "book_wishes")
+@Table(name = "book_wishlist")
 public class BookWishlist extends Wishlist {
 
     @ManyToOne(fetch = FetchType.LAZY)
