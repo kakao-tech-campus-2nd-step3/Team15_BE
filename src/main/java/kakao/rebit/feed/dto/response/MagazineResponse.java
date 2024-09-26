@@ -9,9 +9,8 @@ public class MagazineResponse extends FeedResponse {
     private String content;
 
     public MagazineResponse(Long id, MemberResponse memberResponse, BookResponse bookResponse,
-            String name, String imageUrl,
-            String content) {
-        super(id, memberResponse, bookResponse, Type.M);
+            String type, String name, String imageUrl, String content) {
+        super(id, memberResponse, bookResponse, type);
         this.name = name;
         this.imageUrl = imageUrl;
         this.content = content;

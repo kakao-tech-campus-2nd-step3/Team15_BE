@@ -13,7 +13,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-@Transactional(readOnly = true)
 public class MagazineService {
 
     private final MagazineRepository magazineRepository;
@@ -22,10 +21,12 @@ public class MagazineService {
         this.magazineRepository = magazineRepository;
     }
 
+    @Transactional(readOnly = true)
     public Page<MagazineResponse> getMagazines(Pageable pageable) {
         return magazineRepository.findAll(pageable).map(this::toMagazineResponse);
     }
 
+    @Transactional(readOnly = true)
     public MagazineResponse getMagazineById(Long id) {
         Magazine magazine = magazineRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("찾는 Magazine이 없습니다."));
@@ -37,6 +38,7 @@ public class MagazineService {
                 magazine.getId(),
                 toMemberResponse(magazine.getMember()),
                 toBookResponse(magazine.getBook()),
+                magazine.getType(),
                 magazine.getName(),
                 magazine.getImageUrl(),
                 magazine.getContent()
