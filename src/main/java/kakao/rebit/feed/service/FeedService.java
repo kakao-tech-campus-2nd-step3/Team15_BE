@@ -1,6 +1,7 @@
 package kakao.rebit.feed.service;
 
 import kakao.rebit.book.entity.Book;
+import kakao.rebit.feed.dto.response.AuthorResponse;
 import kakao.rebit.feed.dto.response.BookResponse;
 import kakao.rebit.feed.dto.response.FavoriteBookResponse;
 import kakao.rebit.feed.dto.response.FeedResponse;
@@ -11,7 +12,6 @@ import kakao.rebit.feed.entity.Feed;
 import kakao.rebit.feed.entity.Magazine;
 import kakao.rebit.feed.entity.Story;
 import kakao.rebit.feed.repository.FeedRepository;
-import kakao.rebit.member.dto.MemberResponse;
 import kakao.rebit.member.entity.Member;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -38,18 +38,18 @@ public class FeedService {
 
     private FeedResponse toFeedResponse(Feed feed) {
         if (feed instanceof FavoriteBook) {
-            return new FavoriteBookResponse(feed.getId(), toMemberResponse(feed.getMember()),
+            return new FavoriteBookResponse(feed.getId(), toAuthorResponse(feed.getMember()),
                     toBookResponse(feed.getBook()), feed.getType(),
                     ((FavoriteBook) feed).getBriefReview(), ((FavoriteBook) feed).getFullReview());
         }
         if (feed instanceof Magazine) {
-            return new MagazineResponse(feed.getId(), toMemberResponse(feed.getMember()),
+            return new MagazineResponse(feed.getId(), toAuthorResponse(feed.getMember()),
                     toBookResponse(feed.getBook()), feed.getType(),
                     ((Magazine) feed).getName(), ((Magazine) feed).getImageUrl(),
                     ((Magazine) feed).getContent());
         }
         if (feed instanceof Story) {
-            return new StoryResponse(feed.getId(), toMemberResponse(feed.getMember()),
+            return new StoryResponse(feed.getId(), toAuthorResponse(feed.getMember()),
                     toBookResponse(feed.getBook()), feed.getType(),
                     ((Story) feed).getImageUrl(), ((Story) feed).getContent());
         }
@@ -57,12 +57,11 @@ public class FeedService {
     }
 
 
-    private MemberResponse toMemberResponse(Member member) {
-        return new MemberResponse(member.getId(), member.getNickname(), member.getImageUrl(),
-                member.getBio(), member.getRole(), member.getPoint());
+    public AuthorResponse toAuthorResponse(Member member) {
+        return new AuthorResponse(member.getId(), member.getNickname(), member.getImageUrl());
     }
 
-    private BookResponse toBookResponse(Book book) {
+    public BookResponse toBookResponse(Book book) {
         return new BookResponse(book.getId(), book.getIsbn(), book.getTitle(),
                 book.getDescription(), book.getAuthor(), book.getPublisher(), book.getImageUrl());
     }
