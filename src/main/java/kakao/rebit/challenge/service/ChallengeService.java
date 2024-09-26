@@ -32,6 +32,17 @@ public class ChallengeService {
         return challenges.map(this::toChallengeResponse);
     }
 
+    @Transactional(readOnly = true)
+    public ChallengeResponse getChallengeById(Long challengeId) {
+        Challenge challenge = findChallengeByIdOrThrow(challengeId);
+        return toChallengeResponse(challenge);
+    }
+
+    private Challenge findChallengeByIdOrThrow(Long challengeId) {
+        return challengeRepository.findById(challengeId)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 챌린지입니다."));
+    }
+
     @Transactional
     public Long createChallenge(MemberResponse memberResponse, ChallengeRequest challengeRequest) {
         Member member = memberService.findMemberByIdOrThrow(memberResponse.id());

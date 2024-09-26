@@ -35,6 +35,11 @@ public class ChallengeController {
         return ResponseEntity.ok().body(challengeService.getChallenges(pageable));
     }
 
+    @GetMapping("/{challenge-id}")
+    public ResponseEntity<ChallengeResponse> getChallenge(@PathVariable("challenge-id") Long challengeId) {
+        return ResponseEntity.ok().body(challengeService.getChallengeById(challengeId));
+    }
+
     @PostMapping
     public ResponseEntity<Void> createChallenge(@RequestBody ChallengeRequest challengeRequest) {
         // 소셜 로그인이 아직 구현되지 않아 임의의 빈 MemberResponse를 넣어줌
@@ -44,8 +49,8 @@ public class ChallengeController {
         return ResponseEntity.created(URI.create("/challenges/" + challengeId)).build();
     }
 
-    @DeleteMapping("/{challengeId}")
-    public ResponseEntity<Void> deleteChallenge(@PathVariable("challengeId") Long challengeId) {
+    @DeleteMapping("/{challenge-id}")
+    public ResponseEntity<Void> deleteChallenge(@PathVariable("challenge-id") Long challengeId) {
         challengeService.deleteChallengeById(challengeId);
         return ResponseEntity.noContent().build();
     }
