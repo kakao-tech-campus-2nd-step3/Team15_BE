@@ -36,7 +36,7 @@ public abstract class Feed extends BaseEntity {
     private int likes;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "isbn")
+    @JoinColumn(name = "book_id")
     private Book book;
 
     protected Feed() {
