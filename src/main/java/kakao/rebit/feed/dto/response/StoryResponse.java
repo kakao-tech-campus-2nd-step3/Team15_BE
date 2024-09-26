@@ -1,15 +1,13 @@
 package kakao.rebit.feed.dto.response;
 
-import kakao.rebit.member.dto.MemberResponse;
-
 public class StoryResponse extends FeedResponse {
 
     private String imageUrl;
     private String content;
 
-    public StoryResponse(Long id, MemberResponse memberResponse, BookResponse bookResponse,
+    public StoryResponse(Long id, AuthorResponse author, BookResponse book,
             String type, String imageUrl, String content) {
-        super(id, memberResponse, bookResponse, type);
+        super(id, author, book, type);
         this.imageUrl = imageUrl;
         this.content = content;
     }

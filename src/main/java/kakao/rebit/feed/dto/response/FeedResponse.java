@@ -1,19 +1,17 @@
 package kakao.rebit.feed.dto.response;
 
-import kakao.rebit.member.dto.MemberResponse;
-
 public abstract class FeedResponse {
 
     private Long id;
-    private MemberResponse memberResponse;
-    private BookResponse bookResponse;
+    private AuthorResponse author;
+    private BookResponse book;
     private String type;
 
-    public FeedResponse(Long id, MemberResponse memberResponse, BookResponse bookResponse,
+    public FeedResponse(Long id, AuthorResponse author, BookResponse book,
             String type) {
         this.id = id;
-        this.memberResponse = memberResponse;
-        this.bookResponse = bookResponse;
+        this.author = author;
+        this.book = book;
         this.type = type;
     }
 
@@ -21,12 +19,12 @@ public abstract class FeedResponse {
         return id;
     }
 
-    public MemberResponse getMemberResponse() {
-        return memberResponse;
+    public AuthorResponse getAuthor() {
+        return author;
     }
 
-    public BookResponse getBookResponse() {
-        return bookResponse;
+    public BookResponse getBook() {
+        return book;
     }
 
     public String getType() {
