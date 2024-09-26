@@ -17,7 +17,7 @@ public class Member extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String username;
+    private String nickname;
 
     private String imageUrl;
 
@@ -33,8 +33,8 @@ public class Member extends BaseEntity {
     protected Member() {
     }
 
-    public Member(String username, String imageUrl, String bio, Role role, Integer point, String kakaoToken) {
-        this.username = username;
+    public Member(String nickname, String imageUrl, String bio, Role role, Integer point, String kakaoToken) {
+        this.nickname = nickname;
         this.imageUrl = imageUrl;
         this.bio = bio;
         this.role = role;
@@ -46,8 +46,8 @@ public class Member extends BaseEntity {
         return id;
     }
 
-    public String getUsername() {
-        return username;
+    public String getNickname() {
+        return nickname;
     }
 
     public String getImageUrl() {
