@@ -19,7 +19,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-@Transactional(readOnly = true)
 public class FeedService {
 
     private final FeedRepository feedRepository;
@@ -28,6 +27,7 @@ public class FeedService {
         this.feedRepository = feedRepository;
     }
 
+    @Transactional(readOnly = true)
     public Page<FeedResponse> getFeeds(Pageable pageable) {
         return feedRepository.findAll(pageable).map(this::toFeedResponse);
     }
@@ -39,21 +39,21 @@ public class FeedService {
     private FeedResponse toFeedResponse(Feed feed) {
         if (feed instanceof FavoriteBook) {
             return new FavoriteBookResponse(feed.getId(), toMemberResponse(feed.getMember()),
-                    toBookResponse(feed.getBook()),
+                    toBookResponse(feed.getBook()), feed.getType(),
                     ((FavoriteBook) feed).getBriefReview(), ((FavoriteBook) feed).getFullReview());
         }
         if (feed instanceof Magazine) {
             return new MagazineResponse(feed.getId(), toMemberResponse(feed.getMember()),
-                    toBookResponse(feed.getBook()),
+                    toBookResponse(feed.getBook()), feed.getType(),
                     ((Magazine) feed).getName(), ((Magazine) feed).getImageUrl(),
                     ((Magazine) feed).getContent());
         }
         if (feed instanceof Story) {
             return new StoryResponse(feed.getId(), toMemberResponse(feed.getMember()),
-                    toBookResponse(feed.getBook()),
+                    toBookResponse(feed.getBook()), feed.getType(),
                     ((Story) feed).getImageUrl(), ((Story) feed).getContent());
         }
-        return null;
+        throw new IllegalStateException("유효하지 않는 피드입니다.");
     }
 
 

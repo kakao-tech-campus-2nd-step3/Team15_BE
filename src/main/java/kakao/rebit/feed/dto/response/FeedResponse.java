@@ -7,10 +7,10 @@ public abstract class FeedResponse {
     private Long id;
     private MemberResponse memberResponse;
     private BookResponse bookResponse;
-    private Type type;
+    private String type;
 
     public FeedResponse(Long id, MemberResponse memberResponse, BookResponse bookResponse,
-            Type type) {
+            String type) {
         this.id = id;
         this.memberResponse = memberResponse;
         this.bookResponse = bookResponse;
@@ -29,7 +29,7 @@ public abstract class FeedResponse {
         return bookResponse;
     }
 
-    public Type getType() {
+    public String getType() {
         return type;
     }
 }

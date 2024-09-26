@@ -13,7 +13,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-@Transactional(readOnly = true)
 public class StoryService {
 
     private final StoryRepository storyRepository;
@@ -22,10 +21,12 @@ public class StoryService {
         this.storyRepository = storyRepository;
     }
 
+    @Transactional(readOnly = true)
     public Page<StoryResponse> getStories(Pageable pageable) {
         return storyRepository.findAll(pageable).map(this::toStoryResponse);
     }
 
+    @Transactional(readOnly = true)
     public StoryResponse getStoryById(Long id) {
         Story story = storyRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("찾는 스토리가 없습니다."));
@@ -41,6 +42,7 @@ public class StoryService {
                 story.getId(),
                 toMemberResponse(story.getMember()),
                 toBookResponse(story.getBook()),
+                story.getType(),
                 story.getImageUrl(),
                 story.getContent()
         );

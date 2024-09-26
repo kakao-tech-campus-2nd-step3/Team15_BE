@@ -13,7 +13,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-@Transactional(readOnly = true)
 public class FavoriteBookService {
 
     private final FavoriteBookRepository favoriteBookRepository;
@@ -22,12 +21,14 @@ public class FavoriteBookService {
         this.favoriteBookRepository = favoriteBookRepository;
     }
 
+    @Transactional(readOnly = true)
     public Page<FavoriteBookResponse> getFavorites(Pageable pageable) {
         Page<FavoriteBook> favorites = favoriteBookRepository.findAll(pageable);
         System.out.println(favorites);
         return favorites.map(this::toFavoriteBookResponse);
     }
 
+    @Transactional(readOnly = true)
     public FavoriteBookResponse getFavoriteById(Long id) {
         FavoriteBook favoriteBook = favoriteBookRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("찾는 인생책이 없습니다."));
@@ -39,13 +40,10 @@ public class FavoriteBookService {
      */
 
     private FavoriteBookResponse toFavoriteBookResponse(FavoriteBook favoriteBook) {
-        return new FavoriteBookResponse(
-                favoriteBook.getId(),
-                toMemberResponse(favoriteBook.getMember()),
-                toBookResponse(favoriteBook.getBook()),
-                favoriteBook.getBriefReview(),
-                favoriteBook.getFullReview()
-        );
+        return new FavoriteBookResponse(favoriteBook.getId(),
+                toMemberResponse(favoriteBook.getMember()), toBookResponse(favoriteBook.getBook()),
+                favoriteBook.getType(), favoriteBook.getBriefReview(),
+                favoriteBook.getFullReview());
     }
 
     private MemberResponse toMemberResponse(Member member) {
