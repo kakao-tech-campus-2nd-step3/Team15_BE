@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/favorites")
+@RequestMapping("/api/feeds/favorite-books")
 public class FavoriteBookController {
 
     private final FavoriteBookService favoriteBookService;
@@ -23,13 +23,14 @@ public class FavoriteBookController {
     }
 
     @GetMapping
-    public ResponseEntity<Page<FavoriteBookResponse>> getFavorites(
+    public ResponseEntity<Page<FavoriteBookResponse>> getFavoriteBooks(
             @PageableDefault(sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
-        return ResponseEntity.ok().body(favoriteBookService.getFavorites(pageable));
+        return ResponseEntity.ok().body(favoriteBookService.getFavoriteBooks(pageable));
     }
 
     @GetMapping("/{favorite-id}")
-    public ResponseEntity<FavoriteBookResponse> getFavorite(@PathVariable("favorite-id") Long id) {
-        return ResponseEntity.ok().body(favoriteBookService.getFavoriteById(id));
+    public ResponseEntity<FavoriteBookResponse> getFavoriteBook(
+            @PathVariable("favorite-id") Long id) {
+        return ResponseEntity.ok().body(favoriteBookService.getFavoriteBookById(id));
     }
 }

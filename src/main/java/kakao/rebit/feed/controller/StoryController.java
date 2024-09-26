@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/stories")
+@RequestMapping("/api/feeds/stories")
 public class StoryController {
 
     private final StoryService storyService;

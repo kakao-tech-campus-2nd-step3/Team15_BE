@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/magazines")
+@RequestMapping("/api/feeds/magazines")
 public class MagazineController {
 
     private final MagazineService magazineService;
