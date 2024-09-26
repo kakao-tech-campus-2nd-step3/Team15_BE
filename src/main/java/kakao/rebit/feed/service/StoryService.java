@@ -1,12 +1,8 @@
 package kakao.rebit.feed.service;
 
-import kakao.rebit.book.entity.Book;
-import kakao.rebit.feed.dto.response.BookResponse;
 import kakao.rebit.feed.dto.response.StoryResponse;
 import kakao.rebit.feed.entity.Story;
 import kakao.rebit.feed.repository.StoryRepository;
-import kakao.rebit.member.dto.MemberResponse;
-import kakao.rebit.member.entity.Member;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -16,9 +12,11 @@ import org.springframework.transaction.annotation.Transactional;
 public class StoryService {
 
     private final StoryRepository storyRepository;
+    private final FeedService feedService;
 
-    public StoryService(StoryRepository storyRepository) {
+    public StoryService(StoryRepository storyRepository, FeedService feedService) {
         this.storyRepository = storyRepository;
+        this.feedService = feedService;
     }
 
     @Transactional(readOnly = true)
@@ -40,22 +38,11 @@ public class StoryService {
     private StoryResponse toStoryResponse(Story story) {
         return new StoryResponse(
                 story.getId(),
-                toMemberResponse(story.getMember()),
-                toBookResponse(story.getBook()),
+                feedService.toAuthorResponse(story.getMember()),
+                feedService.toBookResponse(story.getBook()),
                 story.getType(),
                 story.getImageUrl(),
                 story.getContent()
         );
     }
-
-    private MemberResponse toMemberResponse(Member member) {
-        return new MemberResponse(member.getId(), member.getNickname(), member.getImageUrl(),
-                member.getBio(), member.getRole(), member.getPoint());
-    }
-
-    private BookResponse toBookResponse(Book book) {
-        return new BookResponse(book.getId(), book.getIsbn(), book.getTitle(),
-                book.getDescription(), book.getAuthor(), book.getPublisher(), book.getImageUrl());
-    }
-
 }
