@@ -3,6 +3,7 @@ package kakao.rebit.feed.entity;
 import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
+import kakao.rebit.book.entity.Book;
 import kakao.rebit.member.entity.Member;
 
 @Entity
@@ -15,11 +16,9 @@ public class Magazine extends Feed {
     private String content;
 
     protected Magazine() {
-
     }
 
-    public Magazine(Member member, Book book, String name, String imageUrl,
-            String content) {
+    public Magazine(Member member, Book book, String name, String imageUrl, String content) {
         super(member, book);
         this.name = name;
         this.imageUrl = imageUrl;
