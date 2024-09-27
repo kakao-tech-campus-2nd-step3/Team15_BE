@@ -15,8 +15,7 @@ public class BookService {
 
     private final BookRepository bookRepository;
     private final AladinApiService aladinApiService;
-
-    @Autowired
+    
     public BookService(BookRepository bookRepository, AladinApiService aladinApiService) {
         this.bookRepository = bookRepository;
         this.aladinApiService = aladinApiService;
