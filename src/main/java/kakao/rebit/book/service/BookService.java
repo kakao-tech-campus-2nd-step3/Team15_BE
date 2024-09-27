@@ -30,4 +30,14 @@ public class BookService {
         }
         return books;
     }
+
+    public Book searchBookByIsbn(String isbn) {
+        String apiResponse = aladinApiService.searchBookByIsbn(isbn);
+        Book book = parseBookDetail(apiResponse);
+        Book savedBook = bookRepository.findByIsbn(book.getIsbn())
+            .orElseGet(() -> {
+                return bookRepository.save(book);
+            });
+        return savedBook;
+    }
 }
