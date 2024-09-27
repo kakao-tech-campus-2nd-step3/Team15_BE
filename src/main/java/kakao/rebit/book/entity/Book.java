@@ -1,5 +1,6 @@
 package kakao.rebit.book.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -8,6 +9,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import kakao.rebit.common.persistence.BaseEntity;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 @Entity
 @Table(name = "book")
 public class Book extends BaseEntity {
@@ -16,6 +18,7 @@ public class Book extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(unique = true, nullable = false)
     private String isbn;
 
     private String title;
