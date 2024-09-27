@@ -22,12 +22,12 @@ public class BookController {
         this.reviewService = reviewService;
     }
 
-    @GetMapping("/books/all")
+    @GetMapping("/books")
     public List<Book> getAllBooks() {
         return bookService.getAllBooks();
     }
 
-    @GetMapping("/books")
+    @GetMapping("/books/search")
     public ResponseEntity<String> getBooks(@RequestParam(name="query") String query) {
         String apiResponse = bookService.searchBooksByTitle(query);
         return ResponseEntity.ok(apiResponse);
