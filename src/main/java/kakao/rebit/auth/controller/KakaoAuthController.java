@@ -39,6 +39,6 @@ public class KakaoAuthController {
     @ResponseBody
     public LoginResponse kakaoLogin(@RequestParam String code) {
 
-        return kakaoAuthService.kakaoLogin(code, "localhost");
+        return kakaoAuthService.kakaoLogin(code);
     }
 }

@@ -27,7 +27,7 @@ public class KakaoAuthService {
         this.authTokensGenerator = authTokensGenerator;
     }
 
-    public LoginResponse kakaoLogin(String code, String currentDomain) {
+    public LoginResponse kakaoLogin(String code) {
         // 1. 카카오로부터 액세스 토큰을 받음
         String accessToken = kakaoApiClient.getAccessToken(code);
 
