@@ -27,9 +27,9 @@ public class BookService {
     public String searchBooksByTitle(String title) {
         String apiResponse = aladinApiService.searchBookByTitle(title);
         List<Book> books = parseBooks(apiResponse);
-        for (Book book : books) {
-            bookRepository.findByIsbn(book.getIsbn()).orElseGet(() -> bookRepository.save(book));
-        }
+        books.stream()
+            .filter(book -> bookRepository.findByIsbn(book.getIsbn()).isEmpty())
+            .forEach(bookRepository::save);
         return apiResponse;
     }
 
