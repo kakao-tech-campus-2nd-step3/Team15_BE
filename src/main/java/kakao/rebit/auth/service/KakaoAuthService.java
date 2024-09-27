@@ -1,6 +1,7 @@
 package kakao.rebit.auth.service;
 
 import kakao.rebit.auth.Token.AuthTokenGenerator;
+import kakao.rebit.auth.dto.KakaoUserInfo;
 import kakao.rebit.auth.dto.LoginResponse;
 import kakao.rebit.auth.Token.AuthToken;
 import kakao.rebit.member.entity.Member;
@@ -9,7 +10,6 @@ import kakao.rebit.member.repository.MemberRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
 import java.util.Optional;
 
 @Service
@@ -32,16 +32,17 @@ public class KakaoAuthService {
         String accessToken = kakaoApiClient.getAccessToken(code);
 
         // 2. 받은 액세스 토큰으로 유저 정보를 가져옴
-        HashMap<String, Object> userInfo = kakaoApiClient.getUserInfo(accessToken);
-        Long kakaoId = (Long) userInfo.get("id");
-        String nickname = (String) userInfo.get("nickname");
+        KakaoUserInfo userInfo = kakaoApiClient.getUserInfo(accessToken);
+        Long kakaoId = userInfo.id();
+        String nickname = userInfo.properties().nickname();
+        String email = userInfo.kakaoAccount().email();
 
-        // 3. 카카오 토큰으로 기존 유저 조회
-        Optional<Member> memberOptional = memberRepository.findByKakaoToken(accessToken);
+        // 3. 카카오 이메일로 기존 유저 조회
+        Optional<Member> memberOptional = memberRepository.findByEmail(email);
 
         Member member = memberOptional.orElseGet(() -> {
             // 회원이 없으면 회원가입 처리, 기본 Role은 ROLE_USER로 설정
-            Member newMember = new Member(nickname, null, null, Role.ROLE_USER, null, accessToken);
+            Member newMember = new Member(nickname, email,null, null, Role.ROLE_USER, null, accessToken);
             memberRepository.save(newMember);
             return newMember;
         });
