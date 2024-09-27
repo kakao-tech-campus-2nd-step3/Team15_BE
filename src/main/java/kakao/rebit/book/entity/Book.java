@@ -36,7 +36,7 @@ public class Book extends BaseEntity {
     }
 
     public Book(String isbn, String title, String description, String author, String publisher,
-        String imageUrl) {
+            String imageUrl) {
         this.isbn = isbn;
         this.title = title;
         this.description = description;
