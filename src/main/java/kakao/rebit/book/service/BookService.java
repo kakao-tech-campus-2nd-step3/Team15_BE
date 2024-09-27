@@ -87,5 +87,4 @@ public class BookService {
             throw new RuntimeException("API 응답에서 책 상세 정보를 파싱하는 데 실패했습니다", e);
         }
     }
-
 }
