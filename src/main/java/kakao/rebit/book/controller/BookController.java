@@ -23,8 +23,9 @@ public class BookController {
     }
 
     @GetMapping("/books")
-    public List<Book> getAllBooks() {
-        return bookService.getAllBooks();
+    public ResponseEntity<List<Book>> getAllBooks() {
+        List<Book> books = bookService.getAllBooks();
+        return ResponseEntity.ok(books);
     }
 
     @GetMapping("/books/search")
@@ -33,13 +34,15 @@ public class BookController {
         return ResponseEntity.ok(apiResponse);
     }
 
-    @GetMapping("/books/{isbn}")
-    public Book getBookDetail(@PathVariable(name = "isbn") String isbn) {
-        return bookService.getBookDetail(isbn);
+    @GetMapping("/books/search/{isbn}")
+    public ResponseEntity<Book> getBookDetail(@PathVariable(name = "isbn") String isbn) {
+        Book book = bookService.getBookDetail(isbn);
+        return ResponseEntity.ok(book);
     }
 
     @GetMapping("/books/{isbn}/brief-reviews")
-    public List<Review> getBriefReviews(@PathVariable(name = "isbn") String isbn) {
-        return reviewService.getBriefReviews(isbn);
+    public ResponseEntity<List<Review>> getBriefReviews(@PathVariable(name = "isbn") String isbn) {
+        List<Review> reviews = reviewService.getBriefReviews(isbn);
+        return ResponseEntity.ok(reviews);
     }
 }
