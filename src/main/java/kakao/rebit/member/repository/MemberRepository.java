@@ -6,6 +6,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface MemberRepository extends JpaRepository<Member, Long> {
 
-    Optional<Member> findByKakaoToken(String kakaoToken);
+    Optional<Member> findByEmail(String email);
 
 }
