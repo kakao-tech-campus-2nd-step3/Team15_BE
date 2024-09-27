@@ -21,4 +21,13 @@ public class BookService {
         this.bookRepository = bookRepository;
         this.aladinApiService = aladinApiService;
     }
+
+    public List<Book> searchBooksByTitle(String query) {
+        String apiResponse = aladinApiService.searchBookByTitle(query);
+        List<Book> books = parseBooks(apiResponse);
+        for (Book book : books) {
+            bookRepository.findByIsbn(book.getIsbn()).orElseGet(() -> bookRepository.save(book));
+        }
+        return books;
+    }
 }
