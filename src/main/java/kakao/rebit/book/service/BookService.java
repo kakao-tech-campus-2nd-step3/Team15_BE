@@ -40,4 +40,9 @@ public class BookService {
             });
         return savedBook;
     }
+    
+    public Book getBookDetail(String isbn) {
+        return bookRepository.findByIsbn(isbn)
+            .orElseGet(() -> searchBookByIsbn(isbn));
+    }
 }
