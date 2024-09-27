@@ -27,12 +27,18 @@ public class BookController {
         this.bookService = bookService;
         this.reviewService = reviewService;
         this.aladinApiService = aladinApiService;
-        this.bookRepository = bookRepository; // 추가
+        this.bookRepository = bookRepository;
     }
 
-    // 저장된 책 목록 조회
     @GetMapping("/books/all")
     public List<Book> getAllBooks() {
         return bookRepository.findAll();
+    }
+
+    // 책 목록 조회
+    @GetMapping("/books")
+    public ResponseEntity<String> getBooks(@RequestParam(name="query") String query) {
+        String apiResponse = aladinApiService.searchBookByTitle(query);
+        return ResponseEntity.ok(apiResponse);
     }
 }
