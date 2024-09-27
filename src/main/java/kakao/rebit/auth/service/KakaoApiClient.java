@@ -45,13 +45,7 @@ public class KakaoApiClient {
         HttpHeaders headers = new HttpHeaders();
         headers.add(CONTENT_TYPE, APPLICATION_FORM_URLENCODED);
 
-        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
-        params.add("grant_type", "authorization_code");
-        params.add("client_id", clientId);
-        params.add("redirect_uri", redirectUri);
-        params.add("code", code);
-
-        HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(params, headers);
+        HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(createTokenParams(code), headers);
         String tokenUrl = kakaoAuthUrl + "/oauth/token";
 
         ResponseEntity<String> response = restTemplate.exchange(
@@ -73,6 +67,15 @@ public class KakaoApiClient {
         } catch (Exception e) {
             throw new RuntimeException("액세스 토큰을 파싱하는 데 실패했습니다.", e);
         }
+    }
+
+    private MultiValueMap<String, String> createTokenParams(String code) {
+        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+        params.add("grant_type", "authorization_code");
+        params.add("client_id", clientId);
+        params.add("redirect_uri", redirectUri);
+        params.add("code", code);
+        return params;
     }
 
     public HashMap<String, Object> getUserInfo(String accessToken) {
