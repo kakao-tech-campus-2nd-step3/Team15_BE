@@ -28,7 +28,7 @@ public class BookController {
     }
 
     @GetMapping("/books/search")
-    public ResponseEntity<String> getBooks(@RequestParam(name="query") String query) {
+    public ResponseEntity<String> searchBooks(@RequestParam(name="query") String query) {
         String apiResponse = bookService.searchBooksByTitle(query);
         return ResponseEntity.ok(apiResponse);
     }
