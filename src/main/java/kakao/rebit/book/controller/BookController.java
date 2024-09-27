@@ -20,7 +20,7 @@ public class BookController {
     private final BookService bookService;
     private final ReviewService reviewService;
     private final AladinApiService aladinApiService;
-    private final BookRepository bookRepository; // 추가
+    private final BookRepository bookRepository;
 
     @Autowired
     public BookController(BookService bookService, ReviewService reviewService, AladinApiService aladinApiService,BookRepository bookRepository) {
@@ -34,7 +34,7 @@ public class BookController {
     public List<Book> getAllBooks() {
         return bookRepository.findAll();
     }
-    
+
     @GetMapping("/books")
     public ResponseEntity<String> getBooks(@RequestParam(name="query") String query) {
         String apiResponse = aladinApiService.searchBookByTitle(query);
@@ -44,5 +44,10 @@ public class BookController {
     @GetMapping("/books/{isbn}")
     public Book getBookDetail(@PathVariable(name = "isbn") String isbn) {
         return bookService.getBookDetail(isbn);
+    }
+
+    @GetMapping("/books/{isbn}/brief-reviews")
+    public List<Review> getBriefReviews(@PathVariable(name = "isbn") String isbn) {
+        return reviewService.getBriefReviews(isbn);
     }
 }
