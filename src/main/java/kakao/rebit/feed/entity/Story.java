@@ -2,6 +2,7 @@ package kakao.rebit.feed.entity;
 
 import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;
+import kakao.rebit.book.entity.Book;
 import kakao.rebit.member.entity.Member;
 
 @Entity

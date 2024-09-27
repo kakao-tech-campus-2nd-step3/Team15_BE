@@ -1,8 +1,8 @@
 package kakao.rebit.feed.repository;
 
-import org.springframework.stereotype.Repository;
+import kakao.rebit.feed.entity.Magazine;
+import org.springframework.data.jpa.repository.JpaRepository;
 
-@Repository
-public interface MagazineRepository {
+public interface MagazineRepository extends JpaRepository<Magazine, Long> {
 
 }
