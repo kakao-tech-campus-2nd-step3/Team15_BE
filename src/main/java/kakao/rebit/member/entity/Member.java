@@ -23,6 +23,8 @@ public class Member extends BaseEntity {
 
     private String bio;
 
+    private String email;
+
     @Enumerated(EnumType.STRING)
     private Role role;
 
@@ -33,10 +35,11 @@ public class Member extends BaseEntity {
     protected Member() {
     }
 
-    public Member(String nickname, String imageUrl, String bio, Role role, Integer point, String kakaoToken) {
+    public Member(String nickname, String imageUrl, String bio, String email, Role role, Integer point, String kakaoToken) {
         this.nickname = nickname;
         this.imageUrl = imageUrl;
         this.bio = bio;
+        this.email = email;
         this.role = role;
         this.point = point;
         this.kakaoToken = kakaoToken;
@@ -56,6 +59,10 @@ public class Member extends BaseEntity {
 
     public String getBio() {
         return bio;
+    }
+
+    public String getEmail() {
+        return email;
     }
 
     public Role getRole() {
