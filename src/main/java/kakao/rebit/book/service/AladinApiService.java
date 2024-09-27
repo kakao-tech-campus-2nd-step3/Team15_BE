@@ -16,17 +16,17 @@ public class AladinApiService {
             + String.format(API_QUERY_PARAMS, queryType, maxResults);
     }
 
-    public String searchBookByTitle(String title) {
-        String url = getApiUrlByQuery(title, "Title", 10);
+    private String sendRequest(String query, String queryType, int maxResults) {
+        String url = getApiUrlByQuery(query, queryType, maxResults);
         RestTemplate restTemplate = new RestTemplate();
         ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
         return response.getBody();
     }
+    public String searchBookByTitle(String title) {
+        return sendRequest(title, "Title", 10);
+    }
 
     public String searchBookByIsbn(String isbn) {
-        String url = getApiUrlByQuery(isbn, "ISBN", 1);
-        RestTemplate restTemplate = new RestTemplate();
-        ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
-        return response.getBody();
+        return sendRequest(isbn, "ISBN", 1);
     }
 }
