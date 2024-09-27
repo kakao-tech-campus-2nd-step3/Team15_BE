@@ -6,12 +6,12 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
-import java.awt.print.Book;
+import kakao.rebit.book.entity.Book;
 import kakao.rebit.member.entity.Member;
 
 @Entity
 @DiscriminatorValue("BOOK")
-@Table(name = "book_wishes")
+@Table(name = "book_wishlist")
 public class BookWishlist extends Wishlist {
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -30,4 +30,3 @@ public class BookWishlist extends Wishlist {
         return book;
     }
 }
-

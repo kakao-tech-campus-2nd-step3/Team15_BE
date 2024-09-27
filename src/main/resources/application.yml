@@ -29,8 +29,12 @@ oauth:
       auth-url: ${OAUTH_KAKAO_AUTH_URL}
       api-url: ${OAUTH_KAKAO_API_URL}
       redirect-url: ${OAUTH_KAKAO_REDIRECT_URI}
-      logout-redirect-url:  ${OAUTH_KAKAO_LOGOUT_REDIRECT_URI}
+      logout-redirect-url: ${OAUTH_KAKAO_LOGOUT_REDIRECT_URI}
 
+# Jwt 시크릿 키 설정
+custom:
+  jwt:
+    secretKey: ${JWT_SECRET_KEY}
 
 logging:
   level:
