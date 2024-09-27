@@ -33,15 +33,10 @@ public class ChallengeParticipation extends BaseEntity {
     }
 
     private ChallengeParticipation(Challenge challenge, Member member, Integer entryFee) {
-        validate(member, challenge, entryFee);
+        challenge.validateParticipate(entryFee);
         this.challenge = challenge;
         this.member = member;
         this.entryFee = entryFee;
-    }
-
-    private void validate(Member member, Challenge challenge, Integer entryFee) {
-        challenge.validateParticipate(entryFee);
-        member.usePoints(entryFee);
     }
 
     public static ChallengeParticipation of(Challenge challenge, Member member, Integer entryFee) {
