@@ -12,6 +12,7 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import kakao.rebit.auth.dto.KakaoUserInfo;
 
 @Service
 public class KakaoApiClient {
@@ -45,27 +46,26 @@ public class KakaoApiClient {
         HttpHeaders headers = new HttpHeaders();
         headers.add(CONTENT_TYPE, APPLICATION_FORM_URLENCODED);
 
-        HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(createTokenParams(code), headers);
+        MultiValueMap<String, String> params = createTokenParams(code);
+        HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(params, headers);
         String tokenUrl = kakaoAuthUrl + "/oauth/token";
 
-        ResponseEntity<String> response = restTemplate.exchange(
+        ResponseEntity<JsonNode> response = restTemplate.exchange(
             tokenUrl,
             HttpMethod.POST,
             request,
-            String.class
+            JsonNode.class
         );
 
-        try {
-            JsonNode rootNode = objectMapper.readTree(response.getBody());
+        JsonNode rootNode = response.getBody();
+        if (rootNode != null) {
             String accessToken = rootNode.path("access_token").asText();
-
             if (accessToken == null || accessToken.isEmpty()) {
                 throw new RuntimeException("액세스 토큰을 가져오지 못했습니다.");
             }
-
             return accessToken;
-        } catch (Exception e) {
-            throw new RuntimeException("액세스 토큰을 파싱하는 데 실패했습니다.", e);
+        } else {
+            throw new RuntimeException("응답이 비어 있습니다.");
         }
     }
 
@@ -78,7 +78,7 @@ public class KakaoApiClient {
         return params;
     }
 
-    public HashMap<String, Object> getUserInfo(String accessToken) {
+    public KakaoUserInfo getUserInfo(String accessToken) {
         HttpHeaders headers = new HttpHeaders();
         headers.add(AUTHORIZATION, BEARER_PREFIX + accessToken);
         headers.add(CONTENT_TYPE, APPLICATION_FORM_URLENCODED);
@@ -86,43 +86,18 @@ public class KakaoApiClient {
         HttpEntity<?> request = new HttpEntity<>(headers);
         String userInfoUrl = kakaoApiUrl + "/v2/user/me";
 
-        ResponseEntity<String> response = restTemplate.exchange(
+        ResponseEntity<KakaoUserInfo> response = restTemplate.exchange(
             userInfoUrl,
             HttpMethod.POST,
             request,
-            String.class
+            KakaoUserInfo.class
         );
 
-        System.out.println("카카오 API 응답: " + response.getBody());
-
-        HashMap<String, Object> userInfo = new HashMap<>();
-        try {
-            JsonNode jsonNode = objectMapper.readTree(response.getBody());
-
-            JsonNode idNode = jsonNode.get("id");
-            if (idNode != null) {
-                userInfo.put("id", idNode.asLong());
-            } else {
-                throw new RuntimeException("응답에 ID 필드가 없습니다.");
-            }
-
-            JsonNode kakaoAccountNode = jsonNode.path("kakao_account");
-            if (kakaoAccountNode != null && kakaoAccountNode.get("email") != null) {
-                userInfo.put("email", kakaoAccountNode.get("email").asText());
-            } else {
-                userInfo.put("email", null);
-            }
-
-            JsonNode propertiesNode = jsonNode.path("properties");
-            if (propertiesNode != null && propertiesNode.get("nickname") != null) {
-                userInfo.put("nickname", propertiesNode.get("nickname").asText());
-            } else {
-                userInfo.put("nickname", null);
-            }
-
-        } catch (Exception e) {
-            throw new RuntimeException("사용자 정보를 파싱하는 데 실패했습니다.", e);
+        KakaoUserInfo userInfo = response.getBody();
+        if (userInfo == null) {
+            throw new RuntimeException("사용자 정보가 비어 있습니다.");
         }
+
         return userInfo;
     }
 }
