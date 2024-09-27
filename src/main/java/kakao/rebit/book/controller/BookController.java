@@ -34,11 +34,15 @@ public class BookController {
     public List<Book> getAllBooks() {
         return bookRepository.findAll();
     }
-
-    // 책 목록 조회
+    
     @GetMapping("/books")
     public ResponseEntity<String> getBooks(@RequestParam(name="query") String query) {
         String apiResponse = aladinApiService.searchBookByTitle(query);
         return ResponseEntity.ok(apiResponse);
+    }
+
+    @GetMapping("/books/{isbn}")
+    public Book getBookDetail(@PathVariable(name = "isbn") String isbn) {
+        return bookService.getBookDetail(isbn);
     }
 }
