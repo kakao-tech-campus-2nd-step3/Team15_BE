@@ -24,7 +24,7 @@ public class BookService {
         return bookRepository.findAll();
     }
 
-    public String searchBooksByTitle(String title) {
+    public String searchAndSaveBooksByTitle(String title) {
         String apiResponse = aladinApiService.searchBookByTitle(title);
         List<Book> books = parseBooks(apiResponse);
         books.stream()
@@ -33,7 +33,7 @@ public class BookService {
         return apiResponse;
     }
 
-    public Book searchBookByIsbn(String isbn) {
+    public Book searchAndSaveBookByIsbn(String isbn) {
         String apiResponse = aladinApiService.searchBookByIsbn(isbn);
         Book book = parseBookDetail(apiResponse);
         Book savedBook = bookRepository.findByIsbn(book.getIsbn())
@@ -45,7 +45,7 @@ public class BookService {
 
     public Book getBookDetail(String isbn) {
         return bookRepository.findByIsbn(isbn)
-            .orElseGet(() -> searchBookByIsbn(isbn));
+            .orElseGet(() -> searchAndSaveBookByIsbn(isbn));
     }
 
     private List<Book> parseBooks(String apiResponse) {
