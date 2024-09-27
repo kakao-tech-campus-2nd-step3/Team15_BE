@@ -20,13 +20,17 @@ public class BookService {
         this.aladinApiService = aladinApiService;
     }
 
-    public List<Book> searchBooksByTitle(String query) {
+    public List<Book> getAllBooks() {
+        return bookRepository.findAll();
+    }
+
+    public String searchBooksByTitle(String query) {
         String apiResponse = aladinApiService.searchBookByTitle(query);
         List<Book> books = parseBooks(apiResponse);
         for (Book book : books) {
             bookRepository.findByIsbn(book.getIsbn()).orElseGet(() -> bookRepository.save(book));
         }
-        return books;
+        return apiResponse;  // 그대로 API 응답 반환 (원하는 형식에 맞게 변환할 수 있음)
     }
 
     public Book searchBookByIsbn(String isbn) {
@@ -50,7 +54,7 @@ public class BookService {
             Map<String, Object> responseMap = objectMapper.readValue(apiResponse,
                 new TypeReference<Map<String, Object>>() {
                 });
-            return objectMapper.convertValue(responseMap.get("data"),
+            return objectMapper.convertValue(responseMap.get("item"),
                 new TypeReference<List<Book>>() {
                 });
         } catch (IOException e) {
