@@ -1,25 +1,20 @@
 package kakao.rebit.auth.service;
 
-import java.util.HashMap;
+import java.util.Objects;
+import kakao.rebit.auth.dto.KakaoToken;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
-import org.springframework.web.client.RestTemplate;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.web.client.RestClient;
 import kakao.rebit.auth.dto.KakaoUserInfo;
 
 @Service
 public class KakaoApiClient {
 
-    private static final String CONTENT_TYPE = "Content-type";
-    private static final String APPLICATION_FORM_URLENCODED = "application/x-www-form-urlencoded;charset=utf-8";
-    private static final String AUTHORIZATION = "Authorization";
     private static final String BEARER_PREFIX = "Bearer ";
 
     @Value("${OAUTH_KAKAO_CLIENT_ID}")
@@ -34,39 +29,21 @@ public class KakaoApiClient {
     @Value("${OAUTH_KAKAO_API_URL}")
     private String kakaoApiUrl;
 
-    private final RestTemplate restTemplate;
-    private final ObjectMapper objectMapper;
-
-    public KakaoApiClient(RestTemplate restTemplate, ObjectMapper objectMapper) {
-        this.restTemplate = restTemplate;
-        this.objectMapper = objectMapper;
-    }
+    private final RestClient restClient = RestClient.builder().build();
 
     public String getAccessToken(String code) {
-        HttpHeaders headers = new HttpHeaders();
-        headers.add(CONTENT_TYPE, APPLICATION_FORM_URLENCODED);
+        MultiValueMap<String, String> body = createTokenParams(code);
 
-        MultiValueMap<String, String> params = createTokenParams(code);
-        HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(params, headers);
-        String tokenUrl = kakaoAuthUrl + "/oauth/token";
+        ResponseEntity<KakaoToken> response = restClient.post()
+            .uri(kakaoAuthUrl + "/oauth/token")
+            .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+            .accept(MediaType.APPLICATION_JSON)
+            .body(body)
+            .retrieve()
+            .toEntity(KakaoToken.class);
 
-        ResponseEntity<JsonNode> response = restTemplate.exchange(
-            tokenUrl,
-            HttpMethod.POST,
-            request,
-            JsonNode.class
-        );
-
-        JsonNode rootNode = response.getBody();
-        if (rootNode != null) {
-            String accessToken = rootNode.path("access_token").asText();
-            if (accessToken == null || accessToken.isEmpty()) {
-                throw new RuntimeException("액세스 토큰을 가져오지 못했습니다.");
-            }
-            return accessToken;
-        } else {
-            throw new RuntimeException("응답이 비어 있습니다.");
-        }
+        KakaoToken tokens = Objects.requireNonNull(response.getBody());
+        return tokens.getAccessToken();
     }
 
     private MultiValueMap<String, String> createTokenParams(String code) {
@@ -79,19 +56,12 @@ public class KakaoApiClient {
     }
 
     public KakaoUserInfo getUserInfo(String accessToken) {
-        HttpHeaders headers = new HttpHeaders();
-        headers.add(AUTHORIZATION, BEARER_PREFIX + accessToken);
-        headers.add(CONTENT_TYPE, APPLICATION_FORM_URLENCODED);
-
-        HttpEntity<?> request = new HttpEntity<>(headers);
-        String userInfoUrl = kakaoApiUrl + "/v2/user/me";
-
-        ResponseEntity<KakaoUserInfo> response = restTemplate.exchange(
-            userInfoUrl,
-            HttpMethod.POST,
-            request,
-            KakaoUserInfo.class
-        );
+        ResponseEntity<KakaoUserInfo> response = restClient.get()
+            .uri(kakaoApiUrl + "/v2/user/me")
+            .header(HttpHeaders.AUTHORIZATION, BEARER_PREFIX + accessToken)
+            .accept(MediaType.APPLICATION_JSON)
+            .retrieve()
+            .toEntity(KakaoUserInfo.class);
 
         KakaoUserInfo userInfo = response.getBody();
         if (userInfo == null) {
