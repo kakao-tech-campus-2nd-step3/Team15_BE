@@ -26,9 +26,9 @@ public class BookController {
         return ResponseEntity.ok(books);
     }
 
-    @GetMapping("search")
+    @GetMapping("/search")
     public ResponseEntity<String> searchBooksByTitle(@RequestParam(name = "title") String title) {
-        String apiResponse = bookService.searchBooksByTitle(title);
+        String apiResponse = bookService.searchAndSaveBooksByTitle(title);
         return ResponseEntity.ok(apiResponse);
     }
 
