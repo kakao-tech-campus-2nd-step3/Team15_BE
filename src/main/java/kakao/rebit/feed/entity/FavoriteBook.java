@@ -23,6 +23,19 @@ public class FavoriteBook extends Feed {
         this.fullReview = fullReview;
     }
 
+    @Override
+    public void updateNonNullFields(Feed feed) {
+        if (feed.getBook() != null) {
+            super.updateNonNullFields(feed);
+        }
+        if (((FavoriteBook) feed).getBriefReview() != null) {
+            this.briefReview = ((FavoriteBook) feed).getBriefReview();
+        }
+        if (((FavoriteBook) feed).getFullReview() != null) {
+            this.fullReview = ((FavoriteBook) feed).getFullReview();
+        }
+    }
+
     public String getBriefReview() {
         return briefReview;
     }

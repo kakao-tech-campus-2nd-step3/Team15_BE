@@ -25,6 +25,22 @@ public class Magazine extends Feed {
         this.content = content;
     }
 
+    @Override
+    public void updateNonNullFields(Feed feed) {
+        if (feed.getBook() != null) {
+            super.updateNonNullFields(feed);
+        }
+        if (((Magazine) feed).getName() != null) {
+            this.name = ((Magazine) feed).getName();
+        }
+        if (((Magazine) feed).getImageUrl() != null) {
+            this.imageUrl = ((Magazine) feed).getImageUrl();
+        }
+        if (((Magazine) feed).getContent() != null) {
+            this.content = ((Magazine) feed).getContent();
+        }
+    }
+
     public String getName() {
         return name;
     }

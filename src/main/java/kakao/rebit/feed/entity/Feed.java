@@ -51,6 +51,10 @@ public abstract class Feed extends BaseEntity {
         this.book = book;
     }
 
+    public void updateNonNullFields(Feed feed) {
+        this.book = feed.getBook();
+    }
+
     public Long getId() {
         return id;
     }
@@ -70,4 +74,5 @@ public abstract class Feed extends BaseEntity {
     public String getType() {
         return type;
     }
+
 }

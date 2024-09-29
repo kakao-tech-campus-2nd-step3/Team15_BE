@@ -22,6 +22,19 @@ public class Story extends Feed {
         this.content = content;
     }
 
+    @Override
+    public void updateNonNullFields(Feed feed) {
+        if (feed.getBook() != null) {
+            super.updateNonNullFields(feed);
+        }
+        if (((Story) feed).getImageUrl() != null) {
+            this.imageUrl = ((Story) feed).getImageUrl();
+        }
+        if (((Story) feed).getContent() != null) {
+            this.content = ((Story) feed).getContent();
+        }
+    }
+
     public String getImageUrl() {
         return imageUrl;
     }
