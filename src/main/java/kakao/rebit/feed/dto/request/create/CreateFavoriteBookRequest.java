@@ -3,7 +3,6 @@ package kakao.rebit.feed.dto.request.create;
 public class CreateFavoriteBookRequest extends CreateFeedRequest {
 
     private String briefReview;
-
     private String fullReview;
 
     private CreateFavoriteBookRequest() {
