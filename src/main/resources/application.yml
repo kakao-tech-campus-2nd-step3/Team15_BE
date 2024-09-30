@@ -12,14 +12,10 @@ spring:
     database-platform: org.hibernate.dialect.MySQLDialect # 데이터베이스 문법(방언) 설정
     open-in-view: false # 트랜잭션이 종료된 후 연결을 유지하지 않도록 설정
     defer-datasource-initialization: true # data.sql 파일이 hibernate 초기화 이후 동작하게 하기 위한 옵션
-    hibernate:
-      ddl-auto: create  # 테이블 생성 전략 설정
 
   sql:
     init:
       data-locations: classpath:data.sql  # 초기 데이터 설정
-      mode: never # 애플리케이션 시작 시 SQL 스크립트 실행 여부 설정
-
 
 # 카카오 소셜 로그인을 위해 사용하는 정보들 설정
 oauth:
@@ -49,3 +45,31 @@ decorator:
   datasource:
     p6spy:
       enable-logging: true
+
+---
+spring:
+  config:
+    activate:
+      on-profile: local
+
+  jpa:
+    hibernate:
+      ddl-auto: create
+
+  sql:
+    init:
+      mode: never   # 필요시 always로 변경
+
+---
+spring:
+  config:
+    activate:
+      on-profile: dev
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+
+  sql:
+    init:
+      mode: never
