@@ -39,6 +39,8 @@ logging:
 
     p6spy: info # p6spy 로그 레벨 설정
 
+  file: # 로그 파일 설정
+    name: /app/application.log
 
 # p6spy 로그 여부 설정
 decorator:
