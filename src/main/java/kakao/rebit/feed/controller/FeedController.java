@@ -48,7 +48,7 @@ public class FeedController {
         MemberResponse memberResponse = new MemberResponse(1L, "testUser", "imageUrl", "bio",
                 Role.ROLE_USER, 10000);
         Long feedId = feedService.createFeed(memberResponse, feedRequest);
-        return ResponseEntity.created(URI.create("/api/feeds/" + feedId)).build();
+        return ResponseEntity.created(URI.create("/feeds/" + feedId)).build();
     }
 
     @PutMapping("/{feed-id}")
