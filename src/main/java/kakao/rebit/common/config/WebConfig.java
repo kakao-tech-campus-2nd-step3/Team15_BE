@@ -1,4 +1,4 @@
-package kakao.rebit.auth.config;
+package kakao.rebit.common.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
