@@ -7,8 +7,8 @@ import java.util.Date;
 @Component
 public class AuthTokenGenerator {
 
-    private static final long ACCESS_TOKEN_EXPIRE_TIME = 3600000;
-    private static final long REFRESH_TOKEN_EXPIRE_TIME = 1209600000;
+    private static final long ACCESS_TOKEN_EXPIRE_TIME = 3_600_000;
+    private static final long REFRESH_TOKEN_EXPIRE_TIME = 1_209_600_000;
 
     private final JwtTokenProvider jwtTokenProvider;
 
