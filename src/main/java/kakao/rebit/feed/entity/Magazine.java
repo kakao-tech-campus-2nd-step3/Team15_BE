@@ -4,6 +4,8 @@ import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
 import kakao.rebit.book.entity.Book;
+import kakao.rebit.feed.dto.request.update.UpdateFeedRequest;
+import kakao.rebit.feed.dto.request.update.UpdateMagazineRequest;
 import kakao.rebit.member.entity.Member;
 
 @Entity
@@ -26,19 +28,10 @@ public class Magazine extends Feed {
     }
 
     @Override
-    public void updateNonNullFields(Feed feed) {
-        if (feed.getBook() != null) {
-            super.updateNonNullFields(feed);
-        }
-        if (((Magazine) feed).getName() != null) {
-            this.name = ((Magazine) feed).getName();
-        }
-        if (((Magazine) feed).getImageUrl() != null) {
-            this.imageUrl = ((Magazine) feed).getImageUrl();
-        }
-        if (((Magazine) feed).getContent() != null) {
-            this.content = ((Magazine) feed).getContent();
-        }
+    public void updateAllExceptBook(UpdateFeedRequest feedRequest) {
+        this.name = ((UpdateMagazineRequest) feedRequest).getName();
+        this.imageUrl = ((UpdateMagazineRequest) feedRequest).getImageUrl();
+        this.content = ((UpdateMagazineRequest) feedRequest).getContent();
     }
 
     public String getName() {

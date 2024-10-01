@@ -3,6 +3,8 @@ package kakao.rebit.feed.entity;
 import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;
 import kakao.rebit.book.entity.Book;
+import kakao.rebit.feed.dto.request.update.UpdateFavoriteBookRequest;
+import kakao.rebit.feed.dto.request.update.UpdateFeedRequest;
 import kakao.rebit.member.entity.Member;
 
 @Entity
@@ -10,7 +12,6 @@ import kakao.rebit.member.entity.Member;
 public class FavoriteBook extends Feed {
 
     private String briefReview;
-
     private String fullReview;
 
     protected FavoriteBook() {
@@ -24,16 +25,9 @@ public class FavoriteBook extends Feed {
     }
 
     @Override
-    public void updateNonNullFields(Feed feed) {
-        if (feed.getBook() != null) {
-            super.updateNonNullFields(feed);
-        }
-        if (((FavoriteBook) feed).getBriefReview() != null) {
-            this.briefReview = ((FavoriteBook) feed).getBriefReview();
-        }
-        if (((FavoriteBook) feed).getFullReview() != null) {
-            this.fullReview = ((FavoriteBook) feed).getFullReview();
-        }
+    public void updateAllExceptBook(UpdateFeedRequest feedRequest) {
+        this.briefReview = ((UpdateFavoriteBookRequest) feedRequest).getBriefReview();
+        this.fullReview = ((UpdateFavoriteBookRequest) feedRequest).getFullReview();
     }
 
     public String getBriefReview() {
