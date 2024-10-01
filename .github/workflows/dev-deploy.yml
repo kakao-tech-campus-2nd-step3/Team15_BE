@@ -1,0 +1,60 @@
+name: CI/CD
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+        - develop
+        - "Weekly**"
+
+permissions:
+  contents: read
+
+jobs:
+
+  build:
+    runs-on: ubuntu-22.04
+
+    steps:
+      # 지정한 저장소(현재 REPO)에서 코드를 워크플로우 환경으로 가져오도록 하는 github action
+      - uses: actions/checkout@v4
+
+      # open jdk 21 버전 환경 세팅
+      - name: Set up JDK 21
+        uses: actions/setup-java@v3
+        with:
+          java-version: '21'
+          distribution: 'corretto'
+
+      # data.sql 생성
+      - name: Create data.sql
+        run: |
+          cd ./src/main/resources
+          touch ./data.sql
+          echo "${{ secrets.DATA_SQL }}" > ./data.sql
+
+      # Gradle 빌드
+      - name: Build with Gradle
+        run: |
+          chmod +x ./gradlew
+          ./gradlew clean build -x test
+
+      # dockerfile을 통해 이미지 빌드, 이를 docker repo로 push
+      - name: Build the Docker image
+        run: |
+          docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
+          docker build -f Dockerfile -t ${{ secrets.DOCKER_REPO }} .
+          docker push ${{ secrets.DOCKER_REPO }}
+
+      # appleboy/ssh-action@master 액션으로 EC2 컨테이너 ssh 접속, 스크립트 실행
+      - name: Deploy to server
+        uses: appleboy/ssh-action@master
+        id: deploy
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.KEY }}
+          envs: GITHUB_SHA
+          script: |
+            cd ./rebit
+            bash deploy.sh
