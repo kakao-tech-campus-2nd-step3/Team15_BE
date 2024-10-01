@@ -1,6 +1,6 @@
 package kakao.rebit.feed.service;
 
-import kakao.rebit.feed.dto.response.MagazineResponse;
+import kakao.rebit.feed.dto.response.FeedResponse;
 import kakao.rebit.feed.entity.Magazine;
 import kakao.rebit.feed.mapper.FeedMapper;
 import kakao.rebit.feed.repository.MagazineRepository;
@@ -21,14 +21,14 @@ public class MagazineService {
     }
 
     @Transactional(readOnly = true)
-    public Page<MagazineResponse> getMagazines(Pageable pageable) {
-        return magazineRepository.findAll(pageable).map(feedMapper::toMagazineResponse);
+    public Page<FeedResponse> getMagazines(Pageable pageable) {
+        return magazineRepository.findAll(pageable).map(feedMapper::toFeedResponse);
     }
 
     @Transactional(readOnly = true)
-    public MagazineResponse getMagazineById(Long id) {
+    public FeedResponse getMagazineById(Long id) {
         Magazine magazine = magazineRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("찾는 메거진이 없습니다."));
-        return feedMapper.toMagazineResponse(magazine);
+        return feedMapper.toFeedResponse(magazine);
     }
 }

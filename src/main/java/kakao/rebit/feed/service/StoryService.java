@@ -1,6 +1,6 @@
 package kakao.rebit.feed.service;
 
-import kakao.rebit.feed.dto.response.StoryResponse;
+import kakao.rebit.feed.dto.response.FeedResponse;
 import kakao.rebit.feed.entity.Story;
 import kakao.rebit.feed.mapper.FeedMapper;
 import kakao.rebit.feed.repository.StoryRepository;
@@ -21,14 +21,14 @@ public class StoryService {
     }
 
     @Transactional(readOnly = true)
-    public Page<StoryResponse> getStories(Pageable pageable) {
-        return storyRepository.findAll(pageable).map(feedMapper::toStoryResponse);
+    public Page<FeedResponse> getStories(Pageable pageable) {
+        return storyRepository.findAll(pageable).map(feedMapper::toFeedResponse);
     }
 
     @Transactional(readOnly = true)
-    public StoryResponse getStoryById(Long id) {
+    public FeedResponse getStoryById(Long id) {
         Story story = storyRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("찾는 스토리가 없습니다."));
-        return feedMapper.toStoryResponse(story);
+        return feedMapper.toFeedResponse(story);
     }
 }
