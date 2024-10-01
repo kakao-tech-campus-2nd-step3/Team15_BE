@@ -48,6 +48,10 @@ public class BookService {
             .orElseGet(() -> searchAndSaveBookByIsbn(isbn));
     }
 
+    public Book findBookByIdOrThrow(Long bookId){
+        return bookRepository.findById(bookId).orElseThrow(() -> new IllegalArgumentException("해당 책이 존재하지 않습니다."));
+    }
+
     private List<Book> parseBooks(String apiResponse) {
         ObjectMapper objectMapper = new ObjectMapper();
         try {
