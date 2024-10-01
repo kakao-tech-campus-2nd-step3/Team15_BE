@@ -1,9 +1,9 @@
 package kakao.rebit.auth.service;
 
-import kakao.rebit.auth.Token.AuthTokenGenerator;
+import kakao.rebit.auth.token.AuthTokenGenerator;
 import kakao.rebit.auth.dto.KakaoUserInfo;
 import kakao.rebit.auth.dto.LoginResponse;
-import kakao.rebit.auth.Token.AuthToken;
+import kakao.rebit.auth.token.AuthToken;
 import kakao.rebit.member.entity.Member;
 import kakao.rebit.member.entity.Role;
 import kakao.rebit.member.repository.MemberRepository;
@@ -42,7 +42,7 @@ public class KakaoAuthService {
 
         Member member = memberOptional.orElseGet(() -> {
             // 회원이 없으면 회원가입 처리, 기본 Role은 ROLE_USER로 설정
-            Member newMember = new Member(nickname, email,null, null, Role.ROLE_USER, null, accessToken);
+            Member newMember = new Member(nickname, "","", email, Role.ROLE_USER, 0, accessToken);
             memberRepository.save(newMember);
             return newMember;
         });
