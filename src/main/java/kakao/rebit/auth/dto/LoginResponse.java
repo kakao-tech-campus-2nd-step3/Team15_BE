@@ -1,6 +1,6 @@
 package kakao.rebit.auth.dto;
 
-import kakao.rebit.auth.Token.AuthToken;
+import kakao.rebit.auth.token.AuthToken;
 
 public class LoginResponse {
 

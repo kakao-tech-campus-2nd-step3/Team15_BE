@@ -1,4 +1,4 @@
-package kakao.rebit.auth.Token;
+package kakao.rebit.auth.token;
 
 import kakao.rebit.auth.jwt.JwtTokenProvider;
 import org.springframework.stereotype.Component;
