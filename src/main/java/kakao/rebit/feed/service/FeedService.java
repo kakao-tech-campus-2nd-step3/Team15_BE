@@ -1,6 +1,10 @@
 package kakao.rebit.feed.service;
 
+import kakao.rebit.book.entity.Book;
+import kakao.rebit.book.service.BookService;
+import kakao.rebit.feed.dto.request.create.CreateFavoriteBookRequest;
 import kakao.rebit.feed.dto.request.create.CreateFeedRequest;
+import kakao.rebit.feed.dto.request.update.UpdateFavoriteBookRequest;
 import kakao.rebit.feed.dto.request.update.UpdateFeedRequest;
 import kakao.rebit.feed.dto.response.FeedResponse;
 import kakao.rebit.feed.entity.Feed;
@@ -19,13 +23,14 @@ public class FeedService {
 
     private final FeedRepository feedRepository;
     private final MemberService memberService;
-
+    private final BookService bookService;
     private final FeedMapper feedMapper;
 
     public FeedService(FeedRepository feedRepository, MemberService memberService,
-            FeedMapper feedMapper) {
+            BookService bookService, FeedMapper feedMapper) {
         this.feedRepository = feedRepository;
         this.memberService = memberService;
+        this.bookService = bookService;
         this.feedMapper = feedMapper;
     }
 
@@ -36,15 +41,26 @@ public class FeedService {
 
     @Transactional(readOnly = true)
     public FeedResponse getFeedById(Long feedId) {
-        Feed feed = feedRepository.findById(feedId)
-                .orElseThrow(() -> new IllegalArgumentException("찾는 피드가 존재하지 않습니다."));
+        Feed feed = findFeedByIdOrThrow(feedId);
         return feedMapper.toFeedResponse(feed);
+    }
+
+    @Transactional(readOnly = true)
+    public Feed findFeedByIdOrThrow(Long feedId) {
+        return feedRepository.findById(feedId)
+                .orElseThrow(() -> new IllegalArgumentException("찾는 피드가 존재하지 않습니다."));
     }
 
     @Transactional
     public Long createFeed(MemberResponse memberResponse, CreateFeedRequest feedRequest) {
         Member member = memberService.findMemberByIdOrThrow(memberResponse.id());
-        Feed feed = feedMapper.toFeed(member, feedRequest);
+
+        // 인생책 검증 - 반드시 책이 있어야 된다.
+        if (feedRequest instanceof CreateFavoriteBookRequest && feedRequest.getBookId() == null) {
+            throw new IllegalArgumentException("인생책은 책이 반드시 필요합니다.");
+        }
+        Book book = findBookIfBookIdExist(feedRequest.getBookId());
+        Feed feed = feedMapper.toFeed(member, book, feedRequest);
         return feedRepository.save(feed).getId();
     }
 
@@ -52,15 +68,32 @@ public class FeedService {
     public void updateFeed(MemberResponse memberResponse, Long feedId,
             UpdateFeedRequest feedRequest) {
         Member member = memberService.findMemberByIdOrThrow(memberResponse.id());
-        Feed feed = feedRepository.findByIdAndMember(feedId, member)
-                .orElseThrow(() -> new IllegalArgumentException("찾는 피드가 없습니다."));
+        Feed feed = findFeedByIdOrThrow(feedId);
 
-        Feed updateFeed = feedMapper.toFeed(member, feedRequest);
-        feed.updateNonNullFields(updateFeed);
+        // 피드 작성자 확인
+        if (!(feed.getMember().getId().equals(member.getId()))) {
+            throw new IllegalArgumentException("본인이 올린 피드만 수정할 수 있습니다.");
+        }
+
+        // 인생책 검증 - 반드시 책이 있어야 된다.
+        if (feedRequest instanceof UpdateFavoriteBookRequest && feedRequest.getBookId() == null) {
+            throw new IllegalArgumentException("인생책은 책이 반드시 필요합니다.");
+        }
+        Book book = findBookIfBookIdExist(feedRequest.getBookId());
+        feed.changeBook(book);
+        feed.updateAllExceptBook(feedRequest);
     }
 
     @Transactional
     public void deleteFeedById(Long feedId) {
         feedRepository.deleteById(feedId);
+    }
+
+    private Book findBookIfBookIdExist(Long bookId) {
+        Book book = null;
+        if (bookId != null) {
+            book = bookService.findBookByIdOrThrow(bookId);
+        }
+        return book;
     }
 }
