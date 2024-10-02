@@ -11,8 +11,8 @@ import org.springframework.data.repository.query.Param;
 
 public interface ChallengeParticipationRepository extends JpaRepository<ChallengeParticipation, Long> {
 
-    @Query("SELECT cp FROM ChallengeParticipation cp JOIN FETCH cp.member JOIN FETCH cp.challenge WHERE cp.challenge = :challenge")
-    Page<ChallengeParticipation> findAllByChallenge(@Param("challenge") Challenge challenge, Pageable pageable);
+    @Query("SELECT cp FROM ChallengeParticipation cp JOIN FETCH cp.member WHERE cp.challenge = :challenge")
+    Page<ChallengeParticipation> findAllByChallengeWithMember(@Param("challenge") Challenge challenge, Pageable pageable);
 
     Boolean existsByMemberAndChallenge(Member member, Challenge challenge);
 }
