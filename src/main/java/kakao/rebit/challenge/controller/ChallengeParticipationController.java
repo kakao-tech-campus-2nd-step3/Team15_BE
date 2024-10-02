@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/challenges/{challenge-id}/participants")
+@RequestMapping("/api/challenges/{challenge-id}/participations")
 public class ChallengeParticipationController {
 
     private final ChallengeParticipationService challengeParticipationService;
