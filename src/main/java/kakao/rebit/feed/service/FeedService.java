@@ -1,5 +1,6 @@
 package kakao.rebit.feed.service;
 
+import java.util.Optional;
 import kakao.rebit.book.entity.Book;
 import kakao.rebit.book.service.BookService;
 import kakao.rebit.feed.dto.request.create.CreateFavoriteBookRequest;
@@ -59,7 +60,7 @@ public class FeedService {
         if (feedRequest instanceof CreateFavoriteBookRequest && feedRequest.getBookId() == null) {
             throw new IllegalArgumentException("인생책은 책이 반드시 필요합니다.");
         }
-        Book book = findBookIfBookIdExist(feedRequest.getBookId());
+        Book book = findBookIfBookIdExist(feedRequest.getBookId()).orElse(null);
         Feed feed = feedMapper.toFeed(member, book, feedRequest);
         return feedRepository.save(feed).getId();
     }
@@ -79,7 +80,7 @@ public class FeedService {
         if (feedRequest instanceof UpdateFavoriteBookRequest && feedRequest.getBookId() == null) {
             throw new IllegalArgumentException("인생책은 책이 반드시 필요합니다.");
         }
-        Book book = findBookIfBookIdExist(feedRequest.getBookId());
+        Book book = findBookIfBookIdExist(feedRequest.getBookId()).orElse(null);
         feed.changeBook(book);
         feed.updateAllExceptBook(feedRequest);
     }
@@ -89,11 +90,11 @@ public class FeedService {
         feedRepository.deleteById(feedId);
     }
 
-    private Book findBookIfBookIdExist(Long bookId) {
-        Book book = null;
+    private Optional<Book> findBookIfBookIdExist(Long bookId) {
         if (bookId != null) {
-            book = bookService.findBookByIdOrThrow(bookId);
+            Book book = bookService.findBookByIdOrThrow(bookId);
+            return Optional.of(book);
         }
-        return book;
+        return Optional.empty();
     }
 }
