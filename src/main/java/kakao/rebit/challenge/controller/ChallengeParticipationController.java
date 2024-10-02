@@ -3,7 +3,7 @@ package kakao.rebit.challenge.controller;
 import java.net.URI;
 import kakao.rebit.challenge.dto.ChallengeParticipationRequest;
 import kakao.rebit.challenge.dto.ChallengeParticipationMemberResponse;
-import kakao.rebit.challenge.service.ChallengeParticipantService;
+import kakao.rebit.challenge.service.ChallengeParticipationService;
 import kakao.rebit.member.dto.MemberResponse;
 import kakao.rebit.member.entity.Role;
 import org.springframework.data.domain.Page;
@@ -21,26 +21,26 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/challenges/{challenge-id}/participants")
-public class ChallengeParticipantController {
+public class ChallengeParticipationController {
 
-    private final ChallengeParticipantService challengeParticipantService;
+    private final ChallengeParticipationService challengeParticipationService;
 
-    public ChallengeParticipantController(ChallengeParticipantService challengeParticipantService) {
-        this.challengeParticipantService = challengeParticipantService;
+    public ChallengeParticipationController(ChallengeParticipationService challengeParticipationService) {
+        this.challengeParticipationService = challengeParticipationService;
     }
 
     @GetMapping
     public ResponseEntity<Page<ChallengeParticipationMemberResponse>> getChallengeParticipants(
             @PathVariable("challenge-id") Long challengeId,
             @PageableDefault(sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
-        return ResponseEntity.ok().body(challengeParticipantService.getChallengeParticipantsById(challengeId, pageable));
+        return ResponseEntity.ok().body(challengeParticipationService.getChallengeParticipantsById(challengeId, pageable));
     }
 
     @GetMapping("/{participation-id}")
     public ResponseEntity<ChallengeParticipationMemberResponse> getChallengeParticipant(
             @PathVariable("challenge-id") Long challengeId,    // challenge-id는 사용되지 않지만 URL 일관성을 위해 유지
             @PathVariable("participation-id") Long participantId) {
-        return ResponseEntity.ok().body(challengeParticipantService.getChallengeParticipantById(participantId));
+        return ResponseEntity.ok().body(challengeParticipationService.getChallengeParticipantById(participantId));
     }
 
     @PostMapping
@@ -48,7 +48,7 @@ public class ChallengeParticipantController {
             @PathVariable("challenge-id") Long challengeId,
             @RequestBody ChallengeParticipationRequest participationRequest) {
         MemberResponse memberResponse = new MemberResponse(1L, "testUser", "imageUrl", "bio", Role.ROLE_USER, 10000);
-        Long challengeParticipantId = challengeParticipantService.createChallengeParticipation(memberResponse, challengeId, participationRequest);
+        Long challengeParticipantId = challengeParticipationService.createChallengeParticipation(memberResponse, challengeId, participationRequest);
         return ResponseEntity.created(URI.create("/challenges/" + challengeId + "/participants/" + challengeParticipantId)).build();
     }
 
@@ -56,7 +56,7 @@ public class ChallengeParticipantController {
     public ResponseEntity<Void> cancelParticipation(
             @PathVariable("challenge-id") Long challengeId,    // challenge-id는 사용되지 않지만 URL 일관성을 위해 유지
             @PathVariable("participation-id") Long participantId) {
-        challengeParticipantService.cancelParticipation(participantId);
+        challengeParticipationService.cancelParticipation(participantId);
         return ResponseEntity.noContent().build();
     }
 }

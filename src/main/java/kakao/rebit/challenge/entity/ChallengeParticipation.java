@@ -11,8 +11,8 @@ import kakao.rebit.common.persistence.BaseEntity;
 import kakao.rebit.member.entity.Member;
 
 @Entity
-@Table(name = "challenge_participant")
-public class ChallengeParticipant extends BaseEntity {
+@Table(name = "challenge_participation")
+public class ChallengeParticipation extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -28,10 +28,10 @@ public class ChallengeParticipant extends BaseEntity {
 
     private Integer entryFee;
 
-    protected ChallengeParticipant() {
+    protected ChallengeParticipation() {
     }
 
-    public ChallengeParticipant(Challenge challenge, Member member, Integer entryFee) {
+    public ChallengeParticipation(Challenge challenge, Member member, Integer entryFee) {
         this.challenge = challenge;
         this.member = member;
         this.entryFee = entryFee;
