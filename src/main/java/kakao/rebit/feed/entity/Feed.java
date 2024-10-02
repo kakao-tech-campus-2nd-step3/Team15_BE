@@ -15,6 +15,7 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import kakao.rebit.book.entity.Book;
 import kakao.rebit.common.persistence.BaseEntity;
+import kakao.rebit.feed.dto.request.update.UpdateFeedRequest;
 import kakao.rebit.member.entity.Member;
 import org.hibernate.annotations.Formula;
 
@@ -51,6 +52,12 @@ public abstract class Feed extends BaseEntity {
         this.book = book;
     }
 
+    public void changeBook(Book book) {
+        this.book = book;
+    }
+
+    public abstract void updateAllExceptBook(UpdateFeedRequest feedRequest);
+
     public Long getId() {
         return id;
     }
@@ -70,4 +77,5 @@ public abstract class Feed extends BaseEntity {
     public String getType() {
         return type;
     }
+
 }

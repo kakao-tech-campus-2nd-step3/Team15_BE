@@ -1,6 +1,6 @@
 package kakao.rebit.feed.controller;
 
-import kakao.rebit.feed.dto.response.MagazineResponse;
+import kakao.rebit.feed.dto.response.FeedResponse;
 import kakao.rebit.feed.service.MagazineService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -23,13 +23,13 @@ public class MagazineController {
     }
 
     @GetMapping
-    public ResponseEntity<Page<MagazineResponse>> getMagazines(
+    public ResponseEntity<Page<FeedResponse>> getMagazines(
             @PageableDefault(sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
         return ResponseEntity.ok().body(magazineService.getMagazines(pageable));
     }
 
     @GetMapping("/{magazine-id}")
-    public ResponseEntity<MagazineResponse> getMagazine(@PathVariable("magazine-id") Long id) {
+    public ResponseEntity<FeedResponse> getMagazine(@PathVariable("magazine-id") Long id) {
         return ResponseEntity.ok().body(magazineService.getMagazineById(id));
     }
 }
