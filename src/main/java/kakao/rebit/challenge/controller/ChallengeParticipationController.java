@@ -39,8 +39,8 @@ public class ChallengeParticipationController {
     @GetMapping("/{participation-id}")
     public ResponseEntity<ChallengeParticipationMemberResponse> getChallengeParticipation(
             @PathVariable("challenge-id") Long challengeId,    // challenge-id는 사용되지 않지만 URL 일관성을 위해 유지
-            @PathVariable("participation-id") Long participantId) {
-        return ResponseEntity.ok().body(challengeParticipationService.getChallengeParticipationById(participantId));
+            @PathVariable("participation-id") Long participationId) {
+        return ResponseEntity.ok().body(challengeParticipationService.getChallengeParticipationById(participationId));
     }
 
     @PostMapping
@@ -55,8 +55,9 @@ public class ChallengeParticipationController {
     @DeleteMapping("/{participation-id}")
     public ResponseEntity<Void> cancelParticipation(
             @PathVariable("challenge-id") Long challengeId,    // challenge-id는 사용되지 않지만 URL 일관성을 위해 유지
-            @PathVariable("participation-id") Long participantId) {
-        challengeParticipationService.cancelParticipation(participantId);
+            @PathVariable("participation-id") Long participationId) {
+        MemberResponse memberResponse = new MemberResponse(1L, "testUser", "imageUrl", "bio", Role.ROLE_USER, 10000);
+        challengeParticipationService.cancelParticipation(memberResponse, participationId);
         return ResponseEntity.noContent().build();
     }
 }

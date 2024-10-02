@@ -79,8 +79,13 @@ public class ChallengeParticipationService {
     }
 
     @Transactional
-    public void cancelParticipation(Long participantId) {
+    public void cancelParticipation(MemberResponse memberResponse, Long participantId) {
         ChallengeParticipation challengeParticipation = findChallengeParticipationByIdOrThrow(participantId);
+
+        if (!challengeParticipation.getMember().getId().equals(memberResponse.id())) {
+            throw new IllegalArgumentException("참여중인 회원이 아닙니다.");
+        }
+
         challengeParticipationRepository.delete(challengeParticipation);
     }
 
