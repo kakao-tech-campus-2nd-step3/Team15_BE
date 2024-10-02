@@ -1,5 +1,6 @@
 package kakao.rebit.challenge.service;
 
+import java.time.LocalDateTime;
 import kakao.rebit.challenge.dto.ChallengeParticipationRequest;
 import kakao.rebit.challenge.dto.ChallengeParticipationMemberResponse;
 import kakao.rebit.challenge.entity.Challenge;
@@ -60,6 +61,10 @@ public class ChallengeParticipationService {
     }
 
     private void validateChallengeParticipation(Member member, Challenge challenge, Integer entryFee) {
+        if (!challenge.isRecruiting(LocalDateTime.now())) {
+            throw new IllegalArgumentException("모집 기간이 아닙니다.");
+        }
+
         if (challengeParticipationRepository.existsByMemberAndChallenge(member, challenge)) {
             throw new IllegalArgumentException("이미 참여한 챌린지입니다.");
         }
