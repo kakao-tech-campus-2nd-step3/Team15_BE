@@ -30,17 +30,17 @@ public class ChallengeParticipationController {
     }
 
     @GetMapping
-    public ResponseEntity<Page<ChallengeParticipationMemberResponse>> getChallengeParticipants(
+    public ResponseEntity<Page<ChallengeParticipationMemberResponse>> getChallengeParticipations(
             @PathVariable("challenge-id") Long challengeId,
             @PageableDefault(sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
-        return ResponseEntity.ok().body(challengeParticipationService.getChallengeParticipantsById(challengeId, pageable));
+        return ResponseEntity.ok().body(challengeParticipationService.getChallengeParticipationsById(challengeId, pageable));
     }
 
     @GetMapping("/{participation-id}")
-    public ResponseEntity<ChallengeParticipationMemberResponse> getChallengeParticipant(
+    public ResponseEntity<ChallengeParticipationMemberResponse> getChallengeParticipation(
             @PathVariable("challenge-id") Long challengeId,    // challenge-id는 사용되지 않지만 URL 일관성을 위해 유지
             @PathVariable("participation-id") Long participantId) {
-        return ResponseEntity.ok().body(challengeParticipationService.getChallengeParticipantById(participantId));
+        return ResponseEntity.ok().body(challengeParticipationService.getChallengeParticipationById(participantId));
     }
 
     @PostMapping

@@ -28,19 +28,19 @@ public class ChallengeParticipationService {
     }
 
     @Transactional(readOnly = true)
-    public Page<ChallengeParticipationMemberResponse> getChallengeParticipantsById(Long challengeId, Pageable pageable) {
+    public Page<ChallengeParticipationMemberResponse> getChallengeParticipationsById(Long challengeId, Pageable pageable) {
         Challenge challenge = challengeService.findChallengeByIdOrThrow(challengeId);
         Page<ChallengeParticipation> challengeParticipants = challengeParticipationRepository.findAllByChallenge(challenge, pageable);
         return challengeParticipants.map(this::toParticipantMemberResponse);
     }
 
     @Transactional(readOnly = true)
-    public ChallengeParticipationMemberResponse getChallengeParticipantById(Long participantId) {
-        ChallengeParticipation challengeParticipation = findChallengeParticipantByIdOrThrow(participantId);
+    public ChallengeParticipationMemberResponse getChallengeParticipationById(Long participantId) {
+        ChallengeParticipation challengeParticipation = findChallengeParticipationByIdOrThrow(participantId);
         return toParticipantMemberResponse(challengeParticipation);
     }
 
-    private ChallengeParticipation findChallengeParticipantByIdOrThrow(Long participantId) {
+    private ChallengeParticipation findChallengeParticipationByIdOrThrow(Long participantId) {
         return challengeParticipationRepository.findById(participantId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 참여 정보입니다."));
     }
@@ -75,7 +75,7 @@ public class ChallengeParticipationService {
 
     @Transactional
     public void cancelParticipation(Long participantId) {
-        ChallengeParticipation challengeParticipation = findChallengeParticipantByIdOrThrow(participantId);
+        ChallengeParticipation challengeParticipation = findChallengeParticipationByIdOrThrow(participantId);
         challengeParticipationRepository.delete(challengeParticipation);
     }
 
