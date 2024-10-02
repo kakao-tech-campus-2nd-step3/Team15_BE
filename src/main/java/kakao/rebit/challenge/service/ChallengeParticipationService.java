@@ -32,13 +32,13 @@ public class ChallengeParticipationService {
     public Page<ChallengeParticipationMemberResponse> getChallengeParticipationsById(Long challengeId, Pageable pageable) {
         Challenge challenge = challengeService.findChallengeByIdOrThrow(challengeId);
         Page<ChallengeParticipation> challengeParticipants = challengeParticipationRepository.findAllByChallenge(challenge, pageable);
-        return challengeParticipants.map(this::toParticipantMemberResponse);
+        return challengeParticipants.map(this::toParticipationMemberResponse);
     }
 
     @Transactional(readOnly = true)
     public ChallengeParticipationMemberResponse getChallengeParticipationById(Long participantId) {
         ChallengeParticipation challengeParticipation = findChallengeParticipationByIdOrThrow(participantId);
-        return toParticipantMemberResponse(challengeParticipation);
+        return toParticipationMemberResponse(challengeParticipation);
     }
 
     private ChallengeParticipation findChallengeParticipationByIdOrThrow(Long participantId) {
@@ -54,7 +54,7 @@ public class ChallengeParticipationService {
 
         validateChallengeParticipation(member, challenge, entryFee);
 
-        ChallengeParticipation challengeParticipation = toChallengeParticipant(member, challenge, entryFee);
+        ChallengeParticipation challengeParticipation = toChallengeParticipation(member, challenge, entryFee);
         challengeParticipationRepository.save(challengeParticipation);
 
         return challengeParticipation.getId();
@@ -84,7 +84,7 @@ public class ChallengeParticipationService {
         challengeParticipationRepository.delete(challengeParticipation);
     }
 
-    private ChallengeParticipationMemberResponse toParticipantMemberResponse(ChallengeParticipation challengeParticipation) {
+    private ChallengeParticipationMemberResponse toParticipationMemberResponse(ChallengeParticipation challengeParticipation) {
         Member member = challengeParticipation.getMember();
         return new ChallengeParticipationMemberResponse(
                 member.getId(),
@@ -95,7 +95,7 @@ public class ChallengeParticipationService {
         );
     }
 
-    private ChallengeParticipation toChallengeParticipant(Member member, Challenge challenge, Integer entryFee) {
+    private ChallengeParticipation toChallengeParticipation(Member member, Challenge challenge, Integer entryFee) {
         return new ChallengeParticipation(
                 challenge,
                 member,
