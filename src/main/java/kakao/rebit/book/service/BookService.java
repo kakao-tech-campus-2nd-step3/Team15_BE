@@ -24,7 +24,7 @@ public class BookService {
     // 전체 책 조회
     public List<BookResponse> getAllBooks() {
         return bookRepository.findAll().stream()
-            .map(this::convertToBookResponse)
+            .map(this::ToBookResponse)
             .collect(Collectors.toList());
     }
 
@@ -35,12 +35,12 @@ public class BookService {
 
         List<Book> savedBooks = bookList.item().stream()
             .filter(book -> bookRepository.findByIsbn(book.isbn()).isEmpty())
-            .map(this::convertToBookEntity)
+            .map(this::ToBookEntity)
             .map(bookRepository::save)
             .collect(Collectors.toList());
 
         return savedBooks.stream()
-            .map(this::convertToBookResponse)
+            .map(this::ToBookResponse)
             .collect(Collectors.toList());
     }
 
@@ -49,16 +49,16 @@ public class BookService {
         AladinApiResponseResponse bookResponse = aladinApiService.searchBookByIsbn(isbn);
         Book book = bookRepository.findByIsbn(bookResponse.isbn())
             .orElseGet(() -> saveBook(bookResponse));
-        return convertToBookResponse(book);
+        return ToBookResponse(book);
     }
 
     public BookResponse getBookDetail(String isbn) {
         return bookRepository.findByIsbn(isbn)
-            .map(this::convertToBookResponse)
+            .map(this::ToBookResponse)
             .orElseGet(() -> searchAndSaveBookByIsbn(isbn));
     }
 
-    private BookResponse convertToBookResponse(Book book) {
+    private BookResponse ToBookResponse(Book book) {
         return new BookResponse(
             book.getId(),
             book.getIsbn(),
@@ -71,7 +71,7 @@ public class BookService {
         );
     }
 
-    private Book convertToBookEntity(AladinApiResponseResponse response) {
+    private Book ToBookEntity(AladinApiResponseResponse response) {
         return new Book(
             response.isbn(),
             response.title(),
@@ -85,7 +85,7 @@ public class BookService {
 
     @Transactional
     private Book saveBook(AladinApiResponseResponse bookResponse) {
-        return bookRepository.save(convertToBookEntity(bookResponse));
+        return bookRepository.save(ToBookEntity(bookResponse));
     }
 
     public Book findBookByIdOrThrow(Long bookId) {
