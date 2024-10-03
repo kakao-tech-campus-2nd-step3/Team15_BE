@@ -32,7 +32,7 @@ public class BookController {
         return ResponseEntity.ok(apiResponse);
     }
 
-    @GetMapping("/search/{isbn}")
+    @GetMapping("/{isbn}")
     public ResponseEntity<Book> getBookDetail(@PathVariable(name = "isbn") String isbn) {
         Book book = bookService.getBookDetail(isbn);
         return ResponseEntity.ok(book);
