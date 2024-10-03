@@ -125,15 +125,23 @@ public class Challenge extends BaseEntity {
         return currentHeadcount;
     }
 
+    public boolean isHostedBy(Member member) {
+        return this.member.equals(member);
+    }
+
     public boolean isRecruiting(LocalDateTime now) {
         return recruitmentPeriod.contains(now);
     }
 
-    public boolean isInProgress(LocalDateTime now) {
+    public boolean canBeDeleted(LocalDateTime now) {
+        return !isOngoing(now) && !isCompleted(now);
+    }
+
+    private boolean isOngoing(LocalDateTime now) {
         return challengePeriod.contains(now);
     }
 
-    public boolean isCompleted(LocalDateTime now) {
+    private boolean isCompleted(LocalDateTime now) {
         return challengePeriod.isAfter(now);
     }
 

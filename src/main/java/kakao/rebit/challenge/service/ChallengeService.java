@@ -1,5 +1,6 @@
 package kakao.rebit.challenge.service;
 
+import java.time.LocalDateTime;
 import kakao.rebit.challenge.dto.ChallengeRequest;
 import kakao.rebit.challenge.dto.ChallengeResponse;
 import kakao.rebit.challenge.dto.CreatorResponse;
@@ -52,7 +53,18 @@ public class ChallengeService {
     }
 
     @Transactional
-    public void deleteChallengeById(Long challengeId) {
+    public void deleteChallengeById(MemberResponse memberResponse, Long challengeId) {
+        Member member = memberService.findMemberByIdOrThrow(memberResponse.id());
+        Challenge challenge = findChallengeByIdOrThrow(challengeId);
+
+        if (!challenge.isHostedBy(member)) {
+            throw new IllegalArgumentException("챌린지 주최자만 삭제할 수 있습니다.");
+        }
+
+        if (challenge.canBeDeleted(LocalDateTime.now())) {
+            throw new IllegalArgumentException("진행 중이거나 종료된 챌린지는 삭제할 수 없습니다.");
+        }
+
         challengeRepository.deleteById(challengeId);
     }
 
