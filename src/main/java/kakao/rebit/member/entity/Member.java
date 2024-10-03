@@ -35,7 +35,8 @@ public class Member extends BaseEntity {
     protected Member() {
     }
 
-    public Member(String nickname, String imageUrl, String bio, String email, Role role, Integer point, String kakaoToken) {
+    public Member(String nickname, String imageUrl, String bio, String email, Role role,
+        Integer point, String kakaoToken) {
         this.nickname = nickname;
         this.imageUrl = imageUrl;
         this.bio = bio;
@@ -76,4 +77,21 @@ public class Member extends BaseEntity {
     public String getKakaoToken() {
         return kakaoToken;
     }
+
+    public void setNickname(String nickname) {
+        this.nickname = nickname;
+    }
+
+    public void setBio(String bio) {
+        this.bio = bio;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
+    }
+
+    public void setPoint(Integer point) {
+        this.point = point;
+    }
+
 }
