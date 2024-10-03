@@ -9,11 +9,10 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import kakao.rebit.common.persistence.BaseEntity;
-import kakao.rebit.member.entity.Member;
 
 @Entity
-@Table(name = "challenge_certification")
-public class ChallengeCertification extends BaseEntity {
+@Table(name = "challenge_verification")
+public class ChallengeVerification extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -26,23 +25,17 @@ public class ChallengeCertification extends BaseEntity {
     private String content;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "challenge_id")
-    private Challenge challenge;
+    @JoinColumn(name = "challenge_participation_id")
+    private ChallengeParticipation challengeParticipation;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "member_id")
-    private Member member;
-
-    protected ChallengeCertification() {
+    protected ChallengeVerification() {
     }
 
-    public ChallengeCertification(String title, String imageUrl, String content,
-        Challenge challenge, Member member) {
+    public ChallengeVerification(String title, String imageUrl, String content, ChallengeParticipation challengeParticipation) {
         this.title = title;
         this.imageUrl = imageUrl;
         this.content = content;
-        this.challenge = challenge;
-        this.member = member;
+        this.challengeParticipation = challengeParticipation;
     }
 
     public Long getId() {
@@ -61,11 +54,7 @@ public class ChallengeCertification extends BaseEntity {
         return content;
     }
 
-    public Challenge getChallenge() {
-        return challenge;
-    }
-
-    public Member getMember() {
-        return member;
+    public ChallengeParticipation getChallengeParticipation() {
+        return challengeParticipation;
     }
 }
