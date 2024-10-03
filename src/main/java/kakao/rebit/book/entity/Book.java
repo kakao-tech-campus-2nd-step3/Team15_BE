@@ -31,8 +31,7 @@ public class Book extends BaseEntity {
     private String publisher;
 
     private String cover;
-
-    @Column(name = "pub_date")
+    
     private String pubDate;
 
     protected Book() {
