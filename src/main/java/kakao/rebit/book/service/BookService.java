@@ -1,16 +1,14 @@
 package kakao.rebit.book.service;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import java.io.IOException;
-import java.util.List;
-import java.util.Map;
 import kakao.rebit.book.dto.AladinApiResponseListResponse;
+import kakao.rebit.book.dto.AladinApiResponseResponse;
 import kakao.rebit.book.entity.Book;
 import kakao.rebit.book.repository.BookRepository;
 import kakao.rebit.feed.dto.response.BookResponse;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class BookService {
@@ -23,9 +21,11 @@ public class BookService {
         this.aladinApiService = aladinApiService;
     }
 
-    @Transactional(readOnly = true)
-    public List<Book> getAllBooks() {
-        return bookRepository.findAll();
+    // 전체 책 조회
+    public List<BookResponse> getAllBooks() {
+        return bookRepository.findAll().stream()
+            .map(this::convertToBookResponse)
+            .collect(Collectors.toList());
     }
 
     // 책 타이틀로 검색 후 저장
@@ -85,3 +85,4 @@ public class BookService {
         return bookRepository.save(convertToBookEntity(bookResponse));
     }
 }
+
