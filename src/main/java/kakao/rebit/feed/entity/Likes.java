@@ -8,11 +8,12 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import kakao.rebit.common.persistence.BaseEntity;
 import kakao.rebit.member.entity.Member;
 
 @Entity
 @Table(name = "likes")
-public class Likes {
+public class Likes extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
