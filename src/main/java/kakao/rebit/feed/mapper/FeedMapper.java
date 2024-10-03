@@ -98,7 +98,7 @@ public class FeedMapper {
                 book.getDescription(),
                 book.getAuthor(),
                 book.getPublisher(),
-                book.getImageUrl()
+                book.getCover()
         );
     }
 

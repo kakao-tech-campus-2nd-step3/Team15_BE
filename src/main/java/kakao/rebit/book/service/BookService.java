@@ -94,8 +94,9 @@ public class BookService {
             String author = (String) item.get("author");
             String publisher = (String) item.get("publisher");
             String imageUrl = (String) item.get("cover");
+            String pubDate = (String) item.get("pubdate");
 
-            return new Book(isbn, title, description, author, publisher, imageUrl);
+            return new Book(isbn, title, description, author, publisher, imageUrl,pubDate);
 
         } catch (IOException e) {
             throw new RuntimeException("API 응답에서 책 상세 정보를 파싱하는 데 실패했습니다", e);
