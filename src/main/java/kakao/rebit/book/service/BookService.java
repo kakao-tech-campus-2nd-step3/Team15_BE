@@ -1,6 +1,5 @@
 package kakao.rebit.book.service;
 
-import jakarta.transaction.Transactional;
 import java.util.List;
 import java.util.stream.Collectors;
 import kakao.rebit.book.dto.AladinApiResponseListResponse;
@@ -9,6 +8,7 @@ import kakao.rebit.book.entity.Book;
 import kakao.rebit.book.repository.BookRepository;
 import kakao.rebit.feed.dto.response.BookResponse;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class BookService {
@@ -52,6 +52,7 @@ public class BookService {
         return toBookResponse(book);
     }
 
+    @Transactional(readOnly = true)
     public BookResponse getBookDetail(String isbn) {
         return bookRepository.findByIsbn(isbn)
             .map(this::toBookResponse)
@@ -88,6 +89,7 @@ public class BookService {
         return bookRepository.save(toBookEntity(bookResponse));
     }
 
+    @Transactional(readOnly = true)
     public Book findBookByIdOrThrow(Long bookId) {
         return bookRepository.findById(bookId)
             .orElseThrow(() -> new IllegalArgumentException("해당 책이 존재하지 않습니다."));
