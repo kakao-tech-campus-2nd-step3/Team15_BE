@@ -67,6 +67,10 @@ public class ChallengeParticipationService {
             throw new IllegalArgumentException("모집 기간이 아닙니다.");
         }
 
+        if (challenge.isFull()) {
+            throw new IllegalArgumentException("모집 인원이 다 찼습니다.");
+        }
+
         if (entryFee > member.getPoint()) {
             throw new IllegalArgumentException("포인트가 부족합니다.");
         }

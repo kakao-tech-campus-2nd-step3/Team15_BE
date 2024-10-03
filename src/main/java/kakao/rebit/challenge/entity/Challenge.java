@@ -145,7 +145,7 @@ public class Challenge extends BaseEntity {
         return challengePeriod.isAfter(now);
     }
 
-    public boolean isWithinHeadcountLimit(int currentHeadcount) {
-        return headcountLimit.isWithinLimit(currentHeadcount);
+    public boolean isFull() {
+        return headcountLimit.isFull(currentHeadcount);
     }
 }
