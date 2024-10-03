@@ -61,7 +61,7 @@ public class Challenge extends BaseEntity {
     private HeadcountLimit headcountLimit;
 
     @Basic(fetch = FetchType.LAZY)
-    @Formula("(SELECT COUNT(1) FROM challenge_participant cp WHERE cp.challenge_id = id)")
+    @Formula("(SELECT COUNT(1) FROM challenge_participation cp WHERE cp.challenge_id = id)")
     private int currentHeadcount;
 
     protected Challenge() {
