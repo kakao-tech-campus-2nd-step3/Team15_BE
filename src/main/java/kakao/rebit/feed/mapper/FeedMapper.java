@@ -92,13 +92,14 @@ public class FeedMapper {
             return null;
         }
         return new BookResponse(
-                book.getId(),
-                book.getIsbn(),
-                book.getTitle(),
-                book.getDescription(),
-                book.getAuthor(),
-                book.getPublisher(),
-                book.getCover()
+            book.getId(),
+            book.getIsbn(),
+            book.getTitle(),
+            book.getDescription(),
+            book.getAuthor(),
+            book.getPublisher(),
+            book.getCover(),       // imageUrl을 cover로 수정
+            book.getPubDate()       // pubDate 추가
         );
     }
 
