@@ -1,5 +1,6 @@
 package kakao.rebit.book.service;
 
+import jakarta.transaction.Transactional;
 import java.util.List;
 import java.util.stream.Collectors;
 import kakao.rebit.book.dto.AladinApiResponseListResponse;
@@ -28,6 +29,7 @@ public class BookService {
     }
 
     // 책 타이틀로 검색 후 저장
+    @Transactional
     public List<BookResponse> searchAndSaveBooksByTitle(String title) {
         AladinApiResponseListResponse bookList = aladinApiService.searchBooksByTitle(title);
 
@@ -42,6 +44,7 @@ public class BookService {
             .collect(Collectors.toList());
     }
 
+    @Transactional
     public BookResponse searchAndSaveBookByIsbn(String isbn) {
         AladinApiResponseResponse bookResponse = aladinApiService.searchBookByIsbn(isbn);
         Book book = bookRepository.findByIsbn(bookResponse.isbn())
@@ -80,6 +83,7 @@ public class BookService {
         );
     }
 
+    @Transactional
     private Book saveBook(AladinApiResponseResponse bookResponse) {
         return bookRepository.save(convertToBookEntity(bookResponse));
     }
