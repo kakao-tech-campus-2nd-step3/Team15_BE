@@ -31,7 +31,7 @@ public class Book extends BaseEntity {
     private String publisher;
 
     private String cover;
-    
+
     private String pubDate;
 
     protected Book() {

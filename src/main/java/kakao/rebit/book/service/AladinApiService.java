@@ -35,7 +35,8 @@ public class AladinApiService {
             + "?ttbkey=" + TTB_KEY
             + "&itemIdType=ISBN"
             + "&ItemId=" + isbn
-            + "&output=js&Version=20131101";
+            + "&output=js"
+            + "&Version=20131101";
     }
 
     private <T> T executeApiRequest(String url, Class<T> responseType) {
