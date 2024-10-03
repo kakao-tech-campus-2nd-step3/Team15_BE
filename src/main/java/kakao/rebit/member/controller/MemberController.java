@@ -2,6 +2,7 @@ package kakao.rebit.member.controller;
 
 import java.util.List;
 import kakao.rebit.member.annotation.MemberInfo;
+import kakao.rebit.member.dto.ChargePointRequest;
 import kakao.rebit.member.dto.MemberRequest;
 import kakao.rebit.member.dto.MemberInfoDto;
 import kakao.rebit.member.entity.Member;
@@ -17,6 +18,20 @@ public class MemberController {
 
     public MemberController(MemberService memberService) {
         this.memberService = memberService;
+    }
+
+    // 사용자 자신의 포인트 조회
+    @GetMapping("/points")
+    public ResponseEntity<Integer> getMyPoints(@MemberInfo MemberInfoDto memberInfo) {
+        Integer points = memberService.getPoints(memberInfo.getEmail());
+        return ResponseEntity.ok(points);
+    }
+
+    // 포인트 충전
+    @PostMapping("/points")
+    public ResponseEntity<Void> chargePoints(@MemberInfo MemberInfoDto memberInfo, @RequestBody ChargePointRequest request) {
+        memberService.chargePoints(memberInfo.getEmail(), request.getPoints());
+        return ResponseEntity.noContent().build();
     }
 
     // 사용자 자신의 정보 조회

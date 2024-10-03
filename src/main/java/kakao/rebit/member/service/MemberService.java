@@ -17,6 +17,19 @@ public class MemberService {
         this.memberRepository = memberRepository;
     }
 
+    // 포인트 조회
+    public Integer getPoints(String email) {
+        Member member = findMemberByEmail(email);
+        return member.getPoint();
+    }
+
+    // 포인트 충전
+    public void chargePoints(String email, Integer points) {
+        Member member = findMemberByEmail(email);
+        member.setPoint(member.getPoint() + points);
+        memberRepository.save(member);
+    }
+
     @Transactional(readOnly = true)
     public List<Member> findAllMembers() {
         return memberRepository.findAll();
