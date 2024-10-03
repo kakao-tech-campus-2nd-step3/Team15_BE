@@ -23,7 +23,6 @@ public class AladinApiService {
         this.objectMapper = objectMapper;
     }
 
-
     private String buildTitleSearchUrl(String title, int maxResults) {
         return BASE_API_URL + ITEM_SEARCH_ENDPOINT
             + "?ttbkey=" + TTB_KEY
@@ -37,6 +36,14 @@ public class AladinApiService {
             + "&itemIdType=ISBN"
             + "&ItemId=" + isbn
             + "&output=js&Version=20131101";
+    }
+
+    public AladinApiResponseListResponse searchBooksByTitle(String title) {
+        String url = buildTitleSearchUrl(title, 10);
+        return restClient.get()
+            .uri(url)
+            .retrieve()
+            .body(AladinApiResponseListResponse.class);
     }
 
     public AladinApiResponseResponse searchBookByIsbn(String isbn) {
@@ -57,6 +64,7 @@ public class AladinApiService {
             throw new RuntimeException("API 응답에서 도서를 찾을 수 없습니다.");
         }
 
+        // 첫 번째 책 정보 추출
         AladinApiResponseResponse bookResponse = response.item().get(0);
         System.out.println("API에서 받은 책 정보: " + bookResponse);
         return bookResponse;
