@@ -4,7 +4,9 @@ import java.net.URI;
 import kakao.rebit.feed.dto.request.create.CreateFeedRequest;
 import kakao.rebit.feed.dto.request.update.UpdateFeedRequest;
 import kakao.rebit.feed.dto.response.FeedResponse;
+import kakao.rebit.feed.dto.response.LikesMemberResponse;
 import kakao.rebit.feed.service.FeedService;
+import kakao.rebit.feed.service.LikesService;
 import kakao.rebit.member.dto.MemberResponse;
 import kakao.rebit.member.entity.Role;
 import org.springframework.data.domain.Page;
@@ -26,15 +28,16 @@ import org.springframework.web.bind.annotation.RestController;
 public class FeedController {
 
     private final FeedService feedService;
+    private final LikesService likesService;
 
-    public FeedController(FeedService feedService) {
+    public FeedController(FeedService feedService, LikesService likesService) {
         this.feedService = feedService;
+        this.likesService = likesService;
     }
 
     @GetMapping
     public ResponseEntity<Page<FeedResponse>> getFeeds(
             @PageableDefault(sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
-
         return ResponseEntity.ok().body(feedService.getFeeds(pageable));
     }
 
@@ -63,6 +66,32 @@ public class FeedController {
     @DeleteMapping("/{feed-id}")
     public ResponseEntity<Void> deleteFeed(@PathVariable("feed-id") Long feedId) {
         feedService.deleteFeedById(feedId);
+        return ResponseEntity.noContent().build();
+    }
+
+    /**
+     * 좋아요
+     */
+    @GetMapping("/{feed-id}/likes")
+    public ResponseEntity<Page<LikesMemberResponse>> getLikesMembers(
+            @PathVariable("feed-id") Long feedId,
+            @PageableDefault(sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
+        return ResponseEntity.ok().body(likesService.getLikesMembers(feedId, pageable));
+    }
+
+    @PostMapping("/{feed-id}/likes")
+    public ResponseEntity<Void> creatLikes(@PathVariable("feed-id") Long feedId) {
+        MemberResponse memberResponse = new MemberResponse(1L, "testUser", "imageUrl", "bio",
+                Role.ROLE_USER, 10000);
+        Long likesId = likesService.createLikes(memberResponse, feedId);
+        return ResponseEntity.created(URI.create("/feeds/likes" + likesId)).build();
+    }
+
+    @DeleteMapping("/{feed-id}/likes")
+    public ResponseEntity<Void> deleteLikes(@PathVariable("feed-id") Long feedId) {
+        MemberResponse memberResponse = new MemberResponse(1L, "testUser", "imageUrl", "bio",
+                Role.ROLE_USER, 10000);
+        likesService.deleteLikes(memberResponse, feedId);
         return ResponseEntity.noContent().build();
     }
 }
