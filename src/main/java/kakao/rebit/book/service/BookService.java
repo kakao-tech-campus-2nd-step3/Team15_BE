@@ -80,4 +80,8 @@ public class BookService {
             response.pubDate()
         );
     }
+
+    private Book saveBook(AladinApiResponseResponse bookResponse) {
+        return bookRepository.save(convertToBookEntity(bookResponse));
+    }
 }
