@@ -42,13 +42,14 @@ public class KakaoAuthService {
 
         Member member = memberOptional.orElseGet(() -> {
             // 회원이 없으면 회원가입 처리, 기본 Role은 ROLE_USER로 설정
-            Member newMember = new Member(nickname, "","", email, Role.ROLE_USER, 0, accessToken);
+            Member newMember = new Member(nickname, "", "", email, Role.ROLE_USER, 0, accessToken);
             memberRepository.save(newMember);
             return newMember;
         });
 
         // 4. 자체 JWT 토큰 생성
-        AuthToken tokens = authTokensGenerator.generate(member.getId().toString());
+        AuthToken tokens = authTokensGenerator.generate(member.getId().toString(),
+            member.getEmail(), member.getRole().name());
 
         // 5. 로그인 응답 반환
         return new LoginResponse(tokens);
