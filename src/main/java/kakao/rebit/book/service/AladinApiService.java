@@ -18,11 +18,9 @@ public class AladinApiService {
     private static final String ITEM_SEARCH_ENDPOINT = "/ItemSearch.aspx";
 
     private final RestClient restClient;
-    private final ObjectMapper objectMapper;
 
-    public AladinApiService(RestClient restClient, ObjectMapper objectMapper) {
+    public AladinApiService(RestClient restClient) {
         this.restClient = restClient;
-        this.objectMapper = objectMapper;
     }
 
     private String buildTitleSearchUrl(String title, int maxResults) {
