@@ -1,8 +1,8 @@
 package kakao.rebit.book.controller;
 
 import java.util.List;
-import kakao.rebit.book.entity.Book;
 import kakao.rebit.book.service.BookService;
+import kakao.rebit.feed.dto.response.BookResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -21,20 +21,20 @@ public class BookController {
     }
 
     @GetMapping
-    public ResponseEntity<List<Book>> getAllBooks() {
-        List<Book> books = bookService.getAllBooks();
+    public ResponseEntity<List<BookResponse>> getAllBooks() {
+        List<BookResponse> books = bookService.getAllBooks();
         return ResponseEntity.ok(books);
     }
 
     @GetMapping("/search")
-    public ResponseEntity<String> searchBooksByTitle(@RequestParam(name = "title") String title) {
-        String apiResponse = bookService.searchAndSaveBooksByTitle(title);
-        return ResponseEntity.ok(apiResponse);
+    public ResponseEntity<List<BookResponse>> searchBooksByTitle(@RequestParam(name = "title") String title) {
+        List<BookResponse> books = bookService.searchAndSaveBooksByTitle(title);
+        return ResponseEntity.ok(books);
     }
 
     @GetMapping("/{isbn}")
-    public ResponseEntity<Book> getBookDetail(@PathVariable(name = "isbn") String isbn) {
-        Book book = bookService.getBookDetail(isbn);
+    public ResponseEntity<BookResponse> getBookDetail(@PathVariable(name = "isbn") String isbn) {
+        BookResponse book = bookService.getBookDetail(isbn);
         return ResponseEntity.ok(book);
     }
 }
