@@ -57,7 +57,6 @@ public class AladinApiService {
             throw new RuntimeException("API 응답에서 도서를 찾을 수 없습니다.");
         }
 
-        // 첫 번째 책 정보 추출
         AladinApiResponseResponse bookResponse = response.item().get(0);
         System.out.println("API에서 받은 책 정보: " + bookResponse);
         return bookResponse;
