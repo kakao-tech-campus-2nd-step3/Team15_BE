@@ -21,7 +21,6 @@ public class BookService {
         this.aladinApiService = aladinApiService;
     }
 
-    // 전체 책 조회
     @Transactional(readOnly = true)
     public List<BookResponse> getAllBooks() {
         return bookRepository.findAll().stream()
@@ -38,7 +37,7 @@ public class BookService {
             .filter(book -> bookRepository.findByIsbn(book.isbn()).isEmpty())
             .map(this::toBookEntity)
             .map(bookRepository::save)
-            .collect(Collectors.toList());
+            .toList();
 
         return savedBooks.stream()
             .map(this::toBookResponse)
@@ -53,7 +52,7 @@ public class BookService {
         return toBookResponse(book);
     }
 
-    @Transactional(readOnly = true)
+    @Transactional
     public BookResponse getBookDetail(String isbn) {
         return bookRepository.findByIsbn(isbn)
             .map(this::toBookResponse)
