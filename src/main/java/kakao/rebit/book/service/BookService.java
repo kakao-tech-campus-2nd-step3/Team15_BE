@@ -50,7 +50,34 @@ public class BookService {
         return convertToBookResponse(book);
     }
 
+    public BookResponse getBookDetail(String isbn) {
+        return bookRepository.findByIsbn(isbn)
+            .map(this::convertToBookResponse)
+            .orElseGet(() -> searchAndSaveBookByIsbn(isbn));
+    }
 
+    private BookResponse convertToBookResponse(Book book) {
+        return new BookResponse(
+            book.getId(),
+            book.getIsbn(),
+            book.getTitle(),
+            book.getAuthor(),
+            book.getCover(),
+            book.getDescription(),
+            book.getPublisher(),
+            book.getPubDate()
+        );
+    }
 
-
+    private Book convertToBookEntity(AladinApiResponseResponse response) {
+        return new Book(
+            response.isbn(),
+            response.title(),
+            response.description(),
+            response.author(),
+            response.publisher(),
+            response.cover(),
+            response.pubDate()
+        );
+    }
 }
