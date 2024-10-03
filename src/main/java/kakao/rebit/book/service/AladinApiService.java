@@ -38,23 +38,24 @@ public class AladinApiService {
             + "&output=js&Version=20131101";
     }
 
-    public AladinApiResponseListResponse searchBooksByTitle(String title) {
-        String url = buildTitleSearchUrl(title, 10);
+    private <T> T executeApiRequest(String url, Class<T> responseType) {
         return restClient.get()
             .uri(url)
             .retrieve()
-            .body(AladinApiResponseListResponse.class);
+            .body(responseType);
+    }
+
+    public AladinApiResponseListResponse searchBooksByTitle(String title) {
+        String url = buildTitleSearchUrl(title, 10);
+        return executeApiRequest(url, AladinApiResponseListResponse.class);
     }
 
     public AladinApiResponseResponse searchBookByIsbn(String isbn) {
         String url = buildIsbnLookupUrl(isbn);
-        AladinApiResponseListResponse response = restClient.get()
-            .uri(url)
-            .retrieve()
-            .body(AladinApiResponseListResponse.class);
-
+        AladinApiResponseListResponse response = executeApiRequest(url, AladinApiResponseListResponse.class);
         return extractFirstBookFromResponse(response);
     }
+
 
     // API 응답에서 첫 번째 책 정보를 추출
     // 알라딘 api 에서 item필드 아래의 책 정보를 가져와야 정상 작동. 첫 번째 항목에 책의 상세 정보가 위치
