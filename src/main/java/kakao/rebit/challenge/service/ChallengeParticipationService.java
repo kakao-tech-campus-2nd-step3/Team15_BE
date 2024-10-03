@@ -55,18 +55,16 @@ public class ChallengeParticipationService {
         validateChallengeParticipation(member, challenge, entryFee);
 
         ChallengeParticipation challengeParticipation = toChallengeParticipation(member, challenge, entryFee);
-        challengeParticipationRepository.save(challengeParticipation);
-
-        return challengeParticipation.getId();
+        return challengeParticipationRepository.save(challengeParticipation).getId();
     }
 
     private void validateChallengeParticipation(Member member, Challenge challenge, Integer entryFee) {
-        if (!challenge.isRecruiting(LocalDateTime.now())) {
-            throw new IllegalArgumentException("모집 기간이 아닙니다.");
-        }
-
         if (challengeParticipationRepository.existsByMemberAndChallenge(member, challenge)) {
             throw new IllegalArgumentException("이미 참여한 챌린지입니다.");
+        }
+
+        if (!challenge.isRecruiting(LocalDateTime.now())) {
+            throw new IllegalArgumentException("모집 기간이 아닙니다.");
         }
 
         if (entryFee > member.getPoint()) {
