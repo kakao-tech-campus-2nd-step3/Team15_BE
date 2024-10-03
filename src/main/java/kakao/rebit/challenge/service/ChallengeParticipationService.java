@@ -92,6 +92,7 @@ public class ChallengeParticipationService {
     private ChallengeParticipationMemberResponse toParticipationMemberResponse(ChallengeParticipation challengeParticipation) {
         Member member = challengeParticipation.getMember();
         return new ChallengeParticipationMemberResponse(
+                challengeParticipation.getId(),
                 member.getId(),
                 member.getNickname(),
                 member.getImageUrl(),
