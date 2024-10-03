@@ -84,7 +84,8 @@ public class FeedController {
         MemberResponse memberResponse = new MemberResponse(1L, "testUser", "imageUrl", "bio",
                 Role.ROLE_USER, 10000);
         Long likesId = likesService.createLikes(memberResponse, feedId);
-        return ResponseEntity.created(URI.create("/feeds/likes" + likesId)).build();
+        String uri = String.format("/feeds/%d/likes/%d", feedId, likesId);
+        return ResponseEntity.created(URI.create(uri)).build();
     }
 
     @DeleteMapping("/{feed-id}/likes")
