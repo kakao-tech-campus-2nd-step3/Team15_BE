@@ -1,6 +1,5 @@
 package kakao.rebit.book.service;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import kakao.rebit.book.dto.AladinApiResponseListResponse;
 import kakao.rebit.book.dto.AladinApiResponseResponse;
 import org.springframework.beans.factory.annotation.Value;
@@ -10,10 +9,12 @@ import org.springframework.web.client.RestClient;
 @Service
 public class AladinApiService {
 
-    private static final String BASE_API_URL = "http://www.aladin.co.kr/ttb/api";
     @Value("${TTB_KEY}")
     private String TTB_KEY;
+
+    private static final String BASE_API_URL = "http://www.aladin.co.kr/ttb/api";
     private static final String QUERY_PARAMS_FORMAT = "&QueryType=%s&MaxResults=%s&start=1&SearchTarget=Book&output=js&Version=20131101";
+
     private static final String ITEM_LOOKUP_ENDPOINT = "/ItemLookUp.aspx";
     private static final String ITEM_SEARCH_ENDPOINT = "/ItemSearch.aspx";
 
@@ -53,10 +54,10 @@ public class AladinApiService {
 
     public AladinApiResponseResponse searchBookByIsbn(String isbn) {
         String url = buildIsbnLookupUrl(isbn);
-        AladinApiResponseListResponse response = executeApiRequest(url, AladinApiResponseListResponse.class);
+        AladinApiResponseListResponse response = executeApiRequest(url,
+            AladinApiResponseListResponse.class);
         return extractFirstBookFromResponse(response);
     }
-
 
     // API 응답에서 첫 번째 책 정보를 추출
     // 알라딘 api 에서 item필드 아래의 책 정보를 가져와야 정상 작동. 첫 번째 항목에 책의 상세 정보가 위치
