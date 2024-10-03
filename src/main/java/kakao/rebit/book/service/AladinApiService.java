@@ -1,8 +1,10 @@
 package kakao.rebit.book.service;
 
-import org.springframework.http.ResponseEntity;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import kakao.rebit.book.dto.AladinApiResponseListResponse;
+import kakao.rebit.book.dto.AladinApiResponseResponse;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
+import org.springframework.web.client.RestClient;
 
 @Service
 public class AladinApiService {
@@ -12,6 +14,14 @@ public class AladinApiService {
     private static final String QUERY_PARAMS_FORMAT = "&QueryType=%s&MaxResults=%s&start=1&SearchTarget=Book&output=js&Version=20131101";
     private static final String ITEM_LOOKUP_ENDPOINT = "/ItemLookUp.aspx";
     private static final String ITEM_SEARCH_ENDPOINT = "/ItemSearch.aspx";
+
+    private final RestClient restClient;
+    private final ObjectMapper objectMapper;
+
+    public AladinApiService(RestClient restClient, ObjectMapper objectMapper) {
+        this.restClient = restClient;
+        this.objectMapper = objectMapper;
+    }
 
 
     private String buildTitleSearchUrl(String title, int maxResults) {
@@ -29,17 +39,27 @@ public class AladinApiService {
             + "&output=js&Version=20131101";
     }
 
-    private String sendRequest(String query, String queryType, int maxResults) {
-        String url = getApiUrlByQuery(query, queryType, maxResults);
-        RestTemplate restTemplate = new RestTemplate();
-        ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
-        return response.getBody();
-    }
-    public String searchBookByTitle(String title) {
-        return sendRequest(title, "Title", 10);
+    public AladinApiResponseResponse searchBookByIsbn(String isbn) {
+        String url = buildIsbnLookupUrl(isbn);
+        AladinApiResponseListResponse response = restClient.get()
+            .uri(url)
+            .retrieve()
+            .body(AladinApiResponseListResponse.class);
+
+        return extractFirstBookFromResponse(response);
     }
 
-    public String searchBookByIsbn(String isbn) {
-        return sendRequest(isbn, "ISBN", 1);
+    // API 응답에서 첫 번째 책 정보를 추출
+    // 알라딘 api 에서 item필드 아래의 책 정보를 가져와야 정상 작동. 첫 번째 항목에 책의 상세 정보가 위치
+    private AladinApiResponseResponse extractFirstBookFromResponse(
+        AladinApiResponseListResponse response) {
+        if (response.item() == null || response.item().isEmpty()) {
+            throw new RuntimeException("API 응답에서 도서를 찾을 수 없습니다.");
+        }
+
+        // 첫 번째 책 정보 추출
+        AladinApiResponseResponse bookResponse = response.item().get(0);
+        System.out.println("API에서 받은 책 정보: " + bookResponse);
+        return bookResponse;
     }
 }
