@@ -16,6 +16,8 @@ spring:
   sql:
     init:
       data-locations: classpath:data.sql  # 초기 데이터 설정
+  config:
+    import: "optional:file:.env"
 
 # 카카오 소셜 로그인을 위해 사용하는 정보들 설정
 oauth:

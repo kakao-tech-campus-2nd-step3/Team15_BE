@@ -3,6 +3,7 @@ package kakao.rebit.book.service;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import kakao.rebit.book.dto.AladinApiResponseListResponse;
 import kakao.rebit.book.dto.AladinApiResponseResponse;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
 
@@ -10,7 +11,8 @@ import org.springframework.web.client.RestClient;
 public class AladinApiService {
 
     private static final String BASE_API_URL = "http://www.aladin.co.kr/ttb/api";
-    private static final String TTB_KEY = "ttbtommy452311545001";  // 알라딘 TTBKey
+    @Value("${TTB_KEY}")
+    private String TTB_KEY;
     private static final String QUERY_PARAMS_FORMAT = "&QueryType=%s&MaxResults=%s&start=1&SearchTarget=Book&output=js&Version=20131101";
     private static final String ITEM_LOOKUP_ENDPOINT = "/ItemLookUp.aspx";
     private static final String ITEM_SEARCH_ENDPOINT = "/ItemSearch.aspx";
