@@ -16,14 +16,15 @@ public class AuthTokenGenerator {
         this.jwtTokenProvider = jwtTokenProvider;
     }
 
-    public AuthToken generate(String uid) {
+    public AuthToken generate(String uid, String email, String role) {
         Date now = new Date();
         Date accessTokenExpiry = new Date(now.getTime() + ACCESS_TOKEN_EXPIRE_TIME);
         Date refreshTokenExpiry = new Date(now.getTime() + REFRESH_TOKEN_EXPIRE_TIME);
 
-        String accessToken = jwtTokenProvider.accessTokenGenerate(uid, accessTokenExpiry);
+        String accessToken = jwtTokenProvider.accessTokenGenerate(uid, email, role, accessTokenExpiry);
         String refreshToken = jwtTokenProvider.refreshTokenGenerate(refreshTokenExpiry);
 
         return AuthToken.of(accessToken, refreshToken, "Bearer", ACCESS_TOKEN_EXPIRE_TIME / 1000);
     }
+
 }
