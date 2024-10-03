@@ -22,6 +22,7 @@ public class BookService {
     }
 
     // 전체 책 조회
+    @Transactional(readOnly = true)
     public List<BookResponse> getAllBooks() {
         return bookRepository.findAll().stream()
             .map(this::toBookResponse)
