@@ -4,6 +4,8 @@ import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
 import kakao.rebit.book.entity.Book;
+import kakao.rebit.feed.dto.request.update.UpdateFeedRequest;
+import kakao.rebit.feed.dto.request.update.UpdateMagazineRequest;
 import kakao.rebit.member.entity.Member;
 
 @Entity
@@ -23,6 +25,13 @@ public class Magazine extends Feed {
         this.name = name;
         this.imageUrl = imageUrl;
         this.content = content;
+    }
+
+    @Override
+    public void updateAllExceptBook(UpdateFeedRequest feedRequest) {
+        this.name = ((UpdateMagazineRequest) feedRequest).getName();
+        this.imageUrl = ((UpdateMagazineRequest) feedRequest).getImageUrl();
+        this.content = ((UpdateMagazineRequest) feedRequest).getContent();
     }
 
     public String getName() {

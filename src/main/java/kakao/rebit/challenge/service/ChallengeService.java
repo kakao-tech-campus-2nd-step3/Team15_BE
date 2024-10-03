@@ -38,7 +38,8 @@ public class ChallengeService {
         return toChallengeResponse(challenge);
     }
 
-    private Challenge findChallengeByIdOrThrow(Long challengeId) {
+    @Transactional(readOnly = true)
+    public Challenge findChallengeByIdOrThrow(Long challengeId) {
         return challengeRepository.findById(challengeId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 챌린지입니다."));
     }

@@ -1,6 +1,7 @@
 package kakao.rebit.challenge.entity;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -11,27 +12,27 @@ import kakao.rebit.common.persistence.BaseEntity;
 import kakao.rebit.member.entity.Member;
 
 @Entity
-@Table(name = "challenge_participant")
-public class ChallengeParticipant extends BaseEntity {
+@Table(name = "challenge_participation")
+public class ChallengeParticipation extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "challenge_id")
     private Challenge challenge;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
     private Member member;
 
     private Integer entryFee;
 
-    protected ChallengeParticipant() {
+    protected ChallengeParticipation() {
     }
 
-    public ChallengeParticipant(Challenge challenge, Member member, Integer entryFee) {
+    public ChallengeParticipation(Challenge challenge, Member member, Integer entryFee) {
         this.challenge = challenge;
         this.member = member;
         this.entryFee = entryFee;

@@ -8,6 +8,7 @@ import java.util.Map;
 import kakao.rebit.book.entity.Book;
 import kakao.rebit.book.repository.BookRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class BookService {
@@ -20,10 +21,12 @@ public class BookService {
         this.aladinApiService = aladinApiService;
     }
 
+    @Transactional(readOnly = true)
     public List<Book> getAllBooks() {
         return bookRepository.findAll();
     }
 
+    @Transactional
     public String searchAndSaveBooksByTitle(String title) {
         String apiResponse = aladinApiService.searchBookByTitle(title);
         List<Book> books = parseBooks(apiResponse);
@@ -33,6 +36,7 @@ public class BookService {
         return apiResponse;
     }
 
+    @Transactional
     public Book searchAndSaveBookByIsbn(String isbn) {
         String apiResponse = aladinApiService.searchBookByIsbn(isbn);
         Book book = parseBookDetail(apiResponse);
@@ -43,9 +47,15 @@ public class BookService {
         return savedBook;
     }
 
+    @Transactional(readOnly = true)
     public Book getBookDetail(String isbn) {
         return bookRepository.findByIsbn(isbn)
             .orElseGet(() -> searchAndSaveBookByIsbn(isbn));
+    }
+
+    @Transactional(readOnly = true)
+    public Book findBookByIdOrThrow(Long bookId){
+        return bookRepository.findById(bookId).orElseThrow(() -> new IllegalArgumentException("해당 책이 존재하지 않습니다."));
     }
 
     private List<Book> parseBooks(String apiResponse) {

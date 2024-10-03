@@ -1,6 +1,6 @@
 package kakao.rebit.feed.controller;
 
-import kakao.rebit.feed.dto.response.FavoriteBookResponse;
+import kakao.rebit.feed.dto.response.FeedResponse;
 import kakao.rebit.feed.service.FavoriteBookService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -23,13 +23,13 @@ public class FavoriteBookController {
     }
 
     @GetMapping
-    public ResponseEntity<Page<FavoriteBookResponse>> getFavoriteBooks(
+    public ResponseEntity<Page<FeedResponse>> getFavoriteBooks(
             @PageableDefault(sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
         return ResponseEntity.ok().body(favoriteBookService.getFavoriteBooks(pageable));
     }
 
     @GetMapping("/{favorite-id}")
-    public ResponseEntity<FavoriteBookResponse> getFavoriteBook(
+    public ResponseEntity<FeedResponse> getFavoriteBook(
             @PathVariable("favorite-id") Long id) {
         return ResponseEntity.ok().body(favoriteBookService.getFavoriteBookById(id));
     }
