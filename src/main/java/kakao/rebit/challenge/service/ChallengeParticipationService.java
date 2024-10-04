@@ -46,6 +46,12 @@ public class ChallengeParticipationService {
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 참여 정보입니다."));
     }
 
+    @Transactional(readOnly = true)
+    public ChallengeParticipation findChallengeParticipationByMemberAndChallengeOrThrow(Member member, Challenge challenge) {
+        return challengeParticipationRepository.findByMemberAndChallenge(member, challenge)
+                .orElseThrow(() -> new IllegalArgumentException("참여 정보가 존재하지 않습니다."));
+    }
+
     @Transactional
     public Long createChallengeParticipation(MemberResponse memberResponse, Long challengeId, ChallengeParticipationRequest challengeParticipationRequest) {
         Member member = memberService.findMemberByIdOrThrow(memberResponse.id());
