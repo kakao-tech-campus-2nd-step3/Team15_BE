@@ -30,14 +30,14 @@ public class MemberController {
     // 포인트 충전
     @PostMapping("/points")
     public ResponseEntity<Void> chargePoints(@MemberInfo MemberInfoDto memberInfo, @RequestBody ChargePointRequest request) {
-        memberService.chargePoints(memberInfo.getEmail(), request.getPoints());
+        memberService.chargePoints(memberInfo.getEmail(), request.points());
         return ResponseEntity.noContent().build();
     }
 
     // 사용자 자신의 정보 조회
     @GetMapping("/me")
     public ResponseEntity<Member> getMyInfo(@MemberInfo MemberInfoDto memberInfo) {
-        Member member = memberService.findMemberByEmail(memberInfo.getEmail());
+        Member member = memberService.findMemberByEmailOrThrow(memberInfo.getEmail());
         return ResponseEntity.ok(member);
     }
 
