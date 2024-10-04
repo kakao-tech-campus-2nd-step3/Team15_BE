@@ -6,7 +6,7 @@ import kakao.rebit.feed.dto.request.create.CreateFeedRequest;
 import kakao.rebit.feed.dto.request.create.CreateMagazineRequest;
 import kakao.rebit.feed.dto.request.create.CreateStoryRequest;
 import kakao.rebit.feed.dto.response.AuthorResponse;
-import kakao.rebit.feed.dto.response.BookResponse;
+import kakao.rebit.feed.dto.response.FeedBookResponse;
 import kakao.rebit.feed.dto.response.FavoriteBookResponse;
 import kakao.rebit.feed.dto.response.FeedResponse;
 import kakao.rebit.feed.dto.response.MagazineResponse;
@@ -89,18 +89,19 @@ public class FeedMapper {
         );
     }
 
-    private BookResponse toBookResponse(Book book) {
+    private FeedBookResponse toBookResponse(Book book) {
         if (book == null) {
             return null;
         }
-        return new BookResponse(
-                book.getId(),
-                book.getIsbn(),
-                book.getTitle(),
-                book.getDescription(),
-                book.getAuthor(),
-                book.getPublisher(),
-                book.getImageUrl()
+        return new FeedBookResponse(
+            book.getId(),
+            book.getIsbn(),
+            book.getTitle(),
+            book.getDescription(),
+            book.getAuthor(),
+            book.getPublisher(),
+            book.getCover(),       // imageUrl을 cover로 수정
+            book.getPubDate()       // pubDate 추가
         );
     }
 
