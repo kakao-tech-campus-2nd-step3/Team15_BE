@@ -1,8 +1,9 @@
 package kakao.rebit.member.resolver;
 
-import kakao.rebit.auth.jwt.JwtTokenProvider;
 import kakao.rebit.member.annotation.MemberInfo;
-import kakao.rebit.member.dto.MemberInfoDto;
+import kakao.rebit.member.dto.MemberResponse;
+import kakao.rebit.member.entity.Member;
+import kakao.rebit.member.service.MemberService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.MethodParameter;
 import org.springframework.stereotype.Component;
@@ -16,11 +17,11 @@ import jakarta.servlet.http.HttpServletRequest;
 @Component
 public class MemberInfoArgumentResolver implements HandlerMethodArgumentResolver {
 
-    private final JwtTokenProvider jwtTokenProvider;
+    private final MemberService memberService;
 
     @Autowired
-    public MemberInfoArgumentResolver(JwtTokenProvider jwtTokenProvider) {
-        this.jwtTokenProvider = jwtTokenProvider;
+    public MemberInfoArgumentResolver(MemberService memberService) {
+        this.memberService = memberService;
     }
 
     @Override
@@ -35,17 +36,27 @@ public class MemberInfoArgumentResolver implements HandlerMethodArgumentResolver
         WebDataBinderFactory binderFactory) throws Exception {
 
         HttpServletRequest request = (HttpServletRequest) webRequest.getNativeRequest();
-        String token = request.getHeader("Authorization");
+        String email = (String) request.getAttribute("email");
+        String role = (String) request.getAttribute("role");
 
-        if (token != null && token.startsWith("Bearer ")) {
-            token = token.substring(7);
-            if (jwtTokenProvider.validateToken(token)) {
-                String email = jwtTokenProvider.getEmailFromToken(token);
-                String role = jwtTokenProvider.getRoleFromToken(token);
-                return new MemberInfoDto(email, role);
-            }
+        if (email == null || role == null) {
+            throw new IllegalStateException("JWT 토큰이 유효하지 않거나 누락되었습니다.");
         }
 
-        throw new IllegalStateException("JWT 토큰이 유효하지 않거나 누락되었습니다.");
+        // 데이터베이스에서 회원 정보 조회 후 MemberResponse로 반환
+        Member member = memberService.findMemberByEmailOrThrow(email);
+        return toMemberResponse(member);
+    }
+
+    private MemberResponse toMemberResponse(Member member) {
+        return new MemberResponse(
+            member.getId(),
+            member.getNickname(),
+            member.getImageUrl(),
+            member.getBio(),
+            member.getEmail(),
+            member.getRole(),
+            member.getPoint()
+        );
     }
 }
