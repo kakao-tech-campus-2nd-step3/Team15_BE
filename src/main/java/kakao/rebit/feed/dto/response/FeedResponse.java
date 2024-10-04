@@ -4,10 +4,10 @@ public abstract class FeedResponse {
 
     private Long id;
     private AuthorResponse author;
-    private BookResponse book;
+    private FeedBookResponse book;
     private String type;
 
-    public FeedResponse(Long id, AuthorResponse author, BookResponse book,
+    public FeedResponse(Long id, AuthorResponse author, FeedBookResponse book,
             String type) {
         this.id = id;
         this.author = author;
@@ -23,7 +23,7 @@ public abstract class FeedResponse {
         return author;
     }
 
-    public BookResponse getBook() {
+    public FeedBookResponse getBook() {
         return book;
     }
 

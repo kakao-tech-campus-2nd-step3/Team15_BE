@@ -1,6 +1,6 @@
 package kakao.rebit.feed.dto.response;
 
-public record BookResponse(
+public record FeedBookResponse(
     Long id,
     String isbn,
     String title,
