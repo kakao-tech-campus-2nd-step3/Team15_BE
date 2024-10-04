@@ -21,5 +21,4 @@ public class FavoriteBookResponse extends FeedResponse {
     public String getFullReview() {
         return fullReview;
     }
-
 }
