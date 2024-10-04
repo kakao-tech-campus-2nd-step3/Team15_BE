@@ -137,7 +137,7 @@ public class Challenge extends BaseEntity {
         return !isOngoing(now) && !isCompleted(now);
     }
 
-    private boolean isOngoing(LocalDateTime now) {
+    public boolean isOngoing(LocalDateTime now) {
         return challengePeriod.contains(now);
     }
 

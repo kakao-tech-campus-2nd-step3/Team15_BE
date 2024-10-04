@@ -1,5 +1,6 @@
 package kakao.rebit.challenge.service;
 
+import java.time.LocalDateTime;
 import kakao.rebit.challenge.dto.AuthorResponse;
 import kakao.rebit.challenge.dto.ChallengeVerificationRequest;
 import kakao.rebit.challenge.dto.ChallengeVerificationResponse;
@@ -57,6 +58,11 @@ public class ChallengeVerificationService {
             ChallengeVerificationRequest challengeVerificationRequest) {
         Member member = memberService.findMemberByIdOrThrow(memberResponse.id());
         Challenge challenge = challengeService.findChallengeByIdOrThrow(challengeId);
+
+        if (!challenge.isOngoing(LocalDateTime.now())) {
+            throw new IllegalArgumentException("챌린지가 진행 중에만 인증글을 작성할 수 있습니다.");
+        }
+
         ChallengeParticipation challengeParticipation = challengeParticipationService.findChallengeParticipationByMemberAndChallengeOrThrow(
                 member, challenge);
 
