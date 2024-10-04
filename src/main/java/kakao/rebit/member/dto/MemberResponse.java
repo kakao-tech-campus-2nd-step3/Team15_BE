@@ -7,6 +7,7 @@ public record MemberResponse(
         String nickname,
         String imageUrl,
         String bio,
+        String email,
         Role role,
         Integer point
 ) {
