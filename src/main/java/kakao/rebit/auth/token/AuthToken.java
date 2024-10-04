@@ -1,4 +1,4 @@
-package kakao.rebit.auth.Token;
+package kakao.rebit.auth.token;
 
 public class AuthToken {
 

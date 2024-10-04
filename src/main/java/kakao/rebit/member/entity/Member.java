@@ -35,7 +35,8 @@ public class Member extends BaseEntity {
     protected Member() {
     }
 
-    public Member(String nickname, String imageUrl, String bio, String email, Role role, Integer point, String kakaoToken) {
+    public Member(String nickname, String imageUrl, String bio, String email, Role role,
+        Integer point, String kakaoToken) {
         this.nickname = nickname;
         this.imageUrl = imageUrl;
         this.bio = bio;
@@ -43,6 +44,18 @@ public class Member extends BaseEntity {
         this.role = role;
         this.point = point;
         this.kakaoToken = kakaoToken;
+    }
+
+    public void updateProfile(String nickname, String bio, String imageUrl) {
+        this.nickname = nickname;
+        this.bio = bio;
+        this.imageUrl = imageUrl;
+    }
+
+    public void addPoints(Integer additionalPoints) {
+        if (additionalPoints != null && additionalPoints > 0) {
+            this.point += additionalPoints;
+        }
     }
 
     public Long getId() {
@@ -76,4 +89,5 @@ public class Member extends BaseEntity {
     public String getKakaoToken() {
         return kakaoToken;
     }
+
 }
