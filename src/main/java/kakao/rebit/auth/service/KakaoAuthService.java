@@ -1,5 +1,6 @@
 package kakao.rebit.auth.service;
 
+import jakarta.transaction.Transactional;
 import kakao.rebit.auth.token.AuthTokenGenerator;
 import kakao.rebit.auth.dto.KakaoUserInfo;
 import kakao.rebit.auth.dto.LoginResponse;
@@ -9,8 +10,6 @@ import kakao.rebit.member.entity.Role;
 import kakao.rebit.member.repository.MemberRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.util.Optional;
 
 @Service
 public class KakaoAuthService {
@@ -33,25 +32,37 @@ public class KakaoAuthService {
 
         // 2. 받은 액세스 토큰으로 유저 정보를 가져옴
         KakaoUserInfo userInfo = kakaoApiClient.getUserInfo(accessToken);
-        Long kakaoId = userInfo.id();
-        String nickname = userInfo.properties().nickname();
+
+        // 3. 회원 조회 또는 생성 메서드 호출
+        Member member = findOrCreateMemberByEmail(userInfo, accessToken);
+
+        // 4. JWT 토큰 생성
+        AuthToken tokens = generateAuthToken(member);
+
+        return new LoginResponse(tokens);
+    }
+
+    @Transactional
+    public Member findOrCreateMemberByEmail(KakaoUserInfo userInfo, String accessToken) {
         String email = userInfo.kakaoAccount().email();
 
-        // 3. 카카오 이메일로 기존 유저 조회
-        Optional<Member> memberOptional = memberRepository.findByEmail(email);
+        // 이메일로 회원을 조회하고 없으면 새로운 회원 생성
+        return memberRepository.findByEmail(email)
+            .orElseGet(() -> newMember(userInfo, accessToken, email));
+    }
 
-        Member member = memberOptional.orElseGet(() -> {
-            // 회원이 없으면 회원가입 처리, 기본 Role은 ROLE_USER로 설정
-            Member newMember = new Member(nickname, "", "", email, Role.ROLE_USER, 0, accessToken);
-            memberRepository.save(newMember);
-            return newMember;
-        });
+    private Member newMember(KakaoUserInfo userInfo, String accessToken, String email) {
+        // 사용자 정보를 바탕으로 새로운 회원 생성
+        String nickname = userInfo.properties().nickname();
+        Member newMember = new Member(nickname, "", "", email, Role.ROLE_USER, 0, accessToken);
+        return memberRepository.save(newMember);
+    }
 
-        // 4. 자체 JWT 토큰 생성
-        AuthToken tokens = authTokensGenerator.generate(member.getId().toString(),
-            member.getEmail(), member.getRole().name());
-
-        // 5. 로그인 응답 반환
-        return new LoginResponse(tokens);
+    private AuthToken generateAuthToken(Member member) {
+        return authTokensGenerator.generate(
+            member.getId().toString(),
+            member.getEmail(),
+            member.getRole().name()
+        );
     }
 }
