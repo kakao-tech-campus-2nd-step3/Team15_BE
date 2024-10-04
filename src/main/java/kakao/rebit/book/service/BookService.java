@@ -4,9 +4,10 @@ import java.util.List;
 import java.util.stream.Collectors;
 import kakao.rebit.book.dto.AladinApiResponseListResponse;
 import kakao.rebit.book.dto.AladinApiResponseResponse;
+import kakao.rebit.book.dto.BookResponse;
 import kakao.rebit.book.entity.Book;
+import kakao.rebit.book.mapper.BookMapper;
 import kakao.rebit.book.repository.BookRepository;
-import kakao.rebit.feed.dto.response.BookResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,7 +25,7 @@ public class BookService {
     @Transactional(readOnly = true)
     public List<BookResponse> getAllBooks() {
         return bookRepository.findAll().stream()
-            .map(this::toBookResponse)
+            .map(BookMapper::toBookResponse)
             .collect(Collectors.toList());
     }
 
@@ -35,58 +36,37 @@ public class BookService {
 
         List<Book> savedBooks = bookList.item().stream()
             .filter(book -> bookRepository.findByIsbn(book.isbn()).isEmpty())
-            .map(this::toBookEntity)
+            .map(BookMapper::toBookEntity)
             .map(bookRepository::save)
             .toList();
 
         return savedBooks.stream()
-            .map(this::toBookResponse)
+            .map(BookMapper::toBookResponse)
             .collect(Collectors.toList());
     }
 
     @Transactional
-    public BookResponse searchAndSaveBookByIsbn(String isbn) {
+    public Book searchAndSaveBookByIsbn(String isbn) {
         AladinApiResponseResponse bookResponse = aladinApiService.searchBookByIsbn(isbn);
-        Book book = bookRepository.findByIsbn(bookResponse.isbn())
+        return bookRepository.findByIsbn(bookResponse.isbn())
             .orElseGet(() -> saveBook(bookResponse));
-        return toBookResponse(book);
     }
 
     @Transactional
     public BookResponse getBookDetail(String isbn) {
+        Book book = findByIsbnOrThrow(isbn);
+        return BookMapper.toBookResponse(book);
+    }
+
+    @Transactional
+    private Book findByIsbnOrThrow(String isbn) {
         return bookRepository.findByIsbn(isbn)
-            .map(this::toBookResponse)
             .orElseGet(() -> searchAndSaveBookByIsbn(isbn));
-    }
-
-    private BookResponse toBookResponse(Book book) {
-        return new BookResponse(
-            book.getId(),
-            book.getIsbn(),
-            book.getTitle(),
-            book.getAuthor(),
-            book.getCover(),
-            book.getDescription(),
-            book.getPublisher(),
-            book.getPubDate()
-        );
-    }
-
-    private Book toBookEntity(AladinApiResponseResponse response) {
-        return new Book(
-            response.isbn(),
-            response.title(),
-            response.description(),
-            response.author(),
-            response.publisher(),
-            response.cover(),
-            response.pubDate()
-        );
     }
 
     @Transactional
     private Book saveBook(AladinApiResponseResponse bookResponse) {
-        return bookRepository.save(toBookEntity(bookResponse));
+        return bookRepository.save(BookMapper.toBookEntity(bookResponse));
     }
 
     @Transactional(readOnly = true)
