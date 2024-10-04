@@ -6,13 +6,14 @@ public abstract class FeedResponse {
     private AuthorResponse author;
     private BookResponse book;
     private String type;
+    private int likes;
 
-    public FeedResponse(Long id, AuthorResponse author, BookResponse book,
-            String type) {
+    public FeedResponse(Long id, AuthorResponse author, BookResponse book, String type, int likes) {
         this.id = id;
         this.author = author;
         this.book = book;
         this.type = type;
+        this.likes = likes;
     }
 
     public Long getId() {
@@ -29,5 +30,9 @@ public abstract class FeedResponse {
 
     public String getType() {
         return type;
+    }
+
+    public int getLikes() {
+        return likes;
     }
 }

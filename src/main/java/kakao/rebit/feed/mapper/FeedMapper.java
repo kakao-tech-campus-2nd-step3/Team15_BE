@@ -52,7 +52,7 @@ public class FeedMapper {
                 favoriteBook.getId(),
                 this.toAuthorResponse(favoriteBook.getMember()),
                 this.toBookResponse(favoriteBook.getBook()),
-                favoriteBook.getType(), favoriteBook.getBriefReview(),
+                favoriteBook.getType(), favoriteBook.getLikes(), favoriteBook.getBriefReview(),
                 favoriteBook.getFullReview());
     }
 
@@ -62,6 +62,7 @@ public class FeedMapper {
                 this.toAuthorResponse(magazine.getMember()),
                 this.toBookResponse(magazine.getBook()),
                 magazine.getType(),
+                magazine.getLikes(),
                 magazine.getName(),
                 magazine.getImageUrl(),
                 magazine.getContent()
@@ -74,6 +75,7 @@ public class FeedMapper {
                 this.toAuthorResponse(story.getMember()),
                 this.toBookResponse(story.getBook()),
                 story.getType(),
+                story.getLikes(),
                 story.getImageUrl(),
                 story.getContent()
         );
