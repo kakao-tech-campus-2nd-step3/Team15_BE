@@ -18,15 +18,17 @@ public class MemberService {
     }
 
     // 포인트 조회
+    @Transactional(readOnly = true)
     public Integer getPoints(String email) {
-        Member member = findMemberByEmail(email);
+        Member member = findMemberByEmailOrThrow(email);
         return member.getPoint();
     }
 
     // 포인트 충전
+    @Transactional
     public void chargePoints(String email, Integer points) {
-        Member member = findMemberByEmail(email);
-        member.setPoint(member.getPoint() + points);
+        Member member = findMemberByEmailOrThrow(email);
+        member.addPoints(member.getPoint() + points);
         memberRepository.save(member);
     }
 
@@ -42,7 +44,7 @@ public class MemberService {
     }
 
     @Transactional(readOnly = true)
-    public Member findMemberByEmail(String email) {
+    public Member findMemberByEmailOrThrow(String email) {
         return memberRepository.findByEmail(email)
             .orElseThrow(
                 () -> new IllegalArgumentException("Member with email " + email + " not found"));
@@ -51,19 +53,15 @@ public class MemberService {
     @Transactional
     public Member updateMember(Long memberId, MemberRequest memberRequest) {
         Member member = findMemberByIdOrThrow(memberId);
-        member.setNickname(memberRequest.getNickname());
-        member.setBio(memberRequest.getBio());
-        member.setImageUrl(memberRequest.getImageUrl());
-        member.setPoint(memberRequest.getPoint());
+        member.updateProfile(memberRequest.nickname(), memberRequest.bio(), memberRequest.imageUrl());
+        member.addPoints(memberRequest.point());
         return memberRepository.save(member);
     }
 
     @Transactional
     public Member updateMyMember(String email, MemberRequest memberRequest) {
-        Member member = findMemberByEmail(email);
-        member.setNickname(memberRequest.getNickname());
-        member.setBio(memberRequest.getBio());
-        member.setImageUrl(memberRequest.getImageUrl());
+        Member member = findMemberByEmailOrThrow(email);
+        member.updateProfile(memberRequest.nickname(), memberRequest.bio(), memberRequest.imageUrl());
         return memberRepository.save(member);
     }
 
