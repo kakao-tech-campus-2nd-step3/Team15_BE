@@ -46,25 +46,18 @@ public class BookService {
     }
 
     @Transactional
+    public BookResponse getBookDetail(String isbn) {
+        Book book = searchAndSaveBookByIsbn(isbn);
+        return BookMapper.toBookResponse(book);
+    }
+
+    @Transactional
     public Book searchAndSaveBookByIsbn(String isbn) {
         AladinApiResponseResponse bookResponse = aladinApiService.searchBookByIsbn(isbn);
         return bookRepository.findByIsbn(bookResponse.isbn())
             .orElseGet(() -> saveBook(bookResponse));
     }
 
-    @Transactional
-    public BookResponse getBookDetail(String isbn) {
-        Book book = findByIsbnOrThrow(isbn);
-        return BookMapper.toBookResponse(book);
-    }
-
-    @Transactional
-    private Book findByIsbnOrThrow(String isbn) {
-        return bookRepository.findByIsbn(isbn)
-            .orElseGet(() -> searchAndSaveBookByIsbn(isbn));
-    }
-
-    @Transactional
     private Book saveBook(AladinApiResponseResponse bookResponse) {
         return bookRepository.save(BookMapper.toBookEntity(bookResponse));
     }
