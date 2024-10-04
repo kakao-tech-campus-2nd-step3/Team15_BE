@@ -37,7 +37,7 @@ public class KakaoAuthController {
 
     @GetMapping("/login/oauth/kakao")
     @ResponseBody
-    public LoginResponse kakaoLogin(@RequestParam String code) {
+    public LoginResponse kakaoLogin(@RequestParam("code") String code) {
 
         return kakaoAuthService.kakaoLogin(code);
     }

@@ -3,6 +3,8 @@ package kakao.rebit.feed.entity;
 import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;
 import kakao.rebit.book.entity.Book;
+import kakao.rebit.feed.dto.request.update.UpdateFeedRequest;
+import kakao.rebit.feed.dto.request.update.UpdateStoryRequest;
 import kakao.rebit.member.entity.Member;
 
 @Entity
@@ -20,6 +22,12 @@ public class Story extends Feed {
         super(member, book);
         this.imageUrl = imageUrl;
         this.content = content;
+    }
+
+    @Override
+    public void updateAllExceptBook(UpdateFeedRequest feedRequest) {
+        this.imageUrl = ((UpdateStoryRequest) feedRequest).getImageUrl();
+        this.content = ((UpdateStoryRequest) feedRequest).getContent();
     }
 
     public String getImageUrl() {

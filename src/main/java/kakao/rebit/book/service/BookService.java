@@ -1,13 +1,15 @@
 package kakao.rebit.book.service;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import java.io.IOException;
 import java.util.List;
-import java.util.Map;
+import java.util.stream.Collectors;
+import kakao.rebit.book.dto.AladinApiResponseListResponse;
+import kakao.rebit.book.dto.AladinApiResponseResponse;
+import kakao.rebit.book.dto.BookResponse;
 import kakao.rebit.book.entity.Book;
+import kakao.rebit.book.mapper.BookMapper;
 import kakao.rebit.book.repository.BookRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class BookService {
@@ -20,75 +22,48 @@ public class BookService {
         this.aladinApiService = aladinApiService;
     }
 
-    public List<Book> getAllBooks() {
-        return bookRepository.findAll();
+    @Transactional(readOnly = true)
+    public List<BookResponse> getAllBooks() {
+        return bookRepository.findAll().stream()
+            .map(BookMapper::toBookResponse)
+            .collect(Collectors.toList());
     }
 
-    public String searchAndSaveBooksByTitle(String title) {
-        String apiResponse = aladinApiService.searchBookByTitle(title);
-        List<Book> books = parseBooks(apiResponse);
-        books.stream()
-            .filter(book -> bookRepository.findByIsbn(book.getIsbn()).isEmpty())
-            .forEach(bookRepository::save);
-        return apiResponse;
+    // 책 타이틀로 검색 후 저장
+    @Transactional
+    public List<BookResponse> searchAndSaveBooksByTitle(String title) {
+        AladinApiResponseListResponse bookList = aladinApiService.searchBooksByTitle(title);
+
+        List<Book> savedBooks = bookList.item().stream()
+            .filter(book -> bookRepository.findByIsbn(book.isbn()).isEmpty())
+            .map(BookMapper::toBookEntity)
+            .map(bookRepository::save)
+            .toList();
+
+        return savedBooks.stream()
+            .map(BookMapper::toBookResponse)
+            .collect(Collectors.toList());
     }
 
-    public Book searchAndSaveBookByIsbn(String isbn) {
-        String apiResponse = aladinApiService.searchBookByIsbn(isbn);
-        Book book = parseBookDetail(apiResponse);
-        Book savedBook = bookRepository.findByIsbn(book.getIsbn())
-            .orElseGet(() -> {
-                return bookRepository.save(book);
-            });
-        return savedBook;
+    @Transactional
+    public BookResponse getBookDetail(String isbn) {
+        Book book = searchAndSaveBookByIsbn(isbn);
+        return BookMapper.toBookResponse(book);
     }
 
-    public Book getBookDetail(String isbn) {
-        return bookRepository.findByIsbn(isbn)
-            .orElseGet(() -> searchAndSaveBookByIsbn(isbn));
+    private Book searchAndSaveBookByIsbn(String isbn) {
+        AladinApiResponseResponse bookResponse = aladinApiService.searchBookByIsbn(isbn);
+        return bookRepository.findByIsbn(bookResponse.isbn())
+            .orElseGet(() -> saveBook(bookResponse));
     }
 
-    private List<Book> parseBooks(String apiResponse) {
-        ObjectMapper objectMapper = new ObjectMapper();
-        try {
-            Map<String, Object> responseMap = objectMapper.readValue(apiResponse,
-                new TypeReference<Map<String, Object>>() {
-                });
-            return objectMapper.convertValue(responseMap.get("item"),
-                new TypeReference<List<Book>>() {
-                });
-        } catch (IOException e) {
-            throw new RuntimeException("API 응답에서 책 데이터를 파싱하는 데 실패했습니다", e);
-        }
+    private Book saveBook(AladinApiResponseResponse bookResponse) {
+        return bookRepository.save(BookMapper.toBookEntity(bookResponse));
     }
 
-    private Book parseBookDetail(String apiResponse) {
-        ObjectMapper objectMapper = new ObjectMapper();
-        try {
-            Map<String, Object> responseMap = objectMapper.readValue(apiResponse,
-                new TypeReference<Map<String, Object>>() {
-                });
-
-            // 알라딘  api 에서 책 관련 정보는 'item' 필드 배열로 반환되어 전송 됨
-            List<Map<String, Object>> items = (List<Map<String, Object>>) responseMap.get("item");
-
-            if (items == null || items.isEmpty()) {
-                throw new RuntimeException("API 응답에 책 정보가 없습니다.");
-            }
-
-            Map<String, Object> item = items.get(0);
-
-            String isbn = (String) item.get("isbn");
-            String title = (String) item.get("title");
-            String description = (String) item.get("description");
-            String author = (String) item.get("author");
-            String publisher = (String) item.get("publisher");
-            String imageUrl = (String) item.get("cover");
-
-            return new Book(isbn, title, description, author, publisher, imageUrl);
-
-        } catch (IOException e) {
-            throw new RuntimeException("API 응답에서 책 상세 정보를 파싱하는 데 실패했습니다", e);
-        }
+    @Transactional(readOnly = true)
+    public Book findBookByIdOrThrow(Long bookId) {
+        return bookRepository.findById(bookId)
+            .orElseThrow(() -> new IllegalArgumentException("해당 책이 존재하지 않습니다."));
     }
 }

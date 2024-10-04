@@ -61,7 +61,7 @@ public class Challenge extends BaseEntity {
     private HeadcountLimit headcountLimit;
 
     @Basic(fetch = FetchType.LAZY)
-    @Formula("(SELECT COUNT(1) FROM challenge_participant cp WHERE cp.challenge_id = id)")
+    @Formula("(SELECT COUNT(1) FROM challenge_participation cp WHERE cp.challenge_id = id)")
     private int currentHeadcount;
 
     protected Challenge() {
@@ -125,19 +125,27 @@ public class Challenge extends BaseEntity {
         return currentHeadcount;
     }
 
+    public boolean isHostedBy(Member member) {
+        return this.member.equals(member);
+    }
+
     public boolean isRecruiting(LocalDateTime now) {
         return recruitmentPeriod.contains(now);
     }
 
-    public boolean isInProgress(LocalDateTime now) {
+    public boolean canBeDeleted(LocalDateTime now) {
+        return !isOngoing(now) && !isCompleted(now);
+    }
+
+    public boolean isOngoing(LocalDateTime now) {
         return challengePeriod.contains(now);
     }
 
-    public boolean isCompleted(LocalDateTime now) {
+    private boolean isCompleted(LocalDateTime now) {
         return challengePeriod.isAfter(now);
     }
 
-    public boolean isWithinHeadcountLimit(int currentHeadcount) {
-        return headcountLimit.isWithinLimit(currentHeadcount);
+    public boolean isFull() {
+        return headcountLimit.isFull(currentHeadcount);
     }
 }

@@ -51,7 +51,8 @@ public class ChallengeController {
 
     @DeleteMapping("/{challenge-id}")
     public ResponseEntity<Void> deleteChallenge(@PathVariable("challenge-id") Long challengeId) {
-        challengeService.deleteChallengeById(challengeId);
+        MemberResponse memberResponse = new MemberResponse(1L, "testUser", "imageUrl", "bio", Role.ROLE_USER, 10000);
+        challengeService.deleteChallengeById(memberResponse, challengeId);
         return ResponseEntity.noContent().build();
     }
 }

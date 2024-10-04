@@ -1,17 +1,11 @@
 package kakao.rebit.auth.dto;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.PropertyNamingStrategies;
+import com.fasterxml.jackson.databind.annotation.JsonNaming;
 
-public record KakaoUserInfo(
-    @JsonProperty("id") Long id,
-    @JsonProperty("kakao_account") KakaoAccount kakaoAccount,
-    @JsonProperty("properties") Properties properties
-) {
-    public record KakaoAccount(
-        @JsonProperty("email") String email
-    ) {}
+@JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
+public record KakaoUserInfo(Long id, KakaoAccount kakaoAccount, Properties properties) {
+    public record KakaoAccount(String email) {}
 
-    public record Properties(
-        @JsonProperty("nickname") String nickname
-    ) {}
+    public record Properties(String nickname) {}
 }
