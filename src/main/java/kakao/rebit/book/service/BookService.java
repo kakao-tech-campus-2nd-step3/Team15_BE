@@ -51,8 +51,7 @@ public class BookService {
         return BookMapper.toBookResponse(book);
     }
 
-    @Transactional
-    public Book searchAndSaveBookByIsbn(String isbn) {
+    private Book searchAndSaveBookByIsbn(String isbn) {
         AladinApiResponseResponse bookResponse = aladinApiService.searchBookByIsbn(isbn);
         return bookRepository.findByIsbn(bookResponse.isbn())
             .orElseGet(() -> saveBook(bookResponse));
