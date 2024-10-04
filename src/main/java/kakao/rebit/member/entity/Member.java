@@ -46,6 +46,18 @@ public class Member extends BaseEntity {
         this.kakaoToken = kakaoToken;
     }
 
+    public void updateProfile(String nickname, String bio, String imageUrl) {
+        this.nickname = nickname;
+        this.bio = bio;
+        this.imageUrl = imageUrl;
+    }
+
+    public void addPoints(Integer additionalPoints) {
+        if (additionalPoints != null && additionalPoints > 0) {
+            this.point += additionalPoints;
+        }
+    }
+
     public Long getId() {
         return id;
     }
@@ -76,22 +88,6 @@ public class Member extends BaseEntity {
 
     public String getKakaoToken() {
         return kakaoToken;
-    }
-
-    public void setNickname(String nickname) {
-        this.nickname = nickname;
-    }
-
-    public void setBio(String bio) {
-        this.bio = bio;
-    }
-
-    public void setImageUrl(String imageUrl) {
-        this.imageUrl = imageUrl;
-    }
-
-    public void setPoint(Integer point) {
-        this.point = point;
     }
 
 }
