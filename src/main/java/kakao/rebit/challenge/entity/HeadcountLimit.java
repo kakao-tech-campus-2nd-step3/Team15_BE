@@ -26,8 +26,8 @@ public class HeadcountLimit {
         return maxHeadcount;
     }
 
-    public boolean isWithinLimit(int currentHeadcount) {
-        return currentHeadcount >= minHeadcount && currentHeadcount <= maxHeadcount;
+    public boolean isFull(int currentHeadcount) {
+        return currentHeadcount >= maxHeadcount;
     }
 
     @Override

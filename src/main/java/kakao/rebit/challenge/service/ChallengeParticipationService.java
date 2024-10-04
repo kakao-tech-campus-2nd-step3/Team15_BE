@@ -46,6 +46,12 @@ public class ChallengeParticipationService {
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 참여 정보입니다."));
     }
 
+    @Transactional(readOnly = true)
+    public ChallengeParticipation findChallengeParticipationByMemberAndChallengeOrThrow(Member member, Challenge challenge) {
+        return challengeParticipationRepository.findByMemberAndChallenge(member, challenge)
+                .orElseThrow(() -> new IllegalArgumentException("참여 정보가 존재하지 않습니다."));
+    }
+
     @Transactional
     public Long createChallengeParticipation(MemberResponse memberResponse, Long challengeId, ChallengeParticipationRequest challengeParticipationRequest) {
         Member member = memberService.findMemberByIdOrThrow(memberResponse.id());
@@ -55,18 +61,20 @@ public class ChallengeParticipationService {
         validateChallengeParticipation(member, challenge, entryFee);
 
         ChallengeParticipation challengeParticipation = toChallengeParticipation(member, challenge, entryFee);
-        challengeParticipationRepository.save(challengeParticipation);
-
-        return challengeParticipation.getId();
+        return challengeParticipationRepository.save(challengeParticipation).getId();
     }
 
     private void validateChallengeParticipation(Member member, Challenge challenge, Integer entryFee) {
+        if (challengeParticipationRepository.existsByMemberAndChallenge(member, challenge)) {
+            throw new IllegalArgumentException("이미 참여한 챌린지입니다.");
+        }
+
         if (!challenge.isRecruiting(LocalDateTime.now())) {
             throw new IllegalArgumentException("모집 기간이 아닙니다.");
         }
 
-        if (challengeParticipationRepository.existsByMemberAndChallenge(member, challenge)) {
-            throw new IllegalArgumentException("이미 참여한 챌린지입니다.");
+        if (challenge.isFull()) {
+            throw new IllegalArgumentException("모집 인원이 다 찼습니다.");
         }
 
         if (entryFee > member.getPoint()) {
