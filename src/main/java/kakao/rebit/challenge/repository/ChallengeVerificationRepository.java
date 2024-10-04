@@ -16,6 +16,6 @@ public interface ChallengeVerificationRepository extends JpaRepository<Challenge
     @Query("SELECT cv FROM ChallengeVerification cv WHERE cv.challengeParticipation.challenge = :challenge")
     Page<ChallengeVerification> findAllByChallengeWithParticipants(@Param("challenge") Challenge challenge, Pageable pageable);
 
-    @EntityGraph(attributePaths = {"challengeParticipation", "challengeParticipation.member", "challengeParticipation.challenge"})
+    @EntityGraph(attributePaths = {"challengeParticipation", "challengeParticipation.member"})
     Optional<ChallengeVerification> findByIdAndChallengeParticipation_Challenge(Long verificationId, Challenge challenge);
 }
