@@ -1,8 +1,8 @@
 package kakao.rebit.challenge.service;
 
 import java.time.LocalDateTime;
-import kakao.rebit.challenge.dto.ChallengeParticipationRequest;
 import kakao.rebit.challenge.dto.ChallengeParticipationMemberResponse;
+import kakao.rebit.challenge.dto.ChallengeParticipationRequest;
 import kakao.rebit.challenge.entity.Challenge;
 import kakao.rebit.challenge.entity.ChallengeParticipation;
 import kakao.rebit.challenge.repository.ChallengeParticipationRepository;

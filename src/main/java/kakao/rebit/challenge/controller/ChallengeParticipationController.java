@@ -1,11 +1,11 @@
 package kakao.rebit.challenge.controller;
 
 import java.net.URI;
-import kakao.rebit.challenge.dto.ChallengeParticipationRequest;
 import kakao.rebit.challenge.dto.ChallengeParticipationMemberResponse;
+import kakao.rebit.challenge.dto.ChallengeParticipationRequest;
 import kakao.rebit.challenge.service.ChallengeParticipationService;
+import kakao.rebit.member.annotation.MemberInfo;
 import kakao.rebit.member.dto.MemberResponse;
-import kakao.rebit.member.entity.Role;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -45,18 +45,18 @@ public class ChallengeParticipationController {
 
     @PostMapping
     public ResponseEntity<Void> createChallengeParticipation(
+            @MemberInfo MemberResponse memberResponse,
             @PathVariable("challenge-id") Long challengeId,
             @RequestBody ChallengeParticipationRequest participationRequest) {
-        MemberResponse memberResponse = new MemberResponse(1L, "testUser", "imageUrl", "bio", Role.ROLE_USER, 10000);
         Long challengeParticipantId = challengeParticipationService.createChallengeParticipation(memberResponse, challengeId, participationRequest);
         return ResponseEntity.created(URI.create("/challenges/" + challengeId + "/participants/" + challengeParticipantId)).build();
     }
 
     @DeleteMapping("/{participation-id}")
     public ResponseEntity<Void> cancelParticipation(
+            @MemberInfo MemberResponse memberResponse,
             @PathVariable("challenge-id") Long challengeId,    // challenge-id는 사용되지 않지만 URL 일관성을 위해 유지
             @PathVariable("participation-id") Long participationId) {
-        MemberResponse memberResponse = new MemberResponse(1L, "testUser", "imageUrl", "bio", Role.ROLE_USER, 10000);
         challengeParticipationService.cancelParticipation(memberResponse, participationId);
         return ResponseEntity.noContent().build();
     }

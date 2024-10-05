@@ -1,5 +1,6 @@
 package kakao.rebit.member.resolver;
 
+import jakarta.servlet.http.HttpServletRequest;
 import kakao.rebit.member.annotation.MemberInfo;
 import kakao.rebit.member.dto.MemberResponse;
 import kakao.rebit.member.entity.Member;
@@ -11,8 +12,6 @@ import org.springframework.web.bind.support.WebDataBinderFactory;
 import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.method.support.ModelAndViewContainer;
-
-import jakarta.servlet.http.HttpServletRequest;
 
 @Component
 public class MemberInfoArgumentResolver implements HandlerMethodArgumentResolver {

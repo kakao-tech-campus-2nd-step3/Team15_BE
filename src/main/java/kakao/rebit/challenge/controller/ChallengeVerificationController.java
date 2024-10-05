@@ -4,8 +4,8 @@ import java.net.URI;
 import kakao.rebit.challenge.dto.ChallengeVerificationRequest;
 import kakao.rebit.challenge.dto.ChallengeVerificationResponse;
 import kakao.rebit.challenge.service.ChallengeVerificationService;
+import kakao.rebit.member.annotation.MemberInfo;
 import kakao.rebit.member.dto.MemberResponse;
-import kakao.rebit.member.entity.Role;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -45,19 +45,19 @@ public class ChallengeVerificationController {
 
     @PostMapping
     public ResponseEntity<Void> createChallengeVerification(
+            @MemberInfo MemberResponse memberResponse,
             @PathVariable("challenge-id") Long challengeId,
             @RequestBody ChallengeVerificationRequest challengeVerificationRequest) {
-        MemberResponse memberResponse = new MemberResponse(1L, "testUser", "imageUrl", "bio", Role.ROLE_USER, 10000);
-        Long verificationId = challengeVerificationService.createChallengeVerification(memberResponse, challengeId,
+       Long verificationId = challengeVerificationService.createChallengeVerification(memberResponse, challengeId,
                 challengeVerificationRequest);
         return ResponseEntity.created(URI.create("/challenges/" + challengeId + "/verifications/" + verificationId)).build();
     }
 
     @DeleteMapping("/{verification-id}")
     public ResponseEntity<Void> deleteChallengeVerification(
+            @MemberInfo MemberResponse memberResponse,
             @PathVariable("challenge-id") Long challengeId,
             @PathVariable("verification-id") Long verificationId) {
-        MemberResponse memberResponse = new MemberResponse(1L, "testUser", "imageUrl", "bio", Role.ROLE_USER, 10000);
         challengeVerificationService.deleteChallengeVerification(memberResponse, challengeId, verificationId);
         return ResponseEntity.noContent().build();
     }

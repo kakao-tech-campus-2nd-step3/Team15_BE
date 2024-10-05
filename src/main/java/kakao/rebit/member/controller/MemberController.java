@@ -4,11 +4,19 @@ import java.util.List;
 import kakao.rebit.member.annotation.MemberInfo;
 import kakao.rebit.member.dto.ChargePointRequest;
 import kakao.rebit.member.dto.MemberRequest;
-import kakao.rebit.member.dto.MemberInfoDto;
+import kakao.rebit.member.dto.MemberResponse;
 import kakao.rebit.member.entity.Member;
+import kakao.rebit.member.entity.Role;
 import kakao.rebit.member.service.MemberService;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/members")
@@ -22,70 +30,70 @@ public class MemberController {
 
     // 사용자 자신의 포인트 조회
     @GetMapping("/points")
-    public ResponseEntity<Integer> getMyPoints(@MemberInfo MemberInfoDto memberInfo) {
-        Integer points = memberService.getPoints(memberInfo.getEmail());
+    public ResponseEntity<Integer> getMyPoints(@MemberInfo MemberResponse memberResponse) {
+        Integer points = memberService.getPoints(memberResponse.email());
         return ResponseEntity.ok(points);
     }
 
     // 포인트 충전
     @PostMapping("/points")
-    public ResponseEntity<Void> chargePoints(@MemberInfo MemberInfoDto memberInfo, @RequestBody ChargePointRequest request) {
-        memberService.chargePoints(memberInfo.getEmail(), request.points());
+    public ResponseEntity<Void> chargePoints(@MemberInfo MemberResponse memberResponse, @RequestBody ChargePointRequest request) {
+        memberService.chargePoints(memberResponse.email(), request.points());
         return ResponseEntity.noContent().build();
     }
 
     // 사용자 자신의 정보 조회
     @GetMapping("/me")
-    public ResponseEntity<Member> getMyInfo(@MemberInfo MemberInfoDto memberInfo) {
-        Member member = memberService.findMemberByEmailOrThrow(memberInfo.getEmail());
+    public ResponseEntity<Member> getMyInfo(@MemberInfo MemberResponse memberResponse) {
+        Member member = memberService.findMemberByEmailOrThrow(memberResponse.email());
         return ResponseEntity.ok(member);
     }
 
     // 사용자 자신의 정보 수정
     @PutMapping("/me")
-    public ResponseEntity<Member> updateMyInfo(@MemberInfo MemberInfoDto memberInfo,
+    public ResponseEntity<Member> updateMyInfo(@MemberInfo MemberResponse memberResponse,
         @RequestBody MemberRequest memberRequest) {
-        Member updatedMember = memberService.updateMyMember(memberInfo.getEmail(), memberRequest);
+        Member updatedMember = memberService.updateMyMember(memberResponse.email(), memberRequest);
         return ResponseEntity.ok(updatedMember);
     }
 
     // admin & editor : 모든 사용자 조회
     @GetMapping
-    public ResponseEntity<List<Member>> getAllMembers(@MemberInfo MemberInfoDto memberInfo) {
-        authorize(memberInfo.getRole(), "ROLE_ADMIN", "ROLE_EDITOR");
+    public ResponseEntity<List<Member>> getAllMembers(@MemberInfo MemberResponse memberResponse) {
+        authorize(memberResponse.role(), Role.ROLE_EDITOR, Role.ROLE_EDITOR);
         List<Member> members = memberService.findAllMembers();
         return ResponseEntity.ok(members);
     }
 
     // admin & editor : 특정 사용자 정보 조회
     @GetMapping("/{id}")
-    public ResponseEntity<Member> getMemberById(@MemberInfo MemberInfoDto memberInfo,
+    public ResponseEntity<Member> getMemberById(@MemberInfo MemberResponse memberResponse,
         @PathVariable Long id) {
-        authorize(memberInfo.getRole(), "ROLE_ADMIN", "ROLE_EDITOR");
+        authorize(memberResponse.role(), Role.ROLE_EDITOR, Role.ROLE_EDITOR);
         Member member = memberService.findMemberByIdOrThrow(id);
         return ResponseEntity.ok(member);
     }
 
     // admin & editor : 특정 사용자 정보 수정
     @PutMapping("/{id}")
-    public ResponseEntity<Member> updateMember(@MemberInfo MemberInfoDto memberInfo,
+    public ResponseEntity<Member> updateMember(@MemberInfo MemberResponse memberResponse,
         @PathVariable Long id,
         @RequestBody MemberRequest memberRequest) {
-        authorize(memberInfo.getRole(), "ROLE_ADMIN", "ROLE_EDITOR");
+        authorize(memberResponse.role(), Role.ROLE_EDITOR, Role.ROLE_EDITOR);
         Member updatedMember = memberService.updateMember(id, memberRequest);
         return ResponseEntity.ok(updatedMember);
     }
 
     // admin & editor : 특정 사용자 삭제
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteMember(@MemberInfo MemberInfoDto memberInfo,
+    public ResponseEntity<Void> deleteMember(@MemberInfo MemberResponse memberResponse,
         @PathVariable Long id) {
-        authorize(memberInfo.getRole(), "ROLE_ADMIN", "ROLE_EDITOR");
+        authorize(memberResponse.role(), Role.ROLE_EDITOR, Role.ROLE_EDITOR);
         memberService.deleteMember(id);
         return ResponseEntity.noContent().build();
     }
 
-    private void authorize(String role, String... roles) {
+    private void authorize(Role role, Role... roles) {
         if (!List.of(roles).contains(role)) {
             throw new IllegalStateException("Unauthorized");
         }

@@ -7,8 +7,8 @@ import kakao.rebit.feed.dto.response.FeedResponse;
 import kakao.rebit.feed.dto.response.LikesMemberResponse;
 import kakao.rebit.feed.service.FeedService;
 import kakao.rebit.feed.service.LikesService;
+import kakao.rebit.member.annotation.MemberInfo;
 import kakao.rebit.member.dto.MemberResponse;
-import kakao.rebit.member.entity.Role;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -47,19 +47,15 @@ public class FeedController {
     }
 
     @PostMapping
-    public ResponseEntity<Void> createFeed(@RequestBody CreateFeedRequest feedRequest) {
-        MemberResponse memberResponse = new MemberResponse(1L, "testUser", "imageUrl", "bio",
-                Role.ROLE_USER, 10000);
+    public ResponseEntity<Void> createFeed(@MemberInfo MemberResponse memberResponse, @RequestBody CreateFeedRequest feedRequest) {
         Long feedId = feedService.createFeed(memberResponse, feedRequest);
         return ResponseEntity.created(URI.create("/feeds/" + feedId)).build();
     }
 
     @PutMapping("/{feed-id}")
-    public ResponseEntity<Void> updateFeed(@PathVariable("feed-id") Long feedId,
+    public ResponseEntity<Void> updateFeed(@MemberInfo MemberResponse memberResponse, @PathVariable("feed-id") Long feedId,
             @RequestBody UpdateFeedRequest feedRequest) {
-        MemberResponse memberResponse = new MemberResponse(1L, "testUser", "imageUrl", "bio",
-                Role.ROLE_USER, 10000);
-        feedService.updateFeed(memberResponse, feedId, feedRequest);
+       feedService.updateFeed(memberResponse, feedId, feedRequest);
         return ResponseEntity.ok().build();
     }
 
@@ -80,18 +76,14 @@ public class FeedController {
     }
 
     @PostMapping("/{feed-id}/likes")
-    public ResponseEntity<Void> creatLikes(@PathVariable("feed-id") Long feedId) {
-        MemberResponse memberResponse = new MemberResponse(1L, "testUser", "imageUrl", "bio",
-                Role.ROLE_USER, 10000);
+    public ResponseEntity<Void> creatLikes(@MemberInfo MemberResponse memberResponse, @PathVariable("feed-id") Long feedId) {
         Long likesId = likesService.createLikes(memberResponse, feedId);
         String uri = String.format("/feeds/%d/likes/%d", feedId, likesId);
         return ResponseEntity.created(URI.create(uri)).build();
     }
 
     @DeleteMapping("/{feed-id}/likes")
-    public ResponseEntity<Void> deleteLikes(@PathVariable("feed-id") Long feedId) {
-        MemberResponse memberResponse = new MemberResponse(1L, "testUser", "imageUrl", "bio",
-                Role.ROLE_USER, 10000);
+    public ResponseEntity<Void> deleteLikes(@MemberInfo MemberResponse memberResponse, @PathVariable("feed-id") Long feedId) {
         likesService.deleteLikes(memberResponse, feedId);
         return ResponseEntity.noContent().build();
     }
