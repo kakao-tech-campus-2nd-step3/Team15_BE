@@ -1,8 +1,8 @@
 package kakao.rebit.auth.token;
 
+import java.util.Date;
 import kakao.rebit.auth.jwt.JwtTokenProvider;
 import org.springframework.stereotype.Component;
-import java.util.Date;
 
 @Component
 public class AuthTokenGenerator {
