@@ -1,12 +1,11 @@
 package kakao.rebit.member.service;
 
+import java.util.List;
 import kakao.rebit.member.dto.MemberRequest;
 import kakao.rebit.member.entity.Member;
 import kakao.rebit.member.repository.MemberRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 @Service
 public class MemberService {

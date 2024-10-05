@@ -2,6 +2,7 @@ package kakao.rebit.auth.service;
 
 import java.util.Objects;
 import kakao.rebit.auth.dto.KakaoToken;
+import kakao.rebit.auth.dto.KakaoUserInfo;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -10,7 +11,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestClient;
-import kakao.rebit.auth.dto.KakaoUserInfo;
 
 @Service
 public class KakaoApiClient {
