@@ -6,8 +6,8 @@ public class StoryResponse extends FeedResponse {
     private String content;
 
     public StoryResponse(Long id, AuthorResponse author, FeedBookResponse book,
-            String type, String imageUrl, String content) {
-        super(id, author, book, type);
+            String type, int likes, String imageUrl, String content) {
+        super(id, author, book, type, likes);
         this.imageUrl = imageUrl;
         this.content = content;
     }

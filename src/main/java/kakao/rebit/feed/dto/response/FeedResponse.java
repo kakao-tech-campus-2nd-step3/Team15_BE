@@ -9,7 +9,7 @@ public abstract class FeedResponse {
     private int likes;
 
     public FeedResponse(Long id, AuthorResponse author, FeedBookResponse book,
-            String type) {
+            String type, int likes) {
         this.id = id;
         this.author = author;
         this.book = book;
