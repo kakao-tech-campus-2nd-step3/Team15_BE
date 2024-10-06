@@ -3,6 +3,7 @@ package kakao.rebit.feed.controller;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import java.net.URI;
 import kakao.rebit.feed.dto.request.create.CreateFeedRequest;
 import kakao.rebit.feed.dto.request.update.UpdateFeedRequest;
@@ -56,7 +57,7 @@ public class FeedController {
     @PostMapping
     public ResponseEntity<Void> createFeed(
             @Parameter(hidden = true) @MemberInfo MemberResponse memberResponse,
-            @RequestBody CreateFeedRequest feedRequest) {
+            @Valid @RequestBody CreateFeedRequest feedRequest) {
         Long feedId = feedService.createFeed(memberResponse, feedRequest);
         return ResponseEntity.created(URI.create("/feeds/" + feedId)).build();
     }
@@ -66,7 +67,7 @@ public class FeedController {
     public ResponseEntity<Void> updateFeed(
             @Parameter(hidden = true) @MemberInfo MemberResponse memberResponse,
             @PathVariable("feed-id") Long feedId,
-            @RequestBody UpdateFeedRequest feedRequest) {
+            @Valid @RequestBody UpdateFeedRequest feedRequest) {
         feedService.updateFeed(memberResponse, feedId, feedRequest);
         return ResponseEntity.ok().build();
     }
