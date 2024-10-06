@@ -27,8 +27,14 @@ public class LikesService {
     }
 
     @Transactional(readOnly = true)
-    public Page<LikesMemberResponse> getLikesMembers(Long feedId, Pageable pageable) {
+    public Page<LikesMemberResponse> getLikesMembers(MemberResponse memberResponse, Long feedId,
+            Pageable pageable) {
+        Member member = memberService.findMemberByIdOrThrow(memberResponse.id());
         Feed feed = feedService.findFeedByIdOrThrow(feedId);
+
+        if (!feed.isWrittenBy(member)) {
+            throw new IllegalArgumentException("피드 작성자만 좋아요 누른 유저들을 확인할 수 있습니다.");
+        }
         return likesRepository.findAllByFeedWithMember(feed, pageable)
                 .map(this::toLikesMemberResponse);
     }
@@ -49,6 +55,10 @@ public class LikesService {
     public void deleteLikes(MemberResponse memberResponse, Long feedId) {
         Member member = memberService.findMemberByIdOrThrow(memberResponse.id());
         Feed feed = feedService.findFeedByIdOrThrow(feedId);
+
+        if (!likesRepository.existsByMemberAndFeed(member, feed)) {
+            throw new IllegalArgumentException("좋아요 내역이 없습니다.");
+        }
 
         likesRepository.deleteByMemberAndFeed(member, feed);
     }

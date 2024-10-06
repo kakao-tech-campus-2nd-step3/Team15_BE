@@ -6,7 +6,7 @@ public class MagazineResponse extends FeedResponse {
     private String imageUrl;
     private String content;
 
-    public MagazineResponse(Long id, AuthorResponse author, FeedBookResponse book,
+    public MagazineResponse(Long id, FeedAuthorResponse author, FeedBookResponse book,
             String type, int likes, String name, String imageUrl, String content) {
         super(id, author, book, type, likes);
         this.name = name;
