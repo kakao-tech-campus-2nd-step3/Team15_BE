@@ -1,6 +1,6 @@
 package kakao.rebit.feed.dto.response;
 
-public record AuthorResponse(
+public record FeedAuthorResponse(
         Long id,
         String nickname,
         String imageUrl
