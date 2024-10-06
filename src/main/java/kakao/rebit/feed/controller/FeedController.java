@@ -73,8 +73,9 @@ public class FeedController {
 
     @Operation(summary = "피드 삭제", description = "피드를 삭제합니다.")
     @DeleteMapping("/{feed-id}")
-    public ResponseEntity<Void> deleteFeed(@PathVariable("feed-id") Long feedId) {
-        feedService.deleteFeedById(feedId);
+    public ResponseEntity<Void> deleteFeed(@MemberInfo MemberResponse memberResponse,
+            @PathVariable("feed-id") Long feedId) {
+        feedService.deleteFeedById(memberResponse, feedId);
         return ResponseEntity.noContent().build();
     }
 
@@ -84,9 +85,11 @@ public class FeedController {
     @Operation(summary = "좋아요 누른 멤버 목록 조회", description = "해당 피드에 좋아요를 누른 멤버 목록을 조회합니다.")
     @GetMapping("/{feed-id}/likes")
     public ResponseEntity<Page<LikesMemberResponse>> getLikesMembers(
+            @Parameter(hidden = true) @MemberInfo MemberResponse memberResponse,
             @PathVariable("feed-id") Long feedId,
             @PageableDefault(sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
-        return ResponseEntity.ok().body(likesService.getLikesMembers(feedId, pageable));
+        return ResponseEntity.ok()
+                .body(likesService.getLikesMembers(memberResponse, feedId, pageable));
     }
 
     @Operation(summary = "좋아요 추가", description = "좋아요를 추가합니다.")
