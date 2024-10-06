@@ -72,7 +72,7 @@ public class FeedService {
         Feed feed = findFeedByIdOrThrow(feedId);
 
         // 피드 작성자 확인
-        if (!(feed.getMember().getId().equals(member.getId()))) {
+        if (!feed.isWrittenBy(member)) {
             throw new IllegalArgumentException("본인이 올린 피드만 수정할 수 있습니다.");
         }
 
@@ -80,13 +80,20 @@ public class FeedService {
         if (feedRequest instanceof UpdateFavoriteBookRequest && feedRequest.getBookId() == null) {
             throw new IllegalArgumentException("인생책은 책이 반드시 필요합니다.");
         }
+
         Book book = findBookIfBookIdExist(feedRequest.getBookId()).orElse(null);
         feed.changeBook(book);
         feed.updateAllExceptBook(feedRequest);
     }
 
     @Transactional
-    public void deleteFeedById(Long feedId) {
+    public void deleteFeedById(MemberResponse memberResponse, Long feedId) {
+        Member member = memberService.findMemberByIdOrThrow(memberResponse.id());
+        Feed feed = findFeedByIdOrThrow(feedId);
+
+        if (!feed.isWrittenBy(member)) {
+            throw new IllegalArgumentException("본인의 글만 삭제할 수 있습니다.");
+        }
         feedRepository.deleteById(feedId);
     }
 
