@@ -3,12 +3,12 @@ package kakao.rebit.feed.dto.response;
 public abstract class FeedResponse {
 
     private Long id;
-    private AuthorResponse author;
+    private FeedAuthorResponse author;
     private FeedBookResponse book;
     private String type;
     private int likes;
 
-    public FeedResponse(Long id, AuthorResponse author, FeedBookResponse book,
+    public FeedResponse(Long id, FeedAuthorResponse author, FeedBookResponse book,
             String type, int likes) {
         this.id = id;
         this.author = author;
@@ -21,7 +21,7 @@ public abstract class FeedResponse {
         return id;
     }
 
-    public AuthorResponse getAuthor() {
+    public FeedAuthorResponse getAuthor() {
         return author;
     }
 

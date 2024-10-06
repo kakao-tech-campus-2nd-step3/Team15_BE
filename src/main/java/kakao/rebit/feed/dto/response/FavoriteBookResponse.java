@@ -5,7 +5,7 @@ public class FavoriteBookResponse extends FeedResponse {
     private String briefReview;
     private String fullReview;
 
-    public FavoriteBookResponse(Long id, AuthorResponse author, FeedBookResponse book,
+    public FavoriteBookResponse(Long id, FeedAuthorResponse author, FeedBookResponse book,
             String type,
             int likes,
             String briefReview,
