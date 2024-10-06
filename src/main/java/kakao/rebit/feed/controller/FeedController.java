@@ -73,7 +73,8 @@ public class FeedController {
 
     @Operation(summary = "피드 삭제", description = "피드를 삭제합니다.")
     @DeleteMapping("/{feed-id}")
-    public ResponseEntity<Void> deleteFeed(@MemberInfo MemberResponse memberResponse,
+    public ResponseEntity<Void> deleteFeed(
+            @Parameter(hidden = true) @MemberInfo MemberResponse memberResponse,
             @PathVariable("feed-id") Long feedId) {
         feedService.deleteFeedById(memberResponse, feedId);
         return ResponseEntity.noContent().build();
