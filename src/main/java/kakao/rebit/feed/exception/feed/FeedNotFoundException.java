@@ -9,5 +9,4 @@ public class FeedNotFoundException extends BusinessException {
     private FeedNotFoundException() {
         super(FeedErrorCode.NOT_FOUND);
     }
-
 }

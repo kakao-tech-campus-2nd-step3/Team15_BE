@@ -9,5 +9,4 @@ public class LikesNotPressedException extends BusinessException {
     private LikesNotPressedException() {
         super(LikesErrorCode.LIKES_NOT_PRESSED);
     }
-
 }

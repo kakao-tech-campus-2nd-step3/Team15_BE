@@ -9,5 +9,4 @@ public class FavoriteBookRequiredBookException extends BusinessException {
     private FavoriteBookRequiredBookException() {
         super(FeedErrorCode.FAVORITE_BOOK_REQUIRED_BOOK);
     }
-
 }

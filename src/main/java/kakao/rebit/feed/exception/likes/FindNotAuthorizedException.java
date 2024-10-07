@@ -9,5 +9,4 @@ public class FindNotAuthorizedException extends BusinessException {
     private FindNotAuthorizedException() {
         super(LikesErrorCode.FIND_NOT_AUTHORIZED);
     }
-
 }

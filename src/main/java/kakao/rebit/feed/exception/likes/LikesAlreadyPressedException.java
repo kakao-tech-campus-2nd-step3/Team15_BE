@@ -9,5 +9,4 @@ public class LikesAlreadyPressedException extends BusinessException {
     private LikesAlreadyPressedException() {
         super(LikesErrorCode.LIKES_ALREADY_PRESSED);
     }
-
 }
