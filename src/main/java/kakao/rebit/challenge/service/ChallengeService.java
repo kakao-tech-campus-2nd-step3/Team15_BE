@@ -7,6 +7,9 @@ import kakao.rebit.challenge.dto.CreatorResponse;
 import kakao.rebit.challenge.entity.Challenge;
 import kakao.rebit.challenge.entity.HeadcountLimit;
 import kakao.rebit.challenge.entity.Period;
+import kakao.rebit.challenge.exception.challenge.ChallengeDeleteNotAllowedException;
+import kakao.rebit.challenge.exception.challenge.ChallengeDeleteNotAuthorizedException;
+import kakao.rebit.challenge.exception.challenge.ChallengeNotFoundException;
 import kakao.rebit.challenge.repository.ChallengeRepository;
 import kakao.rebit.member.dto.MemberResponse;
 import kakao.rebit.member.entity.Member;
@@ -42,7 +45,7 @@ public class ChallengeService {
     @Transactional(readOnly = true)
     public Challenge findChallengeByIdOrThrow(Long challengeId) {
         return challengeRepository.findById(challengeId)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 챌린지입니다."));
+                .orElseThrow(() -> ChallengeNotFoundException.EXCEPTION);
     }
 
     @Transactional
@@ -58,11 +61,11 @@ public class ChallengeService {
         Challenge challenge = findChallengeByIdOrThrow(challengeId);
 
         if (!challenge.isHostedBy(member)) {
-            throw new IllegalArgumentException("챌린지 주최자만 삭제할 수 있습니다.");
+            throw ChallengeDeleteNotAuthorizedException.EXCEPTION;
         }
 
         if (challenge.canBeDeleted(LocalDateTime.now())) {
-            throw new IllegalArgumentException("진행 중이거나 종료된 챌린지는 삭제할 수 없습니다.");
+            throw ChallengeDeleteNotAllowedException.EXCEPTION;
         }
 
         challengeRepository.deleteById(challengeId);
