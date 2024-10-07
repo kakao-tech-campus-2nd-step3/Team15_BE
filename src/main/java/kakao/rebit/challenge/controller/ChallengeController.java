@@ -8,6 +8,7 @@ import java.net.URI;
 import kakao.rebit.challenge.dto.ChallengeRequest;
 import kakao.rebit.challenge.dto.ChallengeResponse;
 import kakao.rebit.challenge.service.ChallengeService;
+import kakao.rebit.common.annotation.AllowAnonymous;
 import kakao.rebit.member.annotation.MemberInfo;
 import kakao.rebit.member.dto.MemberResponse;
 import org.springframework.data.domain.Page;
@@ -35,6 +36,7 @@ public class ChallengeController {
     }
 
     @Operation(summary = "챌린지 목록 조회", description = "챌린지 목록을 조회합니다.")
+    @AllowAnonymous
     @GetMapping
     public ResponseEntity<Page<ChallengeResponse>> getChallenges(
             @PageableDefault(sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
@@ -42,6 +44,7 @@ public class ChallengeController {
     }
 
     @Operation(summary = "챌린지 조회", description = "챌린지를 조회합니다.")
+    @AllowAnonymous
     @GetMapping("/{challenge-id}")
     public ResponseEntity<ChallengeResponse> getChallenge(@PathVariable("challenge-id") Long challengeId) {
         return ResponseEntity.ok().body(challengeService.getChallengeById(challengeId));

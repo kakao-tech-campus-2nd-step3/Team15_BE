@@ -2,6 +2,7 @@ package kakao.rebit.auth.controller;
 
 import kakao.rebit.auth.dto.LoginResponse;
 import kakao.rebit.auth.service.KakaoAuthService;
+import kakao.rebit.common.annotation.AllowAnonymous;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -28,6 +29,7 @@ public class KakaoAuthController {
 
     // 테스트용 html
     // 로그인 버튼을 클릭하면 인가코드를 받아옵니다.
+    @AllowAnonymous
     @GetMapping("/login")
     public String showLoginForm(Model model) {
         model.addAttribute("clientId", clientId);
@@ -35,6 +37,7 @@ public class KakaoAuthController {
         return "loginForm";
     }
 
+    @AllowAnonymous
     @GetMapping("/login/oauth/kakao")
     @ResponseBody
     public LoginResponse kakaoLogin(@RequestParam("code") String code) {

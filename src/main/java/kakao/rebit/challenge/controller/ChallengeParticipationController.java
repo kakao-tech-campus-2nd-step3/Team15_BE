@@ -8,6 +8,7 @@ import java.net.URI;
 import kakao.rebit.challenge.dto.ChallengeParticipationMemberResponse;
 import kakao.rebit.challenge.dto.ChallengeParticipationRequest;
 import kakao.rebit.challenge.service.ChallengeParticipationService;
+import kakao.rebit.common.annotation.AllowAnonymous;
 import kakao.rebit.member.annotation.MemberInfo;
 import kakao.rebit.member.dto.MemberResponse;
 import org.springframework.data.domain.Page;
@@ -35,6 +36,7 @@ public class ChallengeParticipationController {
     }
 
     @Operation(summary = "챌린지 참여자 목록 조회", description = "챌린지 참여자 목록을 조회합니다.")
+    @AllowAnonymous
     @GetMapping
     public ResponseEntity<Page<ChallengeParticipationMemberResponse>> getChallengeParticipations(
             @PathVariable("challenge-id") Long challengeId,
@@ -43,6 +45,7 @@ public class ChallengeParticipationController {
     }
 
     @Operation(summary = "챌린지 참여자 조회", description = "챌린지 참여자를 조회합니다.")
+    @AllowAnonymous
     @GetMapping("/{participation-id}")
     public ResponseEntity<ChallengeParticipationMemberResponse> getChallengeParticipation(
             @PathVariable("challenge-id") Long challengeId,    // challenge-id는 사용되지 않지만 URL 일관성을 위해 유지

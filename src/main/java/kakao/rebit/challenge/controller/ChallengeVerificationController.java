@@ -8,6 +8,7 @@ import java.net.URI;
 import kakao.rebit.challenge.dto.ChallengeVerificationRequest;
 import kakao.rebit.challenge.dto.ChallengeVerificationResponse;
 import kakao.rebit.challenge.service.ChallengeVerificationService;
+import kakao.rebit.common.annotation.AllowAnonymous;
 import kakao.rebit.member.annotation.MemberInfo;
 import kakao.rebit.member.dto.MemberResponse;
 import org.springframework.data.domain.Page;
@@ -35,6 +36,7 @@ public class ChallengeVerificationController {
     }
 
     @Operation(summary = "챌린지 인증글 목록 조회", description = "챌린지 인증글 목록을 조회합니다.")
+    @AllowAnonymous
     @GetMapping
     public ResponseEntity<Page<ChallengeVerificationResponse>> getChallengeVerifications(
             @PathVariable("challenge-id") Long challengeId,
@@ -43,6 +45,7 @@ public class ChallengeVerificationController {
     }
 
     @Operation(summary = "챌린지 인증글 조회", description = "챌린지 인증글을 조회합니다.")
+    @AllowAnonymous
     @GetMapping("/{verification-id}")
     public ResponseEntity<ChallengeVerificationResponse> getChallengeVerification(
             @PathVariable("challenge-id") Long challengeId,
