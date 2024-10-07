@@ -9,6 +9,10 @@ import kakao.rebit.feed.dto.request.update.UpdateFavoriteBookRequest;
 import kakao.rebit.feed.dto.request.update.UpdateFeedRequest;
 import kakao.rebit.feed.dto.response.FeedResponse;
 import kakao.rebit.feed.entity.Feed;
+import kakao.rebit.feed.exception.feed.DeleteNotAuthorizedException;
+import kakao.rebit.feed.exception.feed.FavoriteBookRequiredBookException;
+import kakao.rebit.feed.exception.feed.FeedNotFoundException;
+import kakao.rebit.feed.exception.feed.UpdateNotAuthorizedException;
 import kakao.rebit.feed.mapper.FeedMapper;
 import kakao.rebit.feed.repository.FeedRepository;
 import kakao.rebit.member.dto.MemberResponse;
@@ -49,7 +53,7 @@ public class FeedService {
     @Transactional(readOnly = true)
     public Feed findFeedByIdOrThrow(Long feedId) {
         return feedRepository.findById(feedId)
-                .orElseThrow(() -> new IllegalArgumentException("찾는 피드가 존재하지 않습니다."));
+                .orElseThrow(() -> FeedNotFoundException.EXCEPTION);
     }
 
     @Transactional
@@ -58,7 +62,7 @@ public class FeedService {
 
         // 인생책 검증 - 반드시 책이 있어야 된다.
         if (feedRequest instanceof CreateFavoriteBookRequest && feedRequest.getBookId() == null) {
-            throw new IllegalArgumentException("인생책은 책이 반드시 필요합니다.");
+            throw FavoriteBookRequiredBookException.EXCEPTION;
         }
         Book book = findBookIfBookIdExist(feedRequest.getBookId()).orElse(null);
         Feed feed = feedMapper.toFeed(member, book, feedRequest);
@@ -73,12 +77,12 @@ public class FeedService {
 
         // 피드 작성자 확인
         if (!feed.isWrittenBy(member)) {
-            throw new IllegalArgumentException("본인이 올린 피드만 수정할 수 있습니다.");
+            throw UpdateNotAuthorizedException.EXCEPTION;
         }
 
         // 인생책 검증 - 반드시 책이 있어야 된다.
         if (feedRequest instanceof UpdateFavoriteBookRequest && feedRequest.getBookId() == null) {
-            throw new IllegalArgumentException("인생책은 책이 반드시 필요합니다.");
+            throw FavoriteBookRequiredBookException.EXCEPTION;
         }
 
         Book book = findBookIfBookIdExist(feedRequest.getBookId()).orElse(null);
@@ -92,7 +96,7 @@ public class FeedService {
         Feed feed = findFeedByIdOrThrow(feedId);
 
         if (!feed.isWrittenBy(member)) {
-            throw new IllegalArgumentException("본인의 글만 삭제할 수 있습니다.");
+            throw DeleteNotAuthorizedException.EXCEPTION;
         }
         feedRepository.deleteById(feedId);
     }
