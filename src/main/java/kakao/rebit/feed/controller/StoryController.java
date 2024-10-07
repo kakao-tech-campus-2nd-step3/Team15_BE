@@ -2,6 +2,7 @@ package kakao.rebit.feed.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import kakao.rebit.common.annotation.AllowAnonymous;
 import kakao.rebit.feed.dto.response.FeedResponse;
 import kakao.rebit.feed.service.StoryService;
 import org.springframework.data.domain.Page;
@@ -26,6 +27,7 @@ public class StoryController {
     }
 
     @Operation(summary = "스토리 목록 조회", description = "스토리 목록을 조회합니다.")
+    @AllowAnonymous
     @GetMapping
     public ResponseEntity<Page<FeedResponse>> getStories(
             @PageableDefault(sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable) {

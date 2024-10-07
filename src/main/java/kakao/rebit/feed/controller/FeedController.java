@@ -5,6 +5,7 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import java.net.URI;
+import kakao.rebit.common.annotation.AllowAnonymous;
 import kakao.rebit.feed.dto.request.create.CreateFeedRequest;
 import kakao.rebit.feed.dto.request.update.UpdateFeedRequest;
 import kakao.rebit.feed.dto.response.FeedResponse;
@@ -41,6 +42,7 @@ public class FeedController {
     }
 
     @Operation(summary = "피드 목록 조회", description = "피드 목록을 조회합니다.")
+    @AllowAnonymous
     @GetMapping
     public ResponseEntity<Page<FeedResponse>> getFeeds(
             @PageableDefault(sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
