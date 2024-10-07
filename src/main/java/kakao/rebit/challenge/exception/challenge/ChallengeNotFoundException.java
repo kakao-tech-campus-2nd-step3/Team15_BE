@@ -7,6 +7,6 @@ public class ChallengeNotFoundException extends BusinessException {
     public static final BusinessException EXCEPTION = new ChallengeNotFoundException();
 
     private ChallengeNotFoundException() {
-        super(ChallengeErrorCode.CHALLENGE_NOT_FOUND);
+        super(ChallengeErrorCode.NOT_FOUND);
     }
 }

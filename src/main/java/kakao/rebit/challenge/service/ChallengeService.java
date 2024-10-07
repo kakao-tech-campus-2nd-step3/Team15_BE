@@ -7,8 +7,8 @@ import kakao.rebit.challenge.dto.CreatorResponse;
 import kakao.rebit.challenge.entity.Challenge;
 import kakao.rebit.challenge.entity.HeadcountLimit;
 import kakao.rebit.challenge.entity.Period;
-import kakao.rebit.challenge.exception.challenge.ChallengeDeleteNotAllowedException;
-import kakao.rebit.challenge.exception.challenge.ChallengeDeleteNotAuthorizedException;
+import kakao.rebit.challenge.exception.challenge.DeleteNotAllowedException;
+import kakao.rebit.challenge.exception.challenge.DeleteNotAuthorizedException;
 import kakao.rebit.challenge.exception.challenge.ChallengeNotFoundException;
 import kakao.rebit.challenge.repository.ChallengeRepository;
 import kakao.rebit.member.dto.MemberResponse;
@@ -61,11 +61,11 @@ public class ChallengeService {
         Challenge challenge = findChallengeByIdOrThrow(challengeId);
 
         if (!challenge.isHostedBy(member)) {
-            throw ChallengeDeleteNotAuthorizedException.EXCEPTION;
+            throw DeleteNotAuthorizedException.EXCEPTION;
         }
 
         if (challenge.canBeDeleted(LocalDateTime.now())) {
-            throw ChallengeDeleteNotAllowedException.EXCEPTION;
+            throw DeleteNotAllowedException.EXCEPTION;
         }
 
         challengeRepository.deleteById(challengeId);

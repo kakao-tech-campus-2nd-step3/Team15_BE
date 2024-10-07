@@ -8,7 +8,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import kakao.rebit.common.persistence.BaseEntity;
-import kakao.rebit.member.exception.MemberNotEnoughPointsException;
+import kakao.rebit.member.exception.NotEnoughPointsException;
 
 @Entity
 @Table(name = "member")
@@ -59,7 +59,7 @@ public class Member extends BaseEntity {
 
     public void usePoints(Integer pointsToUse) {
         if (this.points < pointsToUse) {
-            throw MemberNotEnoughPointsException.EXCEPTION;
+            throw NotEnoughPointsException.EXCEPTION;
         }
         this.points -= pointsToUse;
     }

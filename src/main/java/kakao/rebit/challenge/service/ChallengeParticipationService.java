@@ -4,9 +4,9 @@ import kakao.rebit.challenge.dto.ChallengeParticipationMemberResponse;
 import kakao.rebit.challenge.dto.ChallengeParticipationRequest;
 import kakao.rebit.challenge.entity.Challenge;
 import kakao.rebit.challenge.entity.ChallengeParticipation;
-import kakao.rebit.challenge.exception.participation.ChallengeParticipationAlreadyExistsException;
-import kakao.rebit.challenge.exception.participation.ChallengeParticipationNotFoundException;
-import kakao.rebit.challenge.exception.participation.ChallengeParticipationNotParticipantException;
+import kakao.rebit.challenge.exception.participation.ParticipationAlreadyExistsException;
+import kakao.rebit.challenge.exception.participation.ParticipationNotFoundException;
+import kakao.rebit.challenge.exception.participation.ParticipationNotParticipantException;
 import kakao.rebit.challenge.repository.ChallengeParticipationRepository;
 import kakao.rebit.member.dto.MemberResponse;
 import kakao.rebit.member.entity.Member;
@@ -45,13 +45,13 @@ public class ChallengeParticipationService {
 
     private ChallengeParticipation findChallengeParticipationByIdOrThrow(Long participantId) {
         return challengeParticipationRepository.findById(participantId)
-                .orElseThrow(() -> ChallengeParticipationNotFoundException.EXCEPTION);
+                .orElseThrow(() -> ParticipationNotFoundException.EXCEPTION);
     }
 
     @Transactional(readOnly = true)
     public ChallengeParticipation findChallengeParticipationByMemberAndChallengeOrThrow(Member member, Challenge challenge) {
         return challengeParticipationRepository.findByMemberAndChallenge(member, challenge)
-                .orElseThrow(() -> ChallengeParticipationNotFoundException.EXCEPTION);
+                .orElseThrow(() -> ParticipationNotFoundException.EXCEPTION);
     }
 
     @Transactional
@@ -62,7 +62,7 @@ public class ChallengeParticipationService {
         Integer entryFee = challengeParticipationRequest.entryFee();
 
         if (challengeParticipationRepository.existsByChallengeAndMember(challenge, member)) {
-            throw ChallengeParticipationAlreadyExistsException.EXCEPTION;
+            throw ParticipationAlreadyExistsException.EXCEPTION;
         }
 
         ChallengeParticipation challengeParticipation = ChallengeParticipation.of(challenge, member, entryFee);
@@ -74,7 +74,7 @@ public class ChallengeParticipationService {
         ChallengeParticipation challengeParticipation = findChallengeParticipationByIdOrThrow(participantId);
 
         if (!challengeParticipation.getMember().getId().equals(memberResponse.id())) {
-            throw ChallengeParticipationNotParticipantException.EXCEPTION;
+            throw ParticipationNotParticipantException.EXCEPTION;
         }
 
         challengeParticipationRepository.delete(challengeParticipation);
