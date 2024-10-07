@@ -6,7 +6,7 @@ public class UpdateNotAuthorizedException extends BusinessException {
 
     public static final BusinessException EXCEPTION = new UpdateNotAuthorizedException();
 
-    public UpdateNotAuthorizedException() {
+    private UpdateNotAuthorizedException() {
         super(FeedErrorCode.UPDATE_NOT_AUTHORIZED);
     }
 }
