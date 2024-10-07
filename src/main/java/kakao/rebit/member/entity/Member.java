@@ -8,6 +8,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import kakao.rebit.common.persistence.BaseEntity;
+import kakao.rebit.member.exception.MemberNotEnoughPointsException;
 
 @Entity
 @Table(name = "member")
@@ -28,7 +29,7 @@ public class Member extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private Role role;
 
-    private Integer point;
+    private Integer points;
 
     private String kakaoToken;
 
@@ -36,13 +37,13 @@ public class Member extends BaseEntity {
     }
 
     public Member(String nickname, String imageUrl, String bio, String email, Role role,
-        Integer point, String kakaoToken) {
+            Integer points, String kakaoToken) {
         this.nickname = nickname;
         this.imageUrl = imageUrl;
         this.bio = bio;
         this.email = email;
         this.role = role;
-        this.point = point;
+        this.points = points;
         this.kakaoToken = kakaoToken;
     }
 
@@ -52,10 +53,8 @@ public class Member extends BaseEntity {
         this.imageUrl = imageUrl;
     }
 
-    public void addPoints(Integer additionalPoints) {
-        if (additionalPoints != null && additionalPoints > 0) {
-            this.point += additionalPoints;
-        }
+    public void addPoints(Integer pointsToAdd) {
+        this.points += pointsToAdd;
     }
 
     public Long getId() {
@@ -82,8 +81,8 @@ public class Member extends BaseEntity {
         return role;
     }
 
-    public Integer getPoint() {
-        return point;
+    public Integer getPoints() {
+        return points;
     }
 
     public String getKakaoToken() {

@@ -20,14 +20,14 @@ public class MemberService {
     @Transactional(readOnly = true)
     public Integer getPoints(String email) {
         Member member = findMemberByEmailOrThrow(email);
-        return member.getPoint();
+        return member.getPoints();
     }
 
     // 포인트 충전
     @Transactional
-    public void chargePoints(String email, Integer points) {
+    public void chargePoints(String email, Integer pointsToAdd) {
         Member member = findMemberByEmailOrThrow(email);
-        member.addPoints(member.getPoint() + points);
+        member.addPoints(pointsToAdd);
         memberRepository.save(member);
     }
 

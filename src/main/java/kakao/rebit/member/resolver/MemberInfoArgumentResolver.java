@@ -55,7 +55,7 @@ public class MemberInfoArgumentResolver implements HandlerMethodArgumentResolver
             member.getBio(),
             member.getEmail(),
             member.getRole(),
-            member.getPoint()
+            member.getPoints()
         );
     }
 }
