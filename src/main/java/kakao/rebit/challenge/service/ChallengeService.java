@@ -91,6 +91,7 @@ public class ChallengeService {
     }
 
     private Challenge toChallenge(Member member, ChallengeRequest challengeRequest) {
+        challengeRequest.validate();
         return new Challenge(
                 member,
                 challengeRequest.title(),
