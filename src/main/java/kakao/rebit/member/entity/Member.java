@@ -57,6 +57,13 @@ public class Member extends BaseEntity {
         this.points += pointsToAdd;
     }
 
+    public void usePoints(Integer pointsToUse) {
+        if (this.points < pointsToUse) {
+            throw MemberNotEnoughPointsException.EXCEPTION;
+        }
+        this.points -= pointsToUse;
+    }
+
     public Long getId() {
         return id;
     }
