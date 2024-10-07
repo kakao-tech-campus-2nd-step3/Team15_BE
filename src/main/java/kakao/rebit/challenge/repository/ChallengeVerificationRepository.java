@@ -1,5 +1,6 @@
 package kakao.rebit.challenge.repository;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 import kakao.rebit.challenge.entity.Challenge;
 import kakao.rebit.challenge.entity.ChallengeVerification;
@@ -18,4 +19,9 @@ public interface ChallengeVerificationRepository extends JpaRepository<Challenge
 
     @EntityGraph(attributePaths = {"challengeParticipation", "challengeParticipation.member"})
     Optional<ChallengeVerification> findByIdAndChallengeParticipation_Challenge(Long verificationId, Challenge challenge);
+
+    @Query("SELECT EXISTS (SELECT 1 FROM ChallengeVerification cv " +
+            "WHERE cv.challengeParticipation.id = :participationId " +
+            "AND FUNCTION('DATE', cv.createdAt) = FUNCTION('DATE', :now))")
+    boolean existsDailyVerification(@Param("participationId") Long participationId, @Param("now") LocalDateTime now);
 }

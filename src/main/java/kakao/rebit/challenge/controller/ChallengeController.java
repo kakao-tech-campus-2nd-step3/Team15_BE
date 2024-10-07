@@ -3,6 +3,7 @@ package kakao.rebit.challenge.controller;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import java.net.URI;
 import kakao.rebit.challenge.dto.ChallengeRequest;
 import kakao.rebit.challenge.dto.ChallengeResponse;
@@ -50,7 +51,7 @@ public class ChallengeController {
     @PostMapping
     public ResponseEntity<Void> createChallenge(
             @Parameter(hidden = true) @MemberInfo MemberResponse memberResponse,
-            @RequestBody ChallengeRequest challengeRequest) {
+            @Valid @RequestBody ChallengeRequest challengeRequest) {
         Long challengeId = challengeService.createChallenge(memberResponse, challengeRequest);
         return ResponseEntity.created(URI.create("/challenges/" + challengeId)).build();
     }

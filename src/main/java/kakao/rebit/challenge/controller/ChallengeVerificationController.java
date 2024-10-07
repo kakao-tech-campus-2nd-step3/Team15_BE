@@ -3,6 +3,7 @@ package kakao.rebit.challenge.controller;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import java.net.URI;
 import kakao.rebit.challenge.dto.ChallengeVerificationRequest;
 import kakao.rebit.challenge.dto.ChallengeVerificationResponse;
@@ -54,7 +55,7 @@ public class ChallengeVerificationController {
     public ResponseEntity<Void> createChallengeVerification(
             @Parameter(hidden = true) @MemberInfo MemberResponse memberResponse,
             @PathVariable("challenge-id") Long challengeId,
-            @RequestBody ChallengeVerificationRequest challengeVerificationRequest) {
+            @Valid @RequestBody ChallengeVerificationRequest challengeVerificationRequest) {
        Long verificationId = challengeVerificationService.createChallengeVerification(memberResponse, challengeId,
                 challengeVerificationRequest);
         return ResponseEntity.created(URI.create("/challenges/" + challengeId + "/verifications/" + verificationId)).build();
