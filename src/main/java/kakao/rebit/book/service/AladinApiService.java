@@ -2,6 +2,8 @@ package kakao.rebit.book.service;
 
 import kakao.rebit.book.dto.AladinApiResponseListResponse;
 import kakao.rebit.book.dto.AladinApiResponseResponse;
+import kakao.rebit.book.exception.api.ApiErrorException;
+import kakao.rebit.book.exception.book.InvalidIsbnException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
@@ -41,10 +43,14 @@ public class AladinApiService {
     }
 
     private <T> T executeApiRequest(String url, Class<T> responseType) {
-        return restClient.get()
-            .uri(url)
-            .retrieve()
-            .body(responseType);
+        try {
+            return restClient.get()
+                .uri(url)
+                .retrieve()
+                .body(responseType);
+        } catch (Exception e) {
+            throw ApiErrorException.EXCEPTION;
+        }
     }
 
     public AladinApiResponseListResponse searchBooksByTitle(String title) {
@@ -64,7 +70,7 @@ public class AladinApiService {
     private AladinApiResponseResponse extractFirstBookFromResponse(
         AladinApiResponseListResponse response) {
         if (response.item() == null || response.item().isEmpty()) {
-            throw new RuntimeException("API 응답에서 도서를 찾을 수 없습니다.");
+            throw InvalidIsbnException.EXCEPTION;
         }
         return response.item().get(0);
     }
