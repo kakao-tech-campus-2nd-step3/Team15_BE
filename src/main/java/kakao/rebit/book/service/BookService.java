@@ -6,6 +6,7 @@ import kakao.rebit.book.dto.AladinApiResponseListResponse;
 import kakao.rebit.book.dto.AladinApiResponseResponse;
 import kakao.rebit.book.dto.BookResponse;
 import kakao.rebit.book.entity.Book;
+import kakao.rebit.book.exception.book.BookNotFoundException;
 import kakao.rebit.book.mapper.BookMapper;
 import kakao.rebit.book.repository.BookRepository;
 import org.springframework.stereotype.Service;
@@ -64,6 +65,6 @@ public class BookService {
     @Transactional(readOnly = true)
     public Book findBookByIdOrThrow(Long bookId) {
         return bookRepository.findById(bookId)
-            .orElseThrow(() -> new IllegalArgumentException("해당 책이 존재하지 않습니다."));
+            .orElseThrow(() -> BookNotFoundException.EXCEPTION);
     }
 }
