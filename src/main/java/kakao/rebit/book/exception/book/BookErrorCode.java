@@ -4,7 +4,8 @@ import kakao.rebit.common.exception.ErrorCode;
 import org.springframework.http.HttpStatus;
 
 public enum BookErrorCode implements ErrorCode {
-    NOT_FOUND("BK001", HttpStatus.NOT_FOUND, "책을 찾을 수 없습니다.");
+    NOT_FOUND("BK001", HttpStatus.NOT_FOUND, "책을 찾을 수 없습니다."),
+    INVALID_ISBN("BK002", HttpStatus.BAD_REQUEST, "등록 되지 않은 ISBN입니다.");
 
     private final String code;
     private final HttpStatus httpStatus;

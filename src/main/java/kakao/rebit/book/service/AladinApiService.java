@@ -3,7 +3,7 @@ package kakao.rebit.book.service;
 import kakao.rebit.book.dto.AladinApiResponseListResponse;
 import kakao.rebit.book.dto.AladinApiResponseResponse;
 import kakao.rebit.book.exception.api.ApiErrorException;
-import kakao.rebit.book.exception.book.BookNotFoundException;
+import kakao.rebit.book.exception.book.InvalidIsbnException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
@@ -70,7 +70,7 @@ public class AladinApiService {
     private AladinApiResponseResponse extractFirstBookFromResponse(
         AladinApiResponseListResponse response) {
         if (response.item() == null || response.item().isEmpty()) {
-            throw BookNotFoundException.EXCEPTION;
+            throw InvalidIsbnException.EXCEPTION;
         }
         return response.item().get(0);
     }
