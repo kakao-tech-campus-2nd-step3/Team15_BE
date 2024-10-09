@@ -9,6 +9,8 @@ import kakao.rebit.feed.dto.request.update.UpdateFavoriteBookRequest;
 import kakao.rebit.feed.dto.request.update.UpdateFeedRequest;
 import kakao.rebit.feed.dto.response.FeedResponse;
 import kakao.rebit.feed.entity.Feed;
+import kakao.rebit.feed.entity.Magazine;
+import kakao.rebit.feed.entity.Story;
 import kakao.rebit.feed.exception.feed.DeleteNotAuthorizedException;
 import kakao.rebit.feed.exception.feed.FavoriteBookRequiredBookException;
 import kakao.rebit.feed.exception.feed.FeedNotFoundException;
@@ -18,6 +20,7 @@ import kakao.rebit.feed.repository.FeedRepository;
 import kakao.rebit.member.dto.MemberResponse;
 import kakao.rebit.member.entity.Member;
 import kakao.rebit.member.service.MemberService;
+import kakao.rebit.s3.service.S3Service;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -30,13 +33,15 @@ public class FeedService {
     private final MemberService memberService;
     private final BookService bookService;
     private final FeedMapper feedMapper;
+    private final S3Service s3Service;
 
     public FeedService(FeedRepository feedRepository, MemberService memberService,
-            BookService bookService, FeedMapper feedMapper) {
+            BookService bookService, FeedMapper feedMapper, S3Service s3Service) {
         this.feedRepository = feedRepository;
         this.memberService = memberService;
         this.bookService = bookService;
         this.feedMapper = feedMapper;
+        this.s3Service = s3Service;
     }
 
     @Transactional(readOnly = true)
@@ -98,6 +103,16 @@ public class FeedService {
         if (!feed.isWrittenBy(member)) {
             throw DeleteNotAuthorizedException.EXCEPTION;
         }
+
+        // 메거진과 스토리는 피드 삭제 전 3S에서 image 파일을 먼저 삭제한다.
+        if (feed instanceof Magazine magazine) {
+            s3Service.deleteObject(magazine.getImageKey());
+        }
+
+        if (feed instanceof Story story) {
+            s3Service.deleteObject(story.getImageKey());
+        }
+
         feedRepository.deleteById(feedId);
     }
 
