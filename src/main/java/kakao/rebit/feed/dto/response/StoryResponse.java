@@ -2,18 +2,18 @@ package kakao.rebit.feed.dto.response;
 
 public class StoryResponse extends FeedResponse {
 
-    private String imageUrl;
+    private String presignedUrl;
     private String content;
 
     public StoryResponse(Long id, FeedAuthorResponse author, FeedBookResponse book,
-            String type, int likes, String imageUrl, String content) {
+            String type, int likes, String presignedUrl, String content) {
         super(id, author, book, type, likes);
-        this.imageUrl = imageUrl;
+        this.presignedUrl = presignedUrl;
         this.content = content;
     }
 
-    public String getImageUrl() {
-        return imageUrl;
+    public String getImagePresignedUrl() {
+        return presignedUrl;
     }
 
     public String getContent() {
