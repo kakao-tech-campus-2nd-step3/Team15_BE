@@ -53,9 +53,11 @@ public class BookService {
     }
 
     private Book searchAndSaveBookByIsbn(String isbn) {
-        AladinApiResponseResponse bookResponse = aladinApiService.searchBookByIsbn(isbn);
-        return bookRepository.findByIsbn(bookResponse.isbn())
-            .orElseGet(() -> saveBook(bookResponse));
+        return bookRepository.findByIsbn(isbn)
+            .orElseGet(() -> {
+                AladinApiResponseResponse bookResponse = aladinApiService.searchBookByIsbn(isbn);
+                return saveBook(bookResponse);
+            });
     }
 
     private Book saveBook(AladinApiResponseResponse bookResponse) {
