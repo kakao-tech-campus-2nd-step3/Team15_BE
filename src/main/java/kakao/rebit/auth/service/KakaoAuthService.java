@@ -39,7 +39,7 @@ public class KakaoAuthService {
         // 4. JWT 토큰 생성
         AuthToken tokens = generateAuthToken(member);
 
-        return new LoginResponse(tokens);
+        return new LoginResponse(tokens, member.getId());
     }
 
     @Transactional
