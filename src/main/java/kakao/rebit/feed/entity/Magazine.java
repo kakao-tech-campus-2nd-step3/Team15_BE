@@ -14,23 +14,23 @@ import kakao.rebit.member.entity.Member;
 public class Magazine extends Feed {
 
     private String name;
-    private String imageUrl;
+    private String imageKey;
     private String content;
 
     protected Magazine() {
     }
 
-    public Magazine(Member member, Book book, String name, String imageUrl, String content) {
+    public Magazine(Member member, Book book, String name, String imageKey, String content) {
         super(member, book);
         this.name = name;
-        this.imageUrl = imageUrl;
+        this.imageKey = imageKey;
         this.content = content;
     }
 
     @Override
     public void updateAllExceptBook(UpdateFeedRequest feedRequest) {
         this.name = ((UpdateMagazineRequest) feedRequest).getName();
-        this.imageUrl = ((UpdateMagazineRequest) feedRequest).getImageUrl();
+        this.imageKey = ((UpdateMagazineRequest) feedRequest).getImageKey();
         this.content = ((UpdateMagazineRequest) feedRequest).getContent();
     }
 
@@ -38,8 +38,8 @@ public class Magazine extends Feed {
         return name;
     }
 
-    public String getImageUrl() {
-        return imageUrl;
+    public String getImageKey() {
+        return imageKey;
     }
 
     public String getContent() {

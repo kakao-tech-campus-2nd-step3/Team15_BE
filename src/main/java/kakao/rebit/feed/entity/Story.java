@@ -11,27 +11,27 @@ import kakao.rebit.member.entity.Member;
 @DiscriminatorValue("S")
 public class Story extends Feed {
 
-    private String imageUrl;
+    private String imageKey;
 
     private String content;
 
     protected Story() {
     }
 
-    public Story(Member member, Book book, String imageUrl, String content) {
+    public Story(Member member, Book book, String imageKey, String content) {
         super(member, book);
-        this.imageUrl = imageUrl;
+        this.imageKey = imageKey;
         this.content = content;
     }
 
     @Override
     public void updateAllExceptBook(UpdateFeedRequest feedRequest) {
-        this.imageUrl = ((UpdateStoryRequest) feedRequest).getImageUrl();
+        this.imageKey = ((UpdateStoryRequest) feedRequest).getImageKey();
         this.content = ((UpdateStoryRequest) feedRequest).getContent();
     }
 
-    public String getImageUrl() {
-        return imageUrl;
+    public String getImageKey() {
+        return imageKey;
     }
 
     public String getContent() {
