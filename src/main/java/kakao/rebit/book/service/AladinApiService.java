@@ -26,6 +26,18 @@ public class AladinApiService {
         this.restClient = restClient;
     }
 
+    public AladinApiResponseListResponse searchBooksByTitle(String title) {
+        String url = buildTitleSearchUrl(title, 10);
+        return executeApiRequest(url, AladinApiResponseListResponse.class);
+    }
+
+    public AladinApiResponseResponse searchBookByIsbn(String isbn) {
+        String url = buildIsbnLookupUrl(isbn);
+        AladinApiResponseListResponse response = executeApiRequest(url,
+            AladinApiResponseListResponse.class);
+        return extractFirstBookFromResponse(response);
+    }
+
     private String buildTitleSearchUrl(String title, int maxResults) {
         return BASE_API_URL + ITEM_SEARCH_ENDPOINT
             + "?ttbkey=" + TTB_KEY
@@ -51,18 +63,6 @@ public class AladinApiService {
         } catch (Exception e) {
             throw ApiErrorException.EXCEPTION;
         }
-    }
-
-    public AladinApiResponseListResponse searchBooksByTitle(String title) {
-        String url = buildTitleSearchUrl(title, 10);
-        return executeApiRequest(url, AladinApiResponseListResponse.class);
-    }
-
-    public AladinApiResponseResponse searchBookByIsbn(String isbn) {
-        String url = buildIsbnLookupUrl(isbn);
-        AladinApiResponseListResponse response = executeApiRequest(url,
-            AladinApiResponseListResponse.class);
-        return extractFirstBookFromResponse(response);
     }
 
     // API 응답에서 첫 번째 책 정보를 추출
