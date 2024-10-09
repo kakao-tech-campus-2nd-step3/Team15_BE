@@ -73,7 +73,7 @@ spring:
 
   sql:
     init:
-      mode: always   # 필요시 always로 변경
+      mode: never   # 필요시 always로 변경
 
 ---
 spring:
