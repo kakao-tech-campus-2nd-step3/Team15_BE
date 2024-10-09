@@ -39,6 +39,9 @@ dependencies {
     runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.12.6'
     runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.12.6'
 
+    // AWS S3 관련 의존성 추가
+    implementation "software.amazon.awssdk:s3:2.13.0"
+
     // 테스트용
     implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
 }
