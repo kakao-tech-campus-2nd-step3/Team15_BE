@@ -1,6 +1,7 @@
 package kakao.rebit.book.controller;
 
 import java.util.List;
+import kakao.rebit.book.dto.BookDetailResponse;
 import kakao.rebit.book.dto.BookResponse;
 import kakao.rebit.book.service.BookService;
 import org.springframework.http.ResponseEntity;
@@ -27,7 +28,8 @@ public class BookController {
     }
 
     @GetMapping("/search")
-    public ResponseEntity<List<BookResponse>> searchBooksByTitle(@RequestParam(name = "title") String title) {
+    public ResponseEntity<List<BookResponse>> searchBooksByTitle(
+        @RequestParam(name = "title") String title) {
         List<BookResponse> books = bookService.searchAndSaveBooksByTitle(title);
         return ResponseEntity.ok(books);
     }
@@ -36,5 +38,13 @@ public class BookController {
     public ResponseEntity<BookResponse> getBookDetail(@PathVariable(name = "isbn") String isbn) {
         BookResponse book = bookService.getBookDetail(isbn);
         return ResponseEntity.ok(book);
+    }
+
+    // 좋아요가 가장 많은 책의 한줄평과 서평을 포함한 상세 정보 조회
+    @GetMapping("/detail/{isbn}")
+    public ResponseEntity<BookDetailResponse> getBookDetailReview(
+        @PathVariable(name = "isbn") String isbn) {
+        BookDetailResponse bookDetail = bookService.getBookDetailReview(isbn);
+        return ResponseEntity.ok(bookDetail);
     }
 }
