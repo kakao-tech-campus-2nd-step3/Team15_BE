@@ -54,12 +54,11 @@ public class S3Service {
     }
 
     public S3UploadUrlResponse getUploadUrl(String fullFilename) {
-        String filename = getFilename(fullFilename);
         String extension = getExtension(fullFilename);
         validUploadImageFileFormat(extension);
 
         // S3에 업로드할 객체 요청 생성
-        String key = createKey(filename);
+        String key = createKey(getFilename(fullFilename));
         String contentType = createContentType(extension);
 
         try {
@@ -113,8 +112,8 @@ public class S3Service {
 
     @Transactional
     public void deleteObject(String key) {
-        DeleteObjectRequest deleteObjectRequest = createDeleteObjectRequest(key);
         try {
+            DeleteObjectRequest deleteObjectRequest = createDeleteObjectRequest(key);
             s3Client.deleteObject(deleteObjectRequest);
         } catch (S3Exception e) {
             throw S3DeleteErrorException.EXCEPTION;
