@@ -1,5 +1,7 @@
 package kakao.rebit.wishlist.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import kakao.rebit.member.annotation.MemberInfo;
 import kakao.rebit.member.dto.MemberResponse;
 import kakao.rebit.wishlist.service.BookWishlistService;
@@ -11,55 +13,62 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/wishes")
+@Tag(name = "위시리스트 API", description = "책 및 챌린지 위시리스트 관련 API")
 public class WishlistController {
 
     private final BookWishlistService bookWishlistService;
     private final ChallengeWishlistService challengeWishlistService;
 
-    public WishlistController(BookWishlistService bookWishlistService, ChallengeWishlistService challengeWishlistService) {
+    public WishlistController(BookWishlistService bookWishlistService,
+        ChallengeWishlistService challengeWishlistService) {
         this.bookWishlistService = bookWishlistService;
         this.challengeWishlistService = challengeWishlistService;
     }
 
-    // 책 위시 목록 조회
+    @Operation(summary = "책 위시 목록 조회", description = "사용자가 찜한 책 목록을 조회합니다.")
     @GetMapping("/books")
     public ResponseEntity<List<String>> getBookWishlist(@MemberInfo MemberResponse memberResponse) {
         List<String> bookWishlist = bookWishlistService.getBookWishlist(memberResponse.id());
         return ResponseEntity.ok(bookWishlist);
     }
 
-
-    // 책 위시 추가
+    @Operation(summary = "책 위시 추가", description = "사용자가 책을 위시리스트에 추가합니다.")
     @PostMapping("/books/{isbn}")
-    public ResponseEntity<Void> addBookWishlist(@MemberInfo MemberResponse memberResponse, @PathVariable String isbn) {
+    public ResponseEntity<Void> addBookWishlist(@MemberInfo MemberResponse memberResponse,
+        @PathVariable String isbn) {
         bookWishlistService.addBookWishlist(memberResponse.id(), isbn);
         return ResponseEntity.noContent().build();
     }
 
-    // 책 위시 삭제
+    @Operation(summary = "책 위시 삭제", description = "사용자가 책을 위시리스트에서 삭제합니다.")
     @DeleteMapping("/books/{isbn}")
-    public ResponseEntity<Void> deleteBookWishlist(@MemberInfo MemberResponse memberResponse, @PathVariable String isbn) {
+    public ResponseEntity<Void> deleteBookWishlist(@MemberInfo MemberResponse memberResponse,
+        @PathVariable String isbn) {
         bookWishlistService.deleteBookWishlist(memberResponse.id(), isbn);
         return ResponseEntity.noContent().build();
     }
 
-    // 챌린지 위시 목록 조회
+    @Operation(summary = "챌린지 위시 목록 조회", description = "사용자가 찜한 챌린지 목록을 조회합니다.")
     @GetMapping("/challenges")
-    public ResponseEntity<List<Long>> getChallengeWishlist(@MemberInfo MemberResponse memberResponse) {
-        List<Long> challengeWishlist = challengeWishlistService.getChallengeWishlist(memberResponse.id());
+    public ResponseEntity<List<Long>> getChallengeWishlist(
+        @MemberInfo MemberResponse memberResponse) {
+        List<Long> challengeWishlist = challengeWishlistService.getChallengeWishlist(
+            memberResponse.id());
         return ResponseEntity.ok(challengeWishlist);
     }
 
-    // 챌린지 위시 추가
+    @Operation(summary = "챌린지 위시 추가", description = "사용자가 챌린지를 위시리스트에 추가합니다.")
     @PostMapping("/challenges/{challengeId}")
-    public ResponseEntity<Void> addChallengeWishlist(@MemberInfo MemberResponse memberResponse, @PathVariable Long challengeId) {
+    public ResponseEntity<Void> addChallengeWishlist(@MemberInfo MemberResponse memberResponse,
+        @PathVariable Long challengeId) {
         challengeWishlistService.addChallengeWishlist(memberResponse.id(), challengeId);
         return ResponseEntity.noContent().build();
     }
 
-    // 챌린지 위시 삭제
+    @Operation(summary = "챌린지 위시 삭제", description = "사용자가 챌린지를 위시리스트에서 삭제합니다.")
     @DeleteMapping("/challenges/{challengeId}")
-    public ResponseEntity<Void> deleteChallengeWishlist(@MemberInfo MemberResponse memberResponse, @PathVariable Long challengeId) {
+    public ResponseEntity<Void> deleteChallengeWishlist(@MemberInfo MemberResponse memberResponse,
+        @PathVariable Long challengeId) {
         challengeWishlistService.deleteChallengeWishlist(memberResponse.id(), challengeId);
         return ResponseEntity.noContent().build();
     }
