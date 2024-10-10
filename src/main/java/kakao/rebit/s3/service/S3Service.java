@@ -56,7 +56,7 @@ public class S3Service {
     public S3UploadUrlResponse getUploadUrl(String fullFilename) {
         String filename = getFilename(fullFilename);
         String extension = getExtension(fullFilename);
-        validImageFileFormat(extension);
+        validUploadImageFileFormat(extension);
 
         // S3에 업로드할 객체 요청 생성
         String key = createKey(filename);
@@ -207,8 +207,8 @@ public class S3Service {
         return new S3DownloadUrlResponse(presignedUrl);
     }
 
-    private void validImageFileFormat(String extension){
-        if(!ALLOWED_FILE_FORMAT.contains(extension)){
+    private void validUploadImageFileFormat(String extension) {
+        if (!ALLOWED_FILE_FORMAT.contains(extension)) {
             throw S3NotAllowedFileFormatException.EXCEPTION;
         }
     }

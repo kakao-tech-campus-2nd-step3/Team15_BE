@@ -9,5 +9,4 @@ public class S3DeleteClientErrorException extends BusinessException {
     private S3DeleteClientErrorException() {
         super(S3ErrorCode.S3_DELETE_CLIENT_ERROR);
     }
-
 }

@@ -9,5 +9,4 @@ public class S3UploadErrorException extends BusinessException {
     private S3UploadErrorException() {
         super(S3ErrorCode.S3_UPLOAD_ERROR);
     }
-
 }
