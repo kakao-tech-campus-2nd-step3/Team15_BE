@@ -4,6 +4,7 @@ import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
 import kakao.rebit.book.entity.Book;
+import kakao.rebit.common.domain.ImageKeyHolder;
 import kakao.rebit.feed.dto.request.update.UpdateFeedRequest;
 import kakao.rebit.feed.dto.request.update.UpdateMagazineRequest;
 import kakao.rebit.member.entity.Member;
@@ -11,7 +12,7 @@ import kakao.rebit.member.entity.Member;
 @Entity
 @Table(name = "magazine")
 @DiscriminatorValue("M")
-public class Magazine extends Feed {
+public class Magazine extends Feed implements ImageKeyHolder {
 
     private String name;
     private String imageKey;
@@ -38,6 +39,7 @@ public class Magazine extends Feed {
         return name;
     }
 
+    @Override
     public String getImageKey() {
         return imageKey;
     }

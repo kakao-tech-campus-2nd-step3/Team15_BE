@@ -3,13 +3,14 @@ package kakao.rebit.feed.entity;
 import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;
 import kakao.rebit.book.entity.Book;
+import kakao.rebit.common.domain.ImageKeyHolder;
 import kakao.rebit.feed.dto.request.update.UpdateFeedRequest;
 import kakao.rebit.feed.dto.request.update.UpdateStoryRequest;
 import kakao.rebit.member.entity.Member;
 
 @Entity
 @DiscriminatorValue("S")
-public class Story extends Feed {
+public class Story extends Feed implements ImageKeyHolder {
 
     private String imageKey;
 
@@ -30,6 +31,7 @@ public class Story extends Feed {
         this.content = ((UpdateStoryRequest) feedRequest).getContent();
     }
 
+    @Override
     public String getImageKey() {
         return imageKey;
     }
