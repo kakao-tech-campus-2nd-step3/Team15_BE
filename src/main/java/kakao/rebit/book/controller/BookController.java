@@ -31,9 +31,7 @@ public class BookController {
 
     @GetMapping("/search")
     public ResponseEntity<Page<BookResponse>> searchBooksByTitle(
-        @RequestParam(name = "title") String title,
-        Pageable pageable) {
-
+        @RequestParam(name = "title") String title, Pageable pageable) {
         Page<BookResponse> books = bookService.searchAndSaveBooksByTitle(title, pageable);
         return ResponseEntity.ok(books);
     }
