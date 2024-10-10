@@ -6,7 +6,6 @@ import kakao.rebit.member.annotation.MemberInfo;
 import kakao.rebit.member.dto.ChargePointRequest;
 import kakao.rebit.member.dto.MemberRequest;
 import kakao.rebit.member.dto.MemberResponse;
-import kakao.rebit.member.entity.Member;
 import kakao.rebit.member.entity.Role;
 import kakao.rebit.member.service.MemberService;
 import org.springframework.http.ResponseEntity;
@@ -42,41 +41,41 @@ public class MemberController {
 
     @Operation(summary = "내 정보 조회", description = "사용자 자신의 정보를 조회합니다.")
     @GetMapping("/me")
-    public ResponseEntity<Member> getMyInfo(@MemberInfo MemberResponse memberResponse) {
-        Member member = memberService.findMemberByEmailOrThrow(memberResponse.email());
-        return ResponseEntity.ok(member);
+    public ResponseEntity<MemberResponse> getMyInfo(@MemberInfo MemberResponse memberResponse) {
+        MemberResponse response = memberService.getMemberResponseByEmail(memberResponse.email());
+        return ResponseEntity.ok(response);
     }
 
     @Operation(summary = "내 정보 수정", description = "사용자 자신의 정보를 수정합니다.")
     @PutMapping("/me")
-    public ResponseEntity<Member> updateMyInfo(@MemberInfo MemberResponse memberResponse,
+    public ResponseEntity<MemberResponse> updateMyInfo(@MemberInfo MemberResponse memberResponse,
         @RequestBody MemberRequest memberRequest) {
-        Member updatedMember = memberService.updateMyMember(memberResponse.email(), memberRequest);
+        MemberResponse updatedMember = memberService.updateMyMember(memberResponse.email(), memberRequest);
         return ResponseEntity.ok(updatedMember);
     }
 
     @Operation(summary = "모든 사용자 조회", description = "관리자 및 에디터가 모든 사용자를 조회합니다.")
     @GetMapping
-    public ResponseEntity<List<Member>> getAllMembers(@MemberInfo(allowedRoles = {Role.ROLE_ADMIN,
+    public ResponseEntity<List<MemberResponse>> getAllMembers(@MemberInfo(allowedRoles = {Role.ROLE_ADMIN,
         Role.ROLE_EDITOR}) MemberResponse memberResponse) {
-        List<Member> members = memberService.findAllMembers();
+        List<MemberResponse> members = memberService.getAllMemberResponses();
         return ResponseEntity.ok(members);
     }
 
     @Operation(summary = "특정 사용자 조회", description = "관리자 및 에디터가 특정 사용자를 조회합니다.")
     @GetMapping("/{id}")
-    public ResponseEntity<Member> getMemberById(@MemberInfo(allowedRoles = {Role.ROLE_ADMIN,
+    public ResponseEntity<MemberResponse> getMemberById(@MemberInfo(allowedRoles = {Role.ROLE_ADMIN,
         Role.ROLE_EDITOR}) MemberResponse memberResponse, @PathVariable Long id) {
-        Member member = memberService.findMemberByIdOrThrow(id);
-        return ResponseEntity.ok(member);
+        MemberResponse response = memberService.getMemberResponseById(id);
+        return ResponseEntity.ok(response);
     }
 
     @Operation(summary = "특정 사용자 수정", description = "관리자 및 에디터가 특정 사용자의 정보를 수정합니다.")
     @PutMapping("/{id}")
-    public ResponseEntity<Member> updateMember(@MemberInfo(allowedRoles = {Role.ROLE_ADMIN,
+    public ResponseEntity<MemberResponse> updateMember(@MemberInfo(allowedRoles = {Role.ROLE_ADMIN,
         Role.ROLE_EDITOR}) MemberResponse memberResponse, @PathVariable Long id,
         @RequestBody MemberRequest memberRequest) {
-        Member updatedMember = memberService.updateMember(id, memberRequest);
+        MemberResponse updatedMember = memberService.updateMember(id, memberRequest);
         return ResponseEntity.ok(updatedMember);
     }
 
