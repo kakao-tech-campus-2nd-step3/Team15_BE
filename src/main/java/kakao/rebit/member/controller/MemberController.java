@@ -59,43 +59,33 @@ public class MemberController {
 
     // admin & editor : 모든 사용자 조회
     @GetMapping
-    public ResponseEntity<List<Member>> getAllMembers(@MemberInfo MemberResponse memberResponse) {
-        authorize(memberResponse.role(), Role.ROLE_EDITOR, Role.ROLE_EDITOR);
+    public ResponseEntity<List<Member>> getAllMembers(@MemberInfo(allowedRoles = {Role.ROLE_ADMIN, Role.ROLE_EDITOR}) MemberResponse memberResponse) {
         List<Member> members = memberService.findAllMembers();
         return ResponseEntity.ok(members);
     }
 
     // admin & editor : 특정 사용자 정보 조회
     @GetMapping("/{id}")
-    public ResponseEntity<Member> getMemberById(@MemberInfo MemberResponse memberResponse,
+    public ResponseEntity<Member> getMemberById(@MemberInfo(allowedRoles = {Role.ROLE_ADMIN, Role.ROLE_EDITOR}) MemberResponse memberResponse,
         @PathVariable Long id) {
-        authorize(memberResponse.role(), Role.ROLE_EDITOR, Role.ROLE_EDITOR);
         Member member = memberService.findMemberByIdOrThrow(id);
         return ResponseEntity.ok(member);
     }
 
     // admin & editor : 특정 사용자 정보 수정
     @PutMapping("/{id}")
-    public ResponseEntity<Member> updateMember(@MemberInfo MemberResponse memberResponse,
+    public ResponseEntity<Member> updateMember(@MemberInfo(allowedRoles = {Role.ROLE_ADMIN, Role.ROLE_EDITOR}) MemberResponse memberResponse,
         @PathVariable Long id,
         @RequestBody MemberRequest memberRequest) {
-        authorize(memberResponse.role(), Role.ROLE_EDITOR, Role.ROLE_EDITOR);
         Member updatedMember = memberService.updateMember(id, memberRequest);
         return ResponseEntity.ok(updatedMember);
     }
 
     // admin & editor : 특정 사용자 삭제
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteMember(@MemberInfo MemberResponse memberResponse,
+    public ResponseEntity<Void> deleteMember(@MemberInfo(allowedRoles = {Role.ROLE_ADMIN, Role.ROLE_EDITOR}) MemberResponse memberResponse,
         @PathVariable Long id) {
-        authorize(memberResponse.role(), Role.ROLE_EDITOR, Role.ROLE_EDITOR);
         memberService.deleteMember(id);
         return ResponseEntity.noContent().build();
-    }
-
-    private void authorize(Role role, Role... roles) {
-        if (!List.of(roles).contains(role)) {
-            throw new IllegalStateException("Unauthorized");
-        }
     }
 }
