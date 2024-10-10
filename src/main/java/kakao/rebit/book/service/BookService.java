@@ -2,7 +2,6 @@ package kakao.rebit.book.service;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 import java.util.stream.Collectors;
 import kakao.rebit.book.dto.AladinApiResponseListResponse;
 import kakao.rebit.book.dto.AladinApiResponseResponse;
@@ -14,6 +13,9 @@ import kakao.rebit.book.mapper.BookMapper;
 import kakao.rebit.book.repository.BookRepository;
 import kakao.rebit.feed.entity.FavoriteBook;
 import kakao.rebit.feed.repository.FavoriteBookRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -38,20 +40,23 @@ public class BookService {
             .collect(Collectors.toList());
     }
 
-    // 책 타이틀로 검색 후 저장 및 반환
     @Transactional
-    public List<BookResponse> searchAndSaveBooksByTitle(String title) {
-        AladinApiResponseListResponse bookList = aladinApiService.searchBooksByTitle(title);
+    public Page<BookResponse> searchAndSaveBooksByTitle(String title, Pageable pageable) {
+        int pageSize = pageable.getPageSize();
+        int pageNumber = pageable.getPageNumber() + 1;
+        AladinApiResponseListResponse bookList = aladinApiService.searchBooksByTitle(title,
+            pageSize, pageNumber);
 
-        // 검색된 책 목록을 처리하여 이미 저장된 책은 조회하고, 새 책은 저장
         List<Book> foundBooks = bookList.item().stream()
             .map(book -> bookRepository.findByIsbn(book.isbn())
                 .orElseGet(() -> bookRepository.save(BookMapper.toBookEntity(book))))
             .toList();
 
-        return foundBooks.stream()
+        List<BookResponse> bookResponses = foundBooks.stream()
             .map(BookMapper::toBookResponse)
             .collect(Collectors.toList());
+
+        return new PageImpl<>(bookResponses, pageable, bookList.item().size());
     }
 
     @Transactional

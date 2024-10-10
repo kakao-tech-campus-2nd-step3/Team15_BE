@@ -4,6 +4,8 @@ import java.util.List;
 import kakao.rebit.book.dto.BookDetailResponse;
 import kakao.rebit.book.dto.BookResponse;
 import kakao.rebit.book.service.BookService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -28,9 +30,11 @@ public class BookController {
     }
 
     @GetMapping("/search")
-    public ResponseEntity<List<BookResponse>> searchBooksByTitle(
-        @RequestParam(name = "title") String title) {
-        List<BookResponse> books = bookService.searchAndSaveBooksByTitle(title);
+    public ResponseEntity<Page<BookResponse>> searchBooksByTitle(
+        @RequestParam(name = "title") String title,
+        Pageable pageable) {
+
+        Page<BookResponse> books = bookService.searchAndSaveBooksByTitle(title, pageable);
         return ResponseEntity.ok(books);
     }
 

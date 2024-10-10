@@ -15,7 +15,8 @@ public class AladinApiService {
     private String TTB_KEY;
 
     private static final String BASE_API_URL = "http://www.aladin.co.kr/ttb/api";
-    private static final String QUERY_PARAMS_FORMAT = "&QueryType=%s&MaxResults=%s&start=1&SearchTarget=Book&output=js&Version=20131101";
+    private static final String QUERY_PARAMS_FORMAT = "&QueryType=%s&MaxResults=%s&start=%d&SearchTarget=Book&output=js&Version=20131101";
+
 
     private static final String ITEM_LOOKUP_ENDPOINT = "/ItemLookUp.aspx";
     private static final String ITEM_SEARCH_ENDPOINT = "/ItemSearch.aspx";
@@ -26,8 +27,9 @@ public class AladinApiService {
         this.restClient = restClient;
     }
 
-    public AladinApiResponseListResponse searchBooksByTitle(String title) {
-        String url = buildTitleSearchUrl(title, 10);
+    public AladinApiResponseListResponse searchBooksByTitle(String title, int maxResults,
+        int startPage) {
+        String url = buildTitleSearchUrl(title, maxResults, startPage);
         return executeApiRequest(url, AladinApiResponseListResponse.class);
     }
 
@@ -38,11 +40,11 @@ public class AladinApiService {
         return extractFirstBookFromResponse(response);
     }
 
-    private String buildTitleSearchUrl(String title, int maxResults) {
+    private String buildTitleSearchUrl(String title, int maxResults, int startPage) {
         return BASE_API_URL + ITEM_SEARCH_ENDPOINT
             + "?ttbkey=" + TTB_KEY
             + "&Query=" + title
-            + String.format(QUERY_PARAMS_FORMAT, "Title", maxResults);
+            + String.format(QUERY_PARAMS_FORMAT, "Title", maxResults, startPage);
     }
 
     private String buildIsbnLookupUrl(String isbn) {
