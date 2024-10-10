@@ -7,7 +7,7 @@ public class UpdateMagazineRequest extends UpdateFeedRequest {
 
     @NotBlank(message = "메거진 대상 이름은 필수 입력 값입니다.")
     private String name;
-    @URL(message = "잘못된 URL 형식입니다.")
+    @NotBlank(message = "이미지는 필수 입니다.")
     private String imageKey;
     @NotBlank(message = "본문은 필수 입력 값입니다.")
     private String content;
