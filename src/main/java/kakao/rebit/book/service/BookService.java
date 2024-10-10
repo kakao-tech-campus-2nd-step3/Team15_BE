@@ -85,4 +85,12 @@ public class BookService {
             book);
         return BookMapper.toBookDetailResponse(book, topFavoriteBook.orElse(null));
     }
+
+    @Transactional(readOnly = true)
+    public List<String> getBriefReviewsByIsbn(String isbn) {
+        return favoriteBookRepository.findAllByBookIsbnOrderByLikesDesc(isbn)
+            .stream()
+            .map(FavoriteBook::getBriefReview)
+            .collect(Collectors.toList());
+    }
 }

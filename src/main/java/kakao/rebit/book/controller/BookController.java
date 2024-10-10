@@ -40,6 +40,13 @@ public class BookController {
         return ResponseEntity.ok(book);
     }
 
+    // ISBN으로 해당 책의 작성 된 한줄평을 모두 조회
+    @GetMapping("/{isbn}/brief-reviews")
+    public ResponseEntity<List<String>> getAllBriefReviews(@PathVariable("isbn") String isbn) {
+        List<String> briefReviews = bookService.getBriefReviewsByIsbn(isbn);
+        return ResponseEntity.ok(briefReviews);
+    }
+
     // 좋아요가 가장 많은 책의 한줄평과 서평을 포함한 상세 정보 조회
     @GetMapping("/detail/{isbn}")
     public ResponseEntity<BookDetailResponse> getBookDetailReview(
