@@ -1,7 +1,9 @@
 package kakao.rebit.member.service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 import kakao.rebit.member.dto.MemberRequest;
+import kakao.rebit.member.dto.MemberResponse;
 import kakao.rebit.member.entity.Member;
 import kakao.rebit.member.repository.MemberRepository;
 import org.springframework.stereotype.Service;
@@ -32,8 +34,22 @@ public class MemberService {
     }
 
     @Transactional(readOnly = true)
-    public List<Member> findAllMembers() {
-        return memberRepository.findAll();
+    public List<MemberResponse> getAllMemberResponses() {
+        return memberRepository.findAll().stream()
+            .map(MemberResponse::convertFromEntity)
+            .collect(Collectors.toList());
+    }
+
+    @Transactional(readOnly = true)
+    public MemberResponse getMemberResponseById(Long memberId) {
+        Member member = findMemberByIdOrThrow(memberId);
+        return MemberResponse.convertFromEntity(member);
+    }
+
+    @Transactional(readOnly = true)
+    public MemberResponse getMemberResponseByEmail(String email) {
+        Member member = findMemberByEmailOrThrow(email);
+        return MemberResponse.convertFromEntity(member);
     }
 
     @Transactional(readOnly = true)
@@ -45,23 +61,24 @@ public class MemberService {
     @Transactional(readOnly = true)
     public Member findMemberByEmailOrThrow(String email) {
         return memberRepository.findByEmail(email)
-            .orElseThrow(
-                () -> new IllegalArgumentException("Member with email " + email + " not found"));
+            .orElseThrow(() -> new IllegalArgumentException("Member with email " + email + " not found"));
     }
 
     @Transactional
-    public Member updateMember(Long memberId, MemberRequest memberRequest) {
+    public MemberResponse updateMember(Long memberId, MemberRequest memberRequest) {
         Member member = findMemberByIdOrThrow(memberId);
         member.updateProfile(memberRequest.nickname(), memberRequest.bio(), memberRequest.imageUrl());
         member.addPoints(memberRequest.point());
-        return memberRepository.save(member);
+        memberRepository.save(member);
+        return MemberResponse.convertFromEntity(member);
     }
 
     @Transactional
-    public Member updateMyMember(String email, MemberRequest memberRequest) {
+    public MemberResponse updateMyMember(String email, MemberRequest memberRequest) {
         Member member = findMemberByEmailOrThrow(email);
         member.updateProfile(memberRequest.nickname(), memberRequest.bio(), memberRequest.imageUrl());
-        return memberRepository.save(member);
+        memberRepository.save(member);
+        return MemberResponse.convertFromEntity(member);
     }
 
     @Transactional
