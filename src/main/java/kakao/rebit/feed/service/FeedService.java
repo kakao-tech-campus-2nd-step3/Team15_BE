@@ -3,14 +3,13 @@ package kakao.rebit.feed.service;
 import java.util.Optional;
 import kakao.rebit.book.entity.Book;
 import kakao.rebit.book.service.BookService;
+import kakao.rebit.common.domain.ImageKeyHolder;
 import kakao.rebit.feed.dto.request.create.CreateFavoriteBookRequest;
 import kakao.rebit.feed.dto.request.create.CreateFeedRequest;
 import kakao.rebit.feed.dto.request.update.UpdateFavoriteBookRequest;
 import kakao.rebit.feed.dto.request.update.UpdateFeedRequest;
 import kakao.rebit.feed.dto.response.FeedResponse;
 import kakao.rebit.feed.entity.Feed;
-import kakao.rebit.feed.entity.Magazine;
-import kakao.rebit.feed.entity.Story;
 import kakao.rebit.feed.exception.feed.DeleteNotAuthorizedException;
 import kakao.rebit.feed.exception.feed.FavoriteBookRequiredBookException;
 import kakao.rebit.feed.exception.feed.FeedNotFoundException;
@@ -104,13 +103,9 @@ public class FeedService {
             throw DeleteNotAuthorizedException.EXCEPTION;
         }
 
-        // 메거진과 스토리는 피드 삭제 전 3S에서 image 파일을 먼저 삭제한다.
-        if (feed instanceof Magazine magazine) {
-            s3Service.deleteObject(magazine.getImageKey());
-        }
-
-        if (feed instanceof Story story) {
-            s3Service.deleteObject(story.getImageKey());
+        // 메거진과 스토리는 피드 삭제 전 S3에서 image 파일을 먼저 삭제한다.
+        if (feed instanceof ImageKeyHolder imageKeyHolder) {
+            s3Service.deleteObject(imageKeyHolder.getImageKey());
         }
 
         feedRepository.deleteById(feedId);
