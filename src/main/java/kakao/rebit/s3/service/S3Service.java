@@ -1,30 +1,29 @@
 package kakao.rebit.s3.service;
 
 import java.time.Duration;
+import java.util.Arrays;
+import java.util.List;
 import java.util.UUID;
 import kakao.rebit.s3.dto.S3DownloadUrlResponse;
 import kakao.rebit.s3.dto.S3UploadUrlResponse;
-import kakao.rebit.s3.exception.AwsDeleteServiceErrorException;
-import kakao.rebit.s3.exception.AwsDownloadServiceErrorException;
-import kakao.rebit.s3.exception.AwsUploadServiceErrorException;
 import kakao.rebit.s3.exception.S3DeleteClientErrorException;
-import kakao.rebit.s3.exception.S3DeleteServiceErrorException;
-import kakao.rebit.s3.exception.S3DeleteTimeOutErrorException;
+import kakao.rebit.s3.exception.S3DeleteErrorException;
+import kakao.rebit.s3.exception.S3DeleteSdkErrorException;
 import kakao.rebit.s3.exception.S3DeleteUnknownErrorException;
 import kakao.rebit.s3.exception.S3DownloadClientErrorException;
-import kakao.rebit.s3.exception.S3DownloadServiceErrorException;
-import kakao.rebit.s3.exception.S3DownloadTimeOutErrorException;
+import kakao.rebit.s3.exception.S3DownloadErrorException;
+import kakao.rebit.s3.exception.S3DownloadSdkErrorException;
 import kakao.rebit.s3.exception.S3DownloadUnknownErrorException;
+import kakao.rebit.s3.exception.S3NotAllowedFileFormatException;
 import kakao.rebit.s3.exception.S3UploadClientErrorException;
-import kakao.rebit.s3.exception.S3UploadServiceErrorException;
-import kakao.rebit.s3.exception.S3UploadTimeOutErrorException;
+import kakao.rebit.s3.exception.S3UploadErrorException;
+import kakao.rebit.s3.exception.S3UploadSdkErrorException;
 import kakao.rebit.s3.exception.S3UploadUnknownErrorException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import software.amazon.awssdk.core.exception.SdkClientException;
 import software.amazon.awssdk.core.exception.SdkException;
-import software.amazon.awssdk.core.exception.SdkServiceException;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
 import software.amazon.awssdk.services.s3.model.GetObjectRequest;
@@ -41,6 +40,7 @@ public class S3Service {
 
     private static final String KEY = "feed/%s/%s";
     private static final String CONTENT_TYPE = "image/%s";
+    private static final List<String> ALLOWED_FILE_FORMAT = Arrays.asList("jpg", "jpeg", "png", "gif", "svg", "webp");
 
     @Value("${cloud.aws.s3.bucket}")
     private String bucket;
@@ -56,6 +56,7 @@ public class S3Service {
     public S3UploadUrlResponse getUploadUrl(String fullFilename) {
         String filename = getFilename(fullFilename);
         String extension = getExtension(fullFilename);
+        validImageFileFormat(extension);
 
         // S3에 업로드할 객체 요청 생성
         String key = createKey(filename);
@@ -76,16 +77,11 @@ public class S3Service {
 
             return createS3UploadUrlResponse(presignedUrl, key);
         } catch (S3Exception e) {
-            throw S3UploadServiceErrorException.EXCEPTION;
+            throw S3UploadErrorException.EXCEPTION;
         } catch (SdkClientException e) {
-            // 클라이언트 측에서 발생하는 예외 처리 (예: 요청 오류)
             throw S3UploadClientErrorException.EXCEPTION;
-        } catch (SdkServiceException e) {
-            // AWS 서비스에서 발생하는 일반적인 예외 처리 (예: 서비스 요청 실패)
-            throw AwsUploadServiceErrorException.EXCEPTION;
         } catch (SdkException e) {
-            // 기타 SDK 예외 처리 (예: 요청 타임아웃 등)
-            throw S3UploadTimeOutErrorException.EXCEPTION;
+            throw S3UploadSdkErrorException.EXCEPTION;
         } catch (Exception e) {
             throw S3UploadUnknownErrorException.EXCEPTION;
         }
@@ -105,13 +101,11 @@ public class S3Service {
 
             return createS3DownloadUrlResponse(presignedUrl);
         } catch (S3Exception e) {
-            throw S3DownloadServiceErrorException.EXCEPTION;
+            throw S3DownloadErrorException.EXCEPTION;
         } catch (SdkClientException e) {
             throw S3DownloadClientErrorException.EXCEPTION;
-        } catch (SdkServiceException e) {
-            throw AwsDownloadServiceErrorException.EXCEPTION;
         } catch (SdkException e) {
-            throw S3DownloadTimeOutErrorException.EXCEPTION;
+            throw S3DownloadSdkErrorException.EXCEPTION;
         } catch (Exception e) {
             throw S3DownloadUnknownErrorException.EXCEPTION;
         }
@@ -123,13 +117,11 @@ public class S3Service {
         try {
             s3Client.deleteObject(deleteObjectRequest);
         } catch (S3Exception e) {
-            throw S3DeleteServiceErrorException.EXCEPTION;
+            throw S3DeleteErrorException.EXCEPTION;
         } catch (SdkClientException e) {
             throw S3DeleteClientErrorException.EXCEPTION;
-        } catch (SdkServiceException e) {
-            throw AwsDeleteServiceErrorException.EXCEPTION;
         } catch (SdkException e) {
-            throw S3DeleteTimeOutErrorException.EXCEPTION;
+            throw S3DeleteSdkErrorException.EXCEPTION;
         } catch (Exception e) {
             throw S3DeleteUnknownErrorException.EXCEPTION;
         }
@@ -213,5 +205,11 @@ public class S3Service {
 
     private S3DownloadUrlResponse createS3DownloadUrlResponse(String presignedUrl) {
         return new S3DownloadUrlResponse(presignedUrl);
+    }
+
+    private void validImageFileFormat(String extension){
+        if(!ALLOWED_FILE_FORMAT.contains(extension)){
+            throw S3NotAllowedFileFormatException.EXCEPTION;
+        }
     }
 }
