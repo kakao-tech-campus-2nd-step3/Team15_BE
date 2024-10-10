@@ -17,7 +17,6 @@ public class AladinApiService {
     private static final String BASE_API_URL = "http://www.aladin.co.kr/ttb/api";
     private static final String QUERY_PARAMS_FORMAT = "&QueryType=%s&MaxResults=%s&start=%d&SearchTarget=Book&output=js&Version=20131101";
 
-
     private static final String ITEM_LOOKUP_ENDPOINT = "/ItemLookUp.aspx";
     private static final String ITEM_SEARCH_ENDPOINT = "/ItemSearch.aspx";
 
@@ -33,18 +32,18 @@ public class AladinApiService {
         return executeApiRequest(url, AladinApiResponseListResponse.class);
     }
 
-    public AladinApiResponseResponse searchBookByIsbn(String isbn) {
-        String url = buildIsbnLookupUrl(isbn);
-        AladinApiResponseListResponse response = executeApiRequest(url,
-            AladinApiResponseListResponse.class);
-        return extractFirstBookFromResponse(response);
-    }
-
     private String buildTitleSearchUrl(String title, int maxResults, int startPage) {
         return BASE_API_URL + ITEM_SEARCH_ENDPOINT
             + "?ttbkey=" + TTB_KEY
             + "&Query=" + title
             + String.format(QUERY_PARAMS_FORMAT, "Title", maxResults, startPage);
+    }
+
+    public AladinApiResponseResponse searchBookByIsbn(String isbn) {
+        String url = buildIsbnLookupUrl(isbn);
+        AladinApiResponseListResponse response = executeApiRequest(url,
+            AladinApiResponseListResponse.class);
+        return extractFirstBookFromResponse(response);
     }
 
     private String buildIsbnLookupUrl(String isbn) {
