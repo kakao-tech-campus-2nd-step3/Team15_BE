@@ -1,6 +1,6 @@
 package kakao.rebit.s3.dto;
 
-public record DownloadResponse(
+public record S3DownloadUrlResponse(
         String presignedUrl
 ) {
 
