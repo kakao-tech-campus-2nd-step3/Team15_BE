@@ -1,6 +1,5 @@
 package kakao.rebit.s3.controller;
 
-import kakao.rebit.common.annotation.AllowAnonymous;
 import kakao.rebit.s3.dto.S3UploadUrlResponse;
 import kakao.rebit.s3.service.S3Service;
 import org.springframework.http.ResponseEntity;

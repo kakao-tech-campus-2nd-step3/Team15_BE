@@ -1,7 +1,6 @@
 package kakao.rebit.feed.dto.request.update;
 
 import jakarta.validation.constraints.NotBlank;
-import org.hibernate.validator.constraints.URL;
 
 public class UpdateMagazineRequest extends UpdateFeedRequest {
 
