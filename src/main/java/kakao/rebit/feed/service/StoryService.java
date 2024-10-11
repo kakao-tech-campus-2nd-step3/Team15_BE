@@ -2,6 +2,7 @@ package kakao.rebit.feed.service;
 
 import kakao.rebit.feed.dto.response.FeedResponse;
 import kakao.rebit.feed.entity.Story;
+import kakao.rebit.feed.exception.feed.FeedNotFoundException;
 import kakao.rebit.feed.mapper.FeedMapper;
 import kakao.rebit.feed.repository.StoryRepository;
 import org.springframework.data.domain.Page;
@@ -28,7 +29,7 @@ public class StoryService {
     @Transactional(readOnly = true)
     public FeedResponse getStoryById(Long id) {
         Story story = storyRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("찾는 스토리가 없습니다."));
+                .orElseThrow(() -> FeedNotFoundException.EXCEPTION);
         return feedMapper.toFeedResponse(story);
     }
 }

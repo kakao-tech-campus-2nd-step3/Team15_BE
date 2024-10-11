@@ -1,5 +1,8 @@
 package kakao.rebit.feed.dto.response;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
+@Schema(oneOf = {FavoriteBookResponse.class, MagazineResponse.class, StoryResponse.class})
 public abstract class FeedResponse {
 
     private Long id;

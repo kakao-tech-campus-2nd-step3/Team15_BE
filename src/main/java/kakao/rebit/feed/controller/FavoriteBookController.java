@@ -1,8 +1,12 @@
 package kakao.rebit.feed.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import kakao.rebit.common.annotation.AllowAnonymous;
+import kakao.rebit.feed.dto.response.FavoriteBookResponse;
 import kakao.rebit.feed.dto.response.FeedResponse;
 import kakao.rebit.feed.service.FavoriteBookService;
 import org.springframework.data.domain.Page;
@@ -35,6 +39,7 @@ public class FavoriteBookController {
     }
 
     @Operation(summary = "인생책 조회", description = "인생책을 조회합니다.")
+    @ApiResponse(content = @Content(schema = @Schema(implementation = FavoriteBookResponse.class)))
     @GetMapping("/{favorite-id}")
     public ResponseEntity<FeedResponse> getFavoriteBook(
             @PathVariable("favorite-id") Long id) {

@@ -2,6 +2,7 @@ package kakao.rebit.feed.service;
 
 import kakao.rebit.feed.dto.response.FeedResponse;
 import kakao.rebit.feed.entity.Magazine;
+import kakao.rebit.feed.exception.feed.FeedNotFoundException;
 import kakao.rebit.feed.mapper.FeedMapper;
 import kakao.rebit.feed.repository.MagazineRepository;
 import org.springframework.data.domain.Page;
@@ -28,7 +29,7 @@ public class MagazineService {
     @Transactional(readOnly = true)
     public FeedResponse getMagazineById(Long id) {
         Magazine magazine = magazineRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("찾는 메거진이 없습니다."));
+                .orElseThrow(() -> FeedNotFoundException.EXCEPTION);
         return feedMapper.toFeedResponse(magazine);
     }
 }

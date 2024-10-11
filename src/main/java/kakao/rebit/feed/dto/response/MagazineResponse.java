@@ -1,16 +1,19 @@
 package kakao.rebit.feed.dto.response;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
+@Schema(description = "메거진 응답")
 public class MagazineResponse extends FeedResponse {
 
     private String name;
-    private String imageUrl;
+    private String presignedUrl;
     private String content;
 
     public MagazineResponse(Long id, FeedAuthorResponse author, FeedBookResponse book,
-            String type, int likes, String name, String imageUrl, String content) {
+            String type, int likes, String name, String presignedUrl, String content) {
         super(id, author, book, type, likes);
         this.name = name;
-        this.imageUrl = imageUrl;
+        this.presignedUrl = presignedUrl;
         this.content = content;
     }
 
@@ -18,8 +21,8 @@ public class MagazineResponse extends FeedResponse {
         return name;
     }
 
-    public String getImageUrl() {
-        return imageUrl;
+    public String getPresignedUrl() {
+        return presignedUrl;
     }
 
     public String getContent() {

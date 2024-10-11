@@ -3,6 +3,7 @@ package kakao.rebit.feed.service;
 import java.util.Optional;
 import kakao.rebit.book.entity.Book;
 import kakao.rebit.book.service.BookService;
+import kakao.rebit.common.domain.ImageKeyHolder;
 import kakao.rebit.feed.dto.request.create.CreateFavoriteBookRequest;
 import kakao.rebit.feed.dto.request.create.CreateFeedRequest;
 import kakao.rebit.feed.dto.request.update.UpdateFavoriteBookRequest;
@@ -18,6 +19,7 @@ import kakao.rebit.feed.repository.FeedRepository;
 import kakao.rebit.member.dto.MemberResponse;
 import kakao.rebit.member.entity.Member;
 import kakao.rebit.member.service.MemberService;
+import kakao.rebit.s3.service.S3Service;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -30,13 +32,15 @@ public class FeedService {
     private final MemberService memberService;
     private final BookService bookService;
     private final FeedMapper feedMapper;
+    private final S3Service s3Service;
 
     public FeedService(FeedRepository feedRepository, MemberService memberService,
-            BookService bookService, FeedMapper feedMapper) {
+            BookService bookService, FeedMapper feedMapper, S3Service s3Service) {
         this.feedRepository = feedRepository;
         this.memberService = memberService;
         this.bookService = bookService;
         this.feedMapper = feedMapper;
+        this.s3Service = s3Service;
     }
 
     @Transactional(readOnly = true)
@@ -98,6 +102,12 @@ public class FeedService {
         if (!feed.isWrittenBy(member)) {
             throw DeleteNotAuthorizedException.EXCEPTION;
         }
+
+        // 메거진과 스토리는 피드 삭제 전 S3에서 image 파일을 먼저 삭제한다.
+        if (feed instanceof ImageKeyHolder imageKeyHolder) {
+            s3Service.deleteObject(imageKeyHolder.getImageKey());
+        }
+
         feedRepository.deleteById(feedId);
     }
 
