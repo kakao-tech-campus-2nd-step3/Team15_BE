@@ -55,12 +55,11 @@ public class DiaryController {
 
     @Operation(summary = "독서일기 수정", description = "특정 ID의 독서일기를 수정합니다.")
     @PutMapping("/{diaryId}")
-    public ResponseEntity<DiaryDto> updateDiary(
+    public ResponseEntity<Void> updateDiary(
         @Parameter(hidden = true) @MemberInfo MemberResponse memberResponse,
         @PathVariable("diaryId") Long diaryId, @RequestBody DiaryDto diaryDto) {
-        DiaryDto updatedDiary = diaryService.updateDiaryFromDto(memberResponse.id(), diaryId,
-            diaryDto);
-        return ResponseEntity.ok(updatedDiary);
+        diaryService.updateDiaryFromDto(memberResponse.id(), diaryId, diaryDto);
+        return ResponseEntity.noContent().build();
     }
 
     @Operation(summary = "독서일기 삭제", description = "특정 ID의 독서일기를 삭제합니다.")
