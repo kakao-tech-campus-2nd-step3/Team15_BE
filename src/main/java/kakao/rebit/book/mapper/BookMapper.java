@@ -48,7 +48,6 @@ public class BookMapper {
             book.getDescription(),
             book.getPublisher(),
             book.getPubDate(),
-            briefReview,
             topFullReview
         );
     }
