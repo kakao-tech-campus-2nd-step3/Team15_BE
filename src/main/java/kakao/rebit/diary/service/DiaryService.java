@@ -5,25 +5,23 @@ import kakao.rebit.book.repository.BookRepository;
 import kakao.rebit.diary.entity.Diary;
 import kakao.rebit.diary.repository.DiaryRepository;
 import kakao.rebit.member.entity.Member;
-import kakao.rebit.member.repository.MemberRepository;
+import kakao.rebit.member.service.MemberService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-
 @Service
 public class DiaryService {
 
     private final DiaryRepository diaryRepository;
-    private final MemberRepository memberRepository;
+    private final MemberService memberService;
     private final BookRepository bookRepository;
 
-    public DiaryService(DiaryRepository diaryRepository, MemberRepository memberRepository,
+    public DiaryService(DiaryRepository diaryRepository, MemberService memberService,
         BookRepository bookRepository) {
         this.diaryRepository = diaryRepository;
-        this.memberRepository = memberRepository;
+        this.memberService = memberService;
         this.bookRepository = bookRepository;
     }
 
@@ -42,11 +40,12 @@ public class DiaryService {
 
     @Transactional
     public Long createDiary(Long memberId, Diary diaryRequest) {
-        Member member = memberRepository.findById(memberId)
-            .orElseThrow(() -> new IllegalArgumentException("회원 ID " + memberId + "를 찾을 수 없습니다."));
+        Member member = memberService.findMemberByIdOrThrow(memberId);
+
         Book book = bookRepository.findByIsbn(diaryRequest.getBook().getIsbn())
             .orElseThrow(() -> new IllegalArgumentException(
                 "ISBN " + diaryRequest.getBook().getIsbn() + "에 해당하는 책을 찾을 수 없습니다."));
+
         Diary diary = new Diary(diaryRequest.getContent(), member, book);
         Diary savedDiary = diaryRepository.save(diary);  // 저장된 다이어리 반환
         return savedDiary.getId();  // 다이어리의 ID 반환
