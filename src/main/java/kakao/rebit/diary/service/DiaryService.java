@@ -29,16 +29,17 @@ public class DiaryService {
     @Transactional(readOnly = true)
     public Page<DiaryDto> getDiariesDto(Long memberId, Pageable pageable) {
         return diaryRepository.findByMemberId(memberId, pageable)
-            .map(diary -> new DiaryDto(diary.getId(), diary.getContent(), diary.getMember().getId(), diary.getBook().getIsbn()));
+            .map(diary -> new DiaryDto(diary.getId(), diary.getContent(), diary.getMember().getId(),
+                diary.getBook().getIsbn()));
     }
 
     @Transactional(readOnly = true)
     public DiaryDto getDiaryDtoById(Long memberId, Long id) {
-        Diary diary = diaryRepository.findById(id)
-            .filter(d -> d.getMember().getId().equals(memberId))
+        Diary diary = diaryRepository.findByIdAndMemberId(id, memberId)
             .orElseThrow(() -> new IllegalArgumentException(
                 "회원 ID " + memberId + "에 해당하는 다이어리 ID " + id + "를 찾을 수 없습니다."));
-        return new DiaryDto(diary.getId(), diary.getContent(), diary.getMember().getId(), diary.getBook().getIsbn());
+        return new DiaryDto(diary.getId(), diary.getContent(), diary.getMember().getId(),
+            diary.getBook().getIsbn());
     }
 
     @Transactional
@@ -56,22 +57,23 @@ public class DiaryService {
 
     @Transactional
     public DiaryDto updateDiaryFromDto(Long memberId, Long id, DiaryDto diaryDto) {
-        Diary diary = diaryRepository.findById(id)
-            .filter(d -> d.getMember().getId().equals(memberId))
+        Diary diary = diaryRepository.findByIdAndMemberId(id, memberId)
             .orElseThrow(() -> new IllegalArgumentException(
                 "회원 ID " + memberId + "에 해당하는 다이어리 ID " + id + "를 찾을 수 없습니다."));
+
         Book book = bookRepository.findByIsbn(diaryDto.isbn())
             .orElseThrow(() -> new IllegalArgumentException(
                 "ISBN " + diaryDto.isbn() + "에 해당하는 책을 찾을 수 없습니다."));
+
         diary.updateDiary(diaryDto.content(), book);
         Diary updatedDiary = diaryRepository.save(diary);
-        return new DiaryDto(updatedDiary.getId(), updatedDiary.getContent(), updatedDiary.getMember().getId(), updatedDiary.getBook().getIsbn());
+        return new DiaryDto(updatedDiary.getId(), updatedDiary.getContent(),
+            updatedDiary.getMember().getId(), updatedDiary.getBook().getIsbn());
     }
 
     @Transactional
     public void deleteDiary(Long memberId, Long id) {
-        Diary diary = diaryRepository.findById(id)
-            .filter(d -> d.getMember().getId().equals(memberId))
+        Diary diary = diaryRepository.findByIdAndMemberId(id, memberId)
             .orElseThrow(() -> new IllegalArgumentException(
                 "회원 ID " + memberId + "에 해당하는 다이어리 ID " + id + "를 찾을 수 없습니다."));
         diaryRepository.delete(diary);
