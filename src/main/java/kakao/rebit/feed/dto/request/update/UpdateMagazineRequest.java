@@ -1,18 +1,23 @@
 package kakao.rebit.feed.dto.request.update;
 
+import jakarta.validation.constraints.NotBlank;
+
 public class UpdateMagazineRequest extends UpdateFeedRequest {
 
+    @NotBlank(message = "메거진 대상 이름은 필수 입력 값입니다.")
     private String name;
-    private String imageUrl;
+    @NotBlank(message = "이미지는 필수 입니다.")
+    private String imageKey;
+    @NotBlank(message = "본문은 필수 입력 값입니다.")
     private String content;
 
     private UpdateMagazineRequest() {
     }
 
-    public UpdateMagazineRequest(Long bookId, String name, String imageUrl, String content) {
+    public UpdateMagazineRequest(Long bookId, String name, String imageKey, String content) {
         super(bookId);
         this.name = name;
-        this.imageUrl = imageUrl;
+        this.imageKey = imageKey;
         this.content = content;
     }
 
@@ -20,8 +25,8 @@ public class UpdateMagazineRequest extends UpdateFeedRequest {
         return name;
     }
 
-    public String getImageUrl() {
-        return imageUrl;
+    public String getImageKey() {
+        return imageKey;
     }
 
     public String getContent() {

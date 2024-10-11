@@ -17,7 +17,7 @@ public interface ChallengeParticipationRepository extends JpaRepository<Challeng
     @Query("SELECT cp FROM ChallengeParticipation cp WHERE cp.challenge = :challenge")
     Page<ChallengeParticipation> findAllByChallengeWithMember(@Param("challenge") Challenge challenge, Pageable pageable);
 
-    Boolean existsByMemberAndChallenge(Member member, Challenge challenge);
+    Boolean existsByChallengeAndMember(Challenge challenge, Member member);
 
     @EntityGraph(attributePaths = {"member", "challenge"})
     Optional<ChallengeParticipation> findByMemberAndChallenge(Member member, Challenge challenge);

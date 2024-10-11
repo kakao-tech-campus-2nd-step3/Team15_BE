@@ -1,15 +1,18 @@
 package kakao.rebit.feed.dto.response;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
+@Schema(oneOf = {FavoriteBookResponse.class, MagazineResponse.class, StoryResponse.class})
 public abstract class FeedResponse {
 
     private Long id;
-    private AuthorResponse author;
+    private FeedAuthorResponse author;
     private FeedBookResponse book;
     private String type;
     private int likes;
 
-    public FeedResponse(Long id, AuthorResponse author, FeedBookResponse book,
-            String type) {
+    public FeedResponse(Long id, FeedAuthorResponse author, FeedBookResponse book,
+            String type, int likes) {
         this.id = id;
         this.author = author;
         this.book = book;
@@ -21,7 +24,7 @@ public abstract class FeedResponse {
         return id;
     }
 
-    public AuthorResponse getAuthor() {
+    public FeedAuthorResponse getAuthor() {
         return author;
     }
 
