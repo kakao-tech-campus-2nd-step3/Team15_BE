@@ -5,6 +5,7 @@ import kakao.rebit.book.dto.AladinApiResponseResponse;
 import kakao.rebit.book.exception.api.ApiErrorException;
 import kakao.rebit.book.exception.book.InvalidIsbnException;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
 
@@ -26,17 +27,18 @@ public class AladinApiService {
         this.restClient = restClient;
     }
 
-    public AladinApiResponseListResponse searchBooksByTitle(String title, int maxResults,
-        int startPage) {
-        String url = buildTitleSearchUrl(title, maxResults, startPage);
+    public AladinApiResponseListResponse searchBooksByTitle(String title, Pageable pageable) {
+        String url = buildTitleSearchUrl(title, pageable);
         return executeApiRequest(url, AladinApiResponseListResponse.class);
     }
 
-    private String buildTitleSearchUrl(String title, int maxResults, int startPage) {
+    private String buildTitleSearchUrl(String title, Pageable pageable) {
+        int pageSize = pageable.getPageSize();
+        int pageNumber = pageable.getPageNumber() + 1;  // API에서 1부터 시작하는 페이지 번호를 기대
         return BASE_API_URL + ITEM_SEARCH_ENDPOINT
             + "?ttbkey=" + TTB_KEY
             + "&Query=" + title
-            + String.format(QUERY_PARAMS_FORMAT, "Title", maxResults, startPage);
+            + String.format(QUERY_PARAMS_FORMAT, "Title", pageSize, pageNumber);
     }
 
     public AladinApiResponseResponse searchBookByIsbn(String isbn) {
