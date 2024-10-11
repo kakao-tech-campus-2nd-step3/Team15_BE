@@ -3,7 +3,7 @@ package kakao.rebit.diary.controller;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import kakao.rebit.diary.entity.Diary;
+import kakao.rebit.diary.dto.DiaryDto;
 import kakao.rebit.diary.service.DiaryService;
 import kakao.rebit.member.annotation.MemberInfo;
 import kakao.rebit.member.dto.MemberResponse;
@@ -28,19 +28,19 @@ public class DiaryController {
 
     @Operation(summary = "독서일기 목록 조회", description = "사용자의 모든 독서일기를 조회합니다.")
     @GetMapping
-    public ResponseEntity<Page<Diary>> getDiaries(
+    public ResponseEntity<Page<DiaryDto>> getDiaries(
         @Parameter(hidden = true) @MemberInfo MemberResponse memberResponse,
         @PageableDefault Pageable pageable) {
-        Page<Diary> diaries = diaryService.getDiaries(memberResponse.id(), pageable);
+        Page<DiaryDto> diaries = diaryService.getDiariesDto(memberResponse.id(), pageable);
         return ResponseEntity.ok(diaries);
     }
 
     @Operation(summary = "특정 독서일기 조회", description = "특정 ID의 독서일기를 조회합니다.")
     @GetMapping("/{diaryId}")
-    public ResponseEntity<Diary> getDiaryById(
+    public ResponseEntity<DiaryDto> getDiaryById(
         @Parameter(hidden = true) @MemberInfo MemberResponse memberResponse,
         @PathVariable Long diaryId) {
-        Diary diary = diaryService.getDiaryById(memberResponse.id(), diaryId);
+        DiaryDto diary = diaryService.getDiaryDtoById(memberResponse.id(), diaryId);
         return ResponseEntity.ok(diary);
     }
 
@@ -48,19 +48,18 @@ public class DiaryController {
     @PostMapping
     public ResponseEntity<Void> createDiary(
         @Parameter(hidden = true) @MemberInfo MemberResponse memberResponse,
-        @RequestBody Diary diaryRequest) {
-        Long diaryId = diaryService.createDiary(memberResponse.id(),
-            diaryRequest);  // 다이어리 생성 후 ID 반환
-        return ResponseEntity.created(URI.create("/api/diaries/" + diaryId))
-            .build();  // 생성된 다이어리의 URI 반환
+        @RequestBody DiaryDto diaryDto) {
+        Long diaryId = diaryService.createDiaryFromDto(memberResponse.id(), diaryDto);
+        return ResponseEntity.created(URI.create("/api/diaries/" + diaryId)).build();
     }
 
     @Operation(summary = "독서일기 수정", description = "특정 ID의 독서일기를 수정합니다.")
     @PutMapping("/{diaryId}")
-    public ResponseEntity<Diary> updateDiary(
+    public ResponseEntity<DiaryDto> updateDiary(
         @Parameter(hidden = true) @MemberInfo MemberResponse memberResponse,
-        @PathVariable Long diaryId, @RequestBody Diary diaryRequest) {
-        Diary updatedDiary = diaryService.updateDiary(memberResponse.id(), diaryId, diaryRequest);
+        @PathVariable Long diaryId, @RequestBody DiaryDto diaryDto) {
+        DiaryDto updatedDiary = diaryService.updateDiaryFromDto(memberResponse.id(), diaryId,
+            diaryDto);
         return ResponseEntity.ok(updatedDiary);
     }
 
