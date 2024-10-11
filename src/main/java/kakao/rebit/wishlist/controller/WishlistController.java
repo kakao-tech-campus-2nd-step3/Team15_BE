@@ -41,7 +41,7 @@ public class WishlistController {
     @PostMapping("/books/{isbn}")
     public ResponseEntity<Void> addBookWishlist(
         @Parameter(hidden = true) @MemberInfo MemberResponse memberResponse,
-        @PathVariable String isbn) {
+        @PathVariable("isbn") String isbn) {
         bookWishlistService.addBookWishlist(memberResponse.id(), isbn);
         return ResponseEntity.noContent().build();
     }
@@ -50,7 +50,7 @@ public class WishlistController {
     @DeleteMapping("/books/{isbn}")
     public ResponseEntity<Void> deleteBookWishlist(
         @Parameter(hidden = true) @MemberInfo MemberResponse memberResponse,
-        @PathVariable String isbn) {
+        @PathVariable("isbn") String isbn) {
         bookWishlistService.deleteBookWishlist(memberResponse.id(), isbn);
         return ResponseEntity.noContent().build();
     }
@@ -69,7 +69,7 @@ public class WishlistController {
     @PostMapping("/challenges/{challengeId}")
     public ResponseEntity<Void> addChallengeWishlist(
         @Parameter(hidden = true) @MemberInfo MemberResponse memberResponse,
-        @PathVariable Long challengeId) {
+        @PathVariable("challengeId") Long challengeId) {
         challengeWishlistService.addChallengeWishlist(memberResponse.id(), challengeId);
         return ResponseEntity.noContent().build();
     }
@@ -78,7 +78,7 @@ public class WishlistController {
     @DeleteMapping("/challenges/{challengeId}")
     public ResponseEntity<Void> deleteChallengeWishlist(
         @Parameter(hidden = true) @MemberInfo MemberResponse memberResponse,
-        @PathVariable Long challengeId) {
+        @PathVariable("challengeId") Long challengeId) {
         challengeWishlistService.deleteChallengeWishlist(memberResponse.id(), challengeId);
         return ResponseEntity.noContent().build();
     }

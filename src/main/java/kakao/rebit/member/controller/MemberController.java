@@ -74,7 +74,7 @@ public class MemberController {
     public ResponseEntity<MemberResponse> getMemberById(
         @Parameter(hidden = true) @MemberInfo(allowedRoles = {Role.ROLE_ADMIN,
             Role.ROLE_EDITOR}) MemberResponse memberResponse,
-        @PathVariable Long id) {
+        @PathVariable("id") Long id) {
         MemberResponse response = memberService.getMemberResponseById(id);
         return ResponseEntity.ok(response);
     }
@@ -84,7 +84,7 @@ public class MemberController {
     public ResponseEntity<MemberResponse> updateMember(
         @Parameter(hidden = true) @MemberInfo(allowedRoles = {Role.ROLE_ADMIN,
             Role.ROLE_EDITOR}) MemberResponse memberResponse,
-        @PathVariable Long id,
+        @PathVariable("id") Long id,
         @RequestBody MemberRequest memberRequest) {
         MemberResponse updatedMember = memberService.updateMember(id, memberRequest);
         return ResponseEntity.ok(updatedMember);
@@ -95,7 +95,7 @@ public class MemberController {
     public ResponseEntity<Void> deleteMember(
         @Parameter(hidden = true) @MemberInfo(allowedRoles = {Role.ROLE_ADMIN,
             Role.ROLE_EDITOR}) MemberResponse memberResponse,
-        @PathVariable Long id) {
+        @PathVariable("id") Long id) {
         memberService.deleteMember(id);
         return ResponseEntity.noContent().build();
     }

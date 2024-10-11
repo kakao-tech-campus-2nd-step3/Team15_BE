@@ -39,7 +39,7 @@ public class DiaryController {
     @GetMapping("/{diaryId}")
     public ResponseEntity<DiaryDto> getDiaryById(
         @Parameter(hidden = true) @MemberInfo MemberResponse memberResponse,
-        @PathVariable Long diaryId) {
+        @PathVariable("diaryId") Long diaryId) {
         DiaryDto diary = diaryService.getDiaryDtoById(memberResponse.id(), diaryId);
         return ResponseEntity.ok(diary);
     }
@@ -57,7 +57,7 @@ public class DiaryController {
     @PutMapping("/{diaryId}")
     public ResponseEntity<DiaryDto> updateDiary(
         @Parameter(hidden = true) @MemberInfo MemberResponse memberResponse,
-        @PathVariable Long diaryId, @RequestBody DiaryDto diaryDto) {
+        @PathVariable("diaryId") Long diaryId, @RequestBody DiaryDto diaryDto) {
         DiaryDto updatedDiary = diaryService.updateDiaryFromDto(memberResponse.id(), diaryId,
             diaryDto);
         return ResponseEntity.ok(updatedDiary);
@@ -67,7 +67,7 @@ public class DiaryController {
     @DeleteMapping("/{diaryId}")
     public ResponseEntity<Void> deleteDiary(
         @Parameter(hidden = true) @MemberInfo MemberResponse memberResponse,
-        @PathVariable Long diaryId) {
+        @PathVariable("diaryId") Long diaryId) {
         diaryService.deleteDiary(memberResponse.id(), diaryId);
         return ResponseEntity.noContent().build();
     }
