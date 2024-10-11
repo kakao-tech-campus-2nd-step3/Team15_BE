@@ -25,7 +25,6 @@ public class FavoriteBookService {
     @Transactional(readOnly = true)
     public Page<FeedResponse> getFavoriteBooks(Pageable pageable) {
         Page<FavoriteBook> favorites = favoriteBookRepository.findAll(pageable);
-        System.out.println(favorites);
         return favorites.map(feedMapper::toFeedResponse);
     }
 
