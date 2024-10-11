@@ -1,6 +1,7 @@
 package kakao.rebit.diary.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import kakao.rebit.diary.entity.Diary;
 import kakao.rebit.diary.service.DiaryService;
@@ -24,14 +25,14 @@ public class DiaryController {
 
     @Operation(summary = "독서일기 목록 조회", description = "사용자의 모든 독서일기를 조회합니다.")
     @GetMapping
-    public ResponseEntity<List<Diary>> getDiaries(@MemberInfo MemberResponse memberResponse) {
+    public ResponseEntity<List<Diary>> getDiaries(@Parameter(hidden = true) @MemberInfo MemberResponse memberResponse) {
         List<Diary> diaries = diaryService.getDiaries(memberResponse.id());
         return ResponseEntity.ok(diaries);
     }
 
     @Operation(summary = "특정 독서일기 조회", description = "특정 ID의 독서일기를 조회합니다.")
     @GetMapping("/{id}")
-    public ResponseEntity<Diary> getDiaryById(@MemberInfo MemberResponse memberResponse,
+    public ResponseEntity<Diary> getDiaryById(@Parameter(hidden = true) @MemberInfo MemberResponse memberResponse,
         @PathVariable Long id) {
         Diary diary = diaryService.getDiaryById(memberResponse.id(), id);
         return ResponseEntity.ok(diary);
@@ -39,7 +40,7 @@ public class DiaryController {
 
     @Operation(summary = "독서일기 작성", description = "새로운 독서일기를 작성합니다.")
     @PostMapping
-    public ResponseEntity<Void> createDiary(@MemberInfo MemberResponse memberResponse,
+    public ResponseEntity<Void> createDiary(@Parameter(hidden = true) @MemberInfo MemberResponse memberResponse,
         @RequestBody Diary diaryRequest) {
         diaryService.createDiary(memberResponse.id(), diaryRequest);
         return ResponseEntity.noContent().build();
@@ -47,7 +48,7 @@ public class DiaryController {
 
     @Operation(summary = "독서일기 수정", description = "특정 ID의 독서일기를 수정합니다.")
     @PutMapping("/{id}")
-    public ResponseEntity<Diary> updateDiary(@MemberInfo MemberResponse memberResponse,
+    public ResponseEntity<Diary> updateDiary(@Parameter(hidden = true) @MemberInfo MemberResponse memberResponse,
         @PathVariable Long id, @RequestBody Diary diaryRequest) {
         Diary updatedDiary = diaryService.updateDiary(memberResponse.id(), id, diaryRequest);
         return ResponseEntity.ok(updatedDiary);
@@ -55,7 +56,7 @@ public class DiaryController {
 
     @Operation(summary = "독서일기 삭제", description = "특정 ID의 독서일기를 삭제합니다.")
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteDiary(@MemberInfo MemberResponse memberResponse,
+    public ResponseEntity<Void> deleteDiary(@Parameter(hidden = true) @MemberInfo MemberResponse memberResponse,
         @PathVariable Long id) {
         diaryService.deleteDiary(memberResponse.id(), id);
         return ResponseEntity.noContent().build();
