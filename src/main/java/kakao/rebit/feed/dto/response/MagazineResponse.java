@@ -1,5 +1,8 @@
 package kakao.rebit.feed.dto.response;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
+@Schema(description = "메거진 응답")
 public class MagazineResponse extends FeedResponse {
 
     private String name;

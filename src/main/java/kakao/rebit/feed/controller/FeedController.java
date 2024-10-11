@@ -2,14 +2,20 @@ package kakao.rebit.feed.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import java.net.URI;
 import kakao.rebit.common.annotation.AllowAnonymous;
 import kakao.rebit.feed.dto.request.create.CreateFeedRequest;
 import kakao.rebit.feed.dto.request.update.UpdateFeedRequest;
+import kakao.rebit.feed.dto.response.FavoriteBookResponse;
 import kakao.rebit.feed.dto.response.FeedResponse;
 import kakao.rebit.feed.dto.response.LikesMemberResponse;
+import kakao.rebit.feed.dto.response.MagazineResponse;
+import kakao.rebit.feed.dto.response.StoryResponse;
 import kakao.rebit.feed.service.FeedService;
 import kakao.rebit.feed.service.LikesService;
 import kakao.rebit.member.annotation.MemberInfo;
@@ -50,6 +56,7 @@ public class FeedController {
     }
 
     @Operation(summary = "피드 조회", description = "피드를 조회합니다.")
+    @ApiResponse(content = @Content(schema = @Schema(oneOf = {FavoriteBookResponse.class, MagazineResponse.class, StoryResponse.class})))
     @GetMapping("/{feed-id}")
     public ResponseEntity<FeedResponse> getMagazine(@PathVariable("feed-id") Long feedId) {
         return ResponseEntity.ok().body(feedService.getFeedById(feedId));

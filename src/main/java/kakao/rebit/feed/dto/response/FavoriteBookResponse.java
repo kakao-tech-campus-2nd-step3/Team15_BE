@@ -1,5 +1,8 @@
 package kakao.rebit.feed.dto.response;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
+@Schema(description = "인생책 응답")
 public class FavoriteBookResponse extends FeedResponse {
 
     private String briefReview;
