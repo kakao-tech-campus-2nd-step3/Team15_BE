@@ -91,10 +91,8 @@ public class BookService {
     }
 
     @Transactional(readOnly = true)
-    public List<String> getBriefReviewsByIsbn(String isbn) {
-        return favoriteBookRepository.findAllByBookIsbnOrderByLikesDesc(isbn)
-            .stream()
-            .map(FavoriteBook::getBriefReview)
-            .collect(Collectors.toList());
+    public Page<String> getBriefReviewsByIsbn(String isbn, Pageable pageable) {
+        return favoriteBookRepository.findAllByBookIsbnOrderByLikesDesc(isbn, pageable)
+            .map(FavoriteBook::getBriefReview);
     }
 }

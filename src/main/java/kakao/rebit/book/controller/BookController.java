@@ -44,8 +44,9 @@ public class BookController {
 
     // ISBN으로 해당 책의 작성 된 한줄평을 모두 조회
     @GetMapping("/{isbn}/brief-reviews")
-    public ResponseEntity<List<String>> getAllBriefReviews(@PathVariable("isbn") String isbn) {
-        List<String> briefReviews = bookService.getBriefReviewsByIsbn(isbn);
+    public ResponseEntity<Page<String>> getAllBriefReviews(@PathVariable("isbn") String isbn,
+        Pageable pageable) {
+        Page<String> briefReviews = bookService.getBriefReviewsByIsbn(isbn, pageable);
         return ResponseEntity.ok(briefReviews);
     }
 
