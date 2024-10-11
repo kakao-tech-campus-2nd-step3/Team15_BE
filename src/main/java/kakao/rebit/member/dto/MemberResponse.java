@@ -1,6 +1,5 @@
 package kakao.rebit.member.dto;
 
-import kakao.rebit.member.entity.Member;
 import kakao.rebit.member.entity.Role;
 
 public record MemberResponse(
@@ -12,15 +11,4 @@ public record MemberResponse(
     Role role,
     Integer point
 ) {
-    public static MemberResponse convertFromEntity(Member member) {
-        return new MemberResponse(
-            member.getId(),
-            member.getNickname(),
-            member.getImageUrl(),
-            member.getBio(),
-            member.getEmail(),
-            member.getRole(),
-            member.getPoints()
-        );
-    }
 }
