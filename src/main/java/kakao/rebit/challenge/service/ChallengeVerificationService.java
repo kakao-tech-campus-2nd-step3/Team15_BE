@@ -7,6 +7,10 @@ import kakao.rebit.challenge.dto.ChallengeVerificationResponse;
 import kakao.rebit.challenge.entity.Challenge;
 import kakao.rebit.challenge.entity.ChallengeParticipation;
 import kakao.rebit.challenge.entity.ChallengeVerification;
+import kakao.rebit.challenge.exception.verification.VerifyChallengeAlreadyDoneTodayException;
+import kakao.rebit.challenge.exception.verification.VerifyChallengeNotOngoingException;
+import kakao.rebit.challenge.exception.verification.DeleteNotAuthorizedException;
+import kakao.rebit.challenge.exception.verification.VerificationNotFoundException;
 import kakao.rebit.challenge.repository.ChallengeVerificationRepository;
 import kakao.rebit.member.dto.MemberResponse;
 import kakao.rebit.member.entity.Member;
@@ -50,7 +54,7 @@ public class ChallengeVerificationService {
     private ChallengeVerification findByIdAndChallengeOrThrow(Long verificationId, Challenge challenge) {
         return challengeVerificationRepository.findByIdAndChallengeParticipation_Challenge(verificationId,
                         challenge)
-                .orElseThrow(() -> new IllegalArgumentException("찾는 인증글이 존재하지 않습니다."));
+                .orElseThrow(() -> VerificationNotFoundException.EXCEPTION);
     }
 
     @Transactional
@@ -60,11 +64,15 @@ public class ChallengeVerificationService {
         Challenge challenge = challengeService.findChallengeByIdOrThrow(challengeId);
 
         if (!challenge.isOngoing(LocalDateTime.now())) {
-            throw new IllegalArgumentException("챌린지가 진행 중에만 인증글을 작성할 수 있습니다.");
+            throw VerifyChallengeNotOngoingException.EXCEPTION;
         }
 
         ChallengeParticipation challengeParticipation = challengeParticipationService.findChallengeParticipationByMemberAndChallengeOrThrow(
                 member, challenge);
+
+        if (challengeVerificationRepository.existsDailyVerification(challengeParticipation.getId(), LocalDateTime.now())) {
+            throw VerifyChallengeAlreadyDoneTodayException.EXCEPTION;
+        }
 
         return challengeVerificationRepository.save(toChallengeVerification(challengeParticipation, challengeVerificationRequest)).getId();
     }
@@ -76,7 +84,7 @@ public class ChallengeVerificationService {
         ChallengeVerification challengeVerification = findByIdAndChallengeOrThrow(verificationId, challenge);
 
         if (!challengeVerification.getChallengeParticipation().getMember().getId().equals(member.getId())) {
-            throw new IllegalArgumentException("본인이 올린 인증글만 삭제할 수 있습니다.");
+            throw DeleteNotAuthorizedException.EXCEPTION;
         }
 
         challengeVerificationRepository.delete(challengeVerification);

@@ -5,13 +5,16 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Index;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import kakao.rebit.common.persistence.BaseEntity;
 
 @Entity
-@Table(name = "challenge_verification")
+@Table(name = "challenge_verification", indexes = {
+        @Index(name = "idx_challenge_verification_created_at", columnList = "createdAt")
+})
 public class ChallengeVerification extends BaseEntity {
 
     @Id

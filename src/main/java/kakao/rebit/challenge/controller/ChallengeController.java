@@ -1,11 +1,16 @@
 package kakao.rebit.challenge.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import java.net.URI;
 import kakao.rebit.challenge.dto.ChallengeRequest;
 import kakao.rebit.challenge.dto.ChallengeResponse;
 import kakao.rebit.challenge.service.ChallengeService;
+import kakao.rebit.common.annotation.AllowAnonymous;
+import kakao.rebit.member.annotation.MemberInfo;
 import kakao.rebit.member.dto.MemberResponse;
-import kakao.rebit.member.entity.Role;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -21,6 +26,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/challenges")
+@Tag(name = "챌린지 API", description = "챌린지 관련 API")
 public class ChallengeController {
 
     private final ChallengeService challengeService;
@@ -29,30 +35,36 @@ public class ChallengeController {
         this.challengeService = challengeService;
     }
 
+    @Operation(summary = "챌린지 목록 조회", description = "챌린지 목록을 조회합니다.")
+    @AllowAnonymous
     @GetMapping
     public ResponseEntity<Page<ChallengeResponse>> getChallenges(
             @PageableDefault(sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
         return ResponseEntity.ok().body(challengeService.getChallenges(pageable));
     }
 
+    @Operation(summary = "챌린지 조회", description = "챌린지를 조회합니다.")
+    @AllowAnonymous
     @GetMapping("/{challenge-id}")
     public ResponseEntity<ChallengeResponse> getChallenge(@PathVariable("challenge-id") Long challengeId) {
         return ResponseEntity.ok().body(challengeService.getChallengeById(challengeId));
     }
 
+    @Operation(summary = "챌린지 생성", description = "챌린지를 생성합니다.")
     @PostMapping
-    public ResponseEntity<Void> createChallenge(@RequestBody ChallengeRequest challengeRequest) {
-        // 소셜 로그인이 아직 구현되지 않아 임의의 빈 MemberResponse를 넣어줌
-        // 추후에 소셜 로그인 구현 후 ArgumentResolver로 MemberResponse를 받아오도록 수정
-        MemberResponse memberResponse = new MemberResponse(1L, "testUser", "imageUrl", "bio", Role.ROLE_USER, 10000);
+    public ResponseEntity<Void> createChallenge(
+            @Parameter(hidden = true) @MemberInfo MemberResponse memberResponse,
+            @Valid @RequestBody ChallengeRequest challengeRequest) {
         Long challengeId = challengeService.createChallenge(memberResponse, challengeRequest);
         return ResponseEntity.created(URI.create("/challenges/" + challengeId)).build();
     }
 
+    @Operation(summary = "챌린지 삭제", description = "챌린지를 삭제합니다.")
     @DeleteMapping("/{challenge-id}")
-    public ResponseEntity<Void> deleteChallenge(@PathVariable("challenge-id") Long challengeId) {
-        MemberResponse memberResponse = new MemberResponse(1L, "testUser", "imageUrl", "bio", Role.ROLE_USER, 10000);
-        challengeService.deleteChallengeById(memberResponse, challengeId);
+    public ResponseEntity<Void> deleteChallenge(
+            @Parameter(hidden = true) @MemberInfo MemberResponse memberResponse,
+            @PathVariable("challenge-id") Long challengeId) {
+       challengeService.deleteChallengeById(memberResponse, challengeId);
         return ResponseEntity.noContent().build();
     }
 }

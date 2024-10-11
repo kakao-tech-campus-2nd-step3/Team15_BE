@@ -3,6 +3,9 @@ package kakao.rebit.feed.service;
 import kakao.rebit.feed.dto.response.LikesMemberResponse;
 import kakao.rebit.feed.entity.Feed;
 import kakao.rebit.feed.entity.Likes;
+import kakao.rebit.feed.exception.likes.FindNotAuthorizedException;
+import kakao.rebit.feed.exception.likes.LikesAlreadyPressedException;
+import kakao.rebit.feed.exception.likes.LikesNotPressedException;
 import kakao.rebit.feed.repository.LikesRepository;
 import kakao.rebit.member.dto.MemberResponse;
 import kakao.rebit.member.entity.Member;
@@ -27,8 +30,14 @@ public class LikesService {
     }
 
     @Transactional(readOnly = true)
-    public Page<LikesMemberResponse> getLikesMembers(Long feedId, Pageable pageable) {
+    public Page<LikesMemberResponse> getLikesMembers(MemberResponse memberResponse, Long feedId,
+            Pageable pageable) {
+        Member member = memberService.findMemberByIdOrThrow(memberResponse.id());
         Feed feed = feedService.findFeedByIdOrThrow(feedId);
+
+        if (!feed.isWrittenBy(member)) {
+            throw FindNotAuthorizedException.EXCEPTION;
+        }
         return likesRepository.findAllByFeedWithMember(feed, pageable)
                 .map(this::toLikesMemberResponse);
     }
@@ -39,7 +48,7 @@ public class LikesService {
         Feed feed = feedService.findFeedByIdOrThrow(feedId);
 
         if (likesRepository.existsByMemberAndFeed(member, feed)) {
-            throw new IllegalArgumentException("이미 좋아요를 눌렀습니다.");
+            throw LikesAlreadyPressedException.EXCEPTION;
         }
 
         return likesRepository.save(createLikes(member, feed)).getId();
@@ -49,6 +58,10 @@ public class LikesService {
     public void deleteLikes(MemberResponse memberResponse, Long feedId) {
         Member member = memberService.findMemberByIdOrThrow(memberResponse.id());
         Feed feed = feedService.findFeedByIdOrThrow(feedId);
+
+        if (!likesRepository.existsByMemberAndFeed(member, feed)) {
+            throw LikesNotPressedException.EXCEPTION;
+        }
 
         likesRepository.deleteByMemberAndFeed(member, feed);
     }

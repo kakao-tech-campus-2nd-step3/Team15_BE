@@ -48,6 +48,19 @@ decorator:
     p6spy:
       enable-logging: true
 
+# AWS S3 설정
+cloud:
+  aws:
+    credentials: # IAM으로 생성한 키 정보 입력
+      access-key: ${S3_ACCESS_KEY}
+      secret-key: ${S3_SECRET_KEY}
+    S3:
+      bucket: ${S3_BUCKET_NAME} # 버켓 이름 설정
+    region:
+      static: ${S3_REGION} # 버켓이 위치한 region 설정
+    stack:
+      auto: false # 자동 스택 생성 기능 사용 여부
+
 ---
 spring:
   config:

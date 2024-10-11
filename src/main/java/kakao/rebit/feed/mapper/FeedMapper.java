@@ -5,9 +5,9 @@ import kakao.rebit.feed.dto.request.create.CreateFavoriteBookRequest;
 import kakao.rebit.feed.dto.request.create.CreateFeedRequest;
 import kakao.rebit.feed.dto.request.create.CreateMagazineRequest;
 import kakao.rebit.feed.dto.request.create.CreateStoryRequest;
-import kakao.rebit.feed.dto.response.AuthorResponse;
-import kakao.rebit.feed.dto.response.FeedBookResponse;
 import kakao.rebit.feed.dto.response.FavoriteBookResponse;
+import kakao.rebit.feed.dto.response.FeedAuthorResponse;
+import kakao.rebit.feed.dto.response.FeedBookResponse;
 import kakao.rebit.feed.dto.response.FeedResponse;
 import kakao.rebit.feed.dto.response.MagazineResponse;
 import kakao.rebit.feed.dto.response.StoryResponse;
@@ -16,10 +16,17 @@ import kakao.rebit.feed.entity.Feed;
 import kakao.rebit.feed.entity.Magazine;
 import kakao.rebit.feed.entity.Story;
 import kakao.rebit.member.entity.Member;
+import kakao.rebit.s3.service.S3Service;
 import org.springframework.stereotype.Component;
 
 @Component
 public class FeedMapper {
+
+    private final S3Service s3Service;
+
+    public FeedMapper(S3Service s3Service) {
+        this.s3Service = s3Service;
+    }
 
     /**
      * Entity -> DTO(Response) 변환
@@ -53,7 +60,8 @@ public class FeedMapper {
                 this.toAuthorResponse(favoriteBook.getMember()),
                 this.toBookResponse(favoriteBook.getBook()),
                 favoriteBook.getType(), favoriteBook.getLikes(), favoriteBook.getBriefReview(),
-                favoriteBook.getFullReview());
+                favoriteBook.getFullReview()
+        );
     }
 
     private MagazineResponse toMagazineResponse(Magazine magazine) {
@@ -64,7 +72,7 @@ public class FeedMapper {
                 magazine.getType(),
                 magazine.getLikes(),
                 magazine.getName(),
-                magazine.getImageUrl(),
+                s3Service.getDownloadUrl(magazine.getImageKey()).presignedUrl(),
                 magazine.getContent()
         );
     }
@@ -76,13 +84,13 @@ public class FeedMapper {
                 this.toBookResponse(story.getBook()),
                 story.getType(),
                 story.getLikes(),
-                story.getImageUrl(),
+                s3Service.getDownloadUrl(story.getImageKey()).presignedUrl(),
                 story.getContent()
         );
     }
 
-    private AuthorResponse toAuthorResponse(Member member) {
-        return new AuthorResponse(
+    private FeedAuthorResponse toAuthorResponse(Member member) {
+        return new FeedAuthorResponse(
                 member.getId(),
                 member.getNickname(),
                 member.getImageUrl()
@@ -94,14 +102,14 @@ public class FeedMapper {
             return null;
         }
         return new FeedBookResponse(
-            book.getId(),
-            book.getIsbn(),
-            book.getTitle(),
-            book.getDescription(),
-            book.getAuthor(),
-            book.getPublisher(),
-            book.getCover(),       // imageUrl을 cover로 수정
-            book.getPubDate()       // pubDate 추가
+                book.getId(),
+                book.getIsbn(),
+                book.getTitle(),
+                book.getDescription(),
+                book.getAuthor(),
+                book.getPublisher(),
+                book.getCover(),
+                book.getPubDate()
         );
     }
 
@@ -120,7 +128,7 @@ public class FeedMapper {
                 member,
                 book,
                 request.getName(),
-                request.getImageUrl(),
+                request.getImageKey(),
                 request.getContent()
         );
     }
@@ -129,7 +137,7 @@ public class FeedMapper {
         return new Story(
                 member,
                 book,
-                request.getImageUrl(),
+                request.getImageKey(),
                 request.getContent()
         );
     }

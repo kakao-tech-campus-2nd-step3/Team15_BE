@@ -1,6 +1,7 @@
 package kakao.rebit.feed.entity;
 
 import jakarta.persistence.Basic;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.DiscriminatorColumn;
 import jakarta.persistence.Entity;
@@ -12,7 +13,10 @@ import jakarta.persistence.Inheritance;
 import jakarta.persistence.InheritanceType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import java.util.ArrayList;
+import java.util.List;
 import kakao.rebit.book.entity.Book;
 import kakao.rebit.common.persistence.BaseEntity;
 import kakao.rebit.feed.dto.request.update.UpdateFeedRequest;
@@ -44,12 +48,19 @@ public abstract class Feed extends BaseEntity {
     @Column(name = "type", insertable = false, updatable = false)
     private String type; // 상속 관계로 인해 생성된 type을 조회하기 위한 필드
 
+    @OneToMany(mappedBy = "feed", cascade = CascadeType.REMOVE)
+    private List<Likes> likesList = new ArrayList<>();
+
     protected Feed() {
     }
 
     protected Feed(Member member, Book book) {
         this.member = member;
         this.book = book;
+    }
+
+    public boolean isWrittenBy(Member member) {
+        return this.member.equals(member);
     }
 
     public void changeBook(Book book) {
