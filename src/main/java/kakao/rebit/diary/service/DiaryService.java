@@ -37,13 +37,14 @@ public class DiaryService {
     }
 
     @Transactional
-    public void createDiary(Long memberId, Diary diaryRequest) {
+    public Long createDiary(Long memberId, Diary diaryRequest) {
         Member member = memberRepository.findById(memberId)
             .orElseThrow(() -> new IllegalArgumentException("Member not found"));
         Book book = bookRepository.findByIsbn(diaryRequest.getBook().getIsbn())
             .orElseThrow(() -> new IllegalArgumentException("Book not found"));
         Diary diary = new Diary(diaryRequest.getContent(), member, book);
-        diaryRepository.save(diary);
+        Diary savedDiary = diaryRepository.save(diary);  // 저장된 다이어리 반환
+        return savedDiary.getId();  // 다이어리의 ID 반환
     }
 
     @Transactional
