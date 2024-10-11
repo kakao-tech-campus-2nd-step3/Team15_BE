@@ -3,6 +3,7 @@ package kakao.rebit.auth.service;
 import java.util.Objects;
 import kakao.rebit.auth.dto.KakaoToken;
 import kakao.rebit.auth.dto.KakaoUserInfo;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -29,7 +30,12 @@ public class KakaoApiClient {
     @Value("${OAUTH_KAKAO_API_URL}")
     private String kakaoApiUrl;
 
-    private final RestClient restClient = RestClient.builder().build();
+    private final RestClient restClient;
+
+    @Autowired
+    public KakaoApiClient(RestClient restClient) {
+        this.restClient = restClient;
+    }
 
     public String getAccessToken(String code) {
         MultiValueMap<String, String> body = createTokenParams(code);

@@ -1,25 +1,22 @@
 package kakao.rebit.member.controller;
 
-import java.util.List;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import kakao.rebit.member.annotation.MemberInfo;
 import kakao.rebit.member.dto.ChargePointRequest;
 import kakao.rebit.member.dto.MemberRequest;
 import kakao.rebit.member.dto.MemberResponse;
-import kakao.rebit.member.entity.Member;
 import kakao.rebit.member.entity.Role;
 import kakao.rebit.member.service.MemberService;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/members")
+@Tag(name = "회원 API", description = "회원 관련 API")
 public class MemberController {
 
     private final MemberService memberService;
@@ -28,74 +25,78 @@ public class MemberController {
         this.memberService = memberService;
     }
 
-    // 사용자 자신의 포인트 조회
+    @Operation(summary = "포인트 조회", description = "사용자의 포인트를 조회합니다.")
     @GetMapping("/points")
-    public ResponseEntity<Integer> getMyPoints(@MemberInfo MemberResponse memberResponse) {
+    public ResponseEntity<Integer> getMyPoints(
+        @Parameter(hidden = true) @MemberInfo MemberResponse memberResponse) {
         Integer points = memberService.getPoints(memberResponse.email());
         return ResponseEntity.ok(points);
     }
 
-    // 포인트 충전
+    @Operation(summary = "포인트 충전", description = "사용자의 포인트를 충전합니다.")
     @PostMapping("/points")
-    public ResponseEntity<Void> chargePoints(@MemberInfo MemberResponse memberResponse, @RequestBody ChargePointRequest request) {
+    public ResponseEntity<Void> chargePoints(
+        @Parameter(hidden = true) @MemberInfo MemberResponse memberResponse,
+        @RequestBody ChargePointRequest request) {
         memberService.chargePoints(memberResponse.email(), request.points());
         return ResponseEntity.noContent().build();
     }
 
-    // 사용자 자신의 정보 조회
+    @Operation(summary = "내 정보 조회", description = "사용자 자신의 정보를 조회합니다.")
     @GetMapping("/me")
-    public ResponseEntity<Member> getMyInfo(@MemberInfo MemberResponse memberResponse) {
-        Member member = memberService.findMemberByEmailOrThrow(memberResponse.email());
-        return ResponseEntity.ok(member);
+    public ResponseEntity<MemberResponse> getMyInfo(
+        @Parameter(hidden = true) @MemberInfo MemberResponse memberResponse) {
+        MemberResponse response = memberService.getMemberResponseByEmail(memberResponse.email());
+        return ResponseEntity.ok(response);
     }
 
-    // 사용자 자신의 정보 수정
+    @Operation(summary = "내 정보 수정", description = "사용자 자신의 정보를 수정합니다.")
     @PutMapping("/me")
-    public ResponseEntity<Member> updateMyInfo(@MemberInfo MemberResponse memberResponse,
+    public ResponseEntity<MemberResponse> updateMyInfo(
+        @Parameter(hidden = true) @MemberInfo MemberResponse memberResponse,
         @RequestBody MemberRequest memberRequest) {
-        Member updatedMember = memberService.updateMyMember(memberResponse.email(), memberRequest);
+        MemberResponse updatedMember = memberService.updateMyMember(memberResponse.email(),
+            memberRequest);
         return ResponseEntity.ok(updatedMember);
     }
 
-    // admin & editor : 모든 사용자 조회
+    @Operation(summary = "모든 사용자 조회", description = "관리자 및 에디터가 모든 사용자를 조회합니다.")
     @GetMapping
-    public ResponseEntity<List<Member>> getAllMembers(@MemberInfo MemberResponse memberResponse) {
-        authorize(memberResponse.role(), Role.ROLE_EDITOR, Role.ROLE_EDITOR);
-        List<Member> members = memberService.findAllMembers();
+    public ResponseEntity<List<MemberResponse>> getAllMembers(
+        @Parameter(hidden = true) @MemberInfo(allowedRoles = {Role.ROLE_ADMIN,
+            Role.ROLE_EDITOR}) MemberResponse memberResponse) {
+        List<MemberResponse> members = memberService.getAllMemberResponses();
         return ResponseEntity.ok(members);
     }
 
-    // admin & editor : 특정 사용자 정보 조회
+    @Operation(summary = "특정 사용자 조회", description = "관리자 및 에디터가 특정 사용자를 조회합니다.")
     @GetMapping("/{id}")
-    public ResponseEntity<Member> getMemberById(@MemberInfo MemberResponse memberResponse,
-        @PathVariable Long id) {
-        authorize(memberResponse.role(), Role.ROLE_EDITOR, Role.ROLE_EDITOR);
-        Member member = memberService.findMemberByIdOrThrow(id);
-        return ResponseEntity.ok(member);
+    public ResponseEntity<MemberResponse> getMemberById(
+        @Parameter(hidden = true) @MemberInfo(allowedRoles = {Role.ROLE_ADMIN,
+            Role.ROLE_EDITOR}) MemberResponse memberResponse,
+        @PathVariable("id") Long id) {
+        MemberResponse response = memberService.getMemberResponseById(id);
+        return ResponseEntity.ok(response);
     }
 
-    // admin & editor : 특정 사용자 정보 수정
+    @Operation(summary = "특정 사용자 수정", description = "관리자 및 에디터가 특정 사용자의 정보를 수정합니다.")
     @PutMapping("/{id}")
-    public ResponseEntity<Member> updateMember(@MemberInfo MemberResponse memberResponse,
-        @PathVariable Long id,
+    public ResponseEntity<MemberResponse> updateMember(
+        @Parameter(hidden = true) @MemberInfo(allowedRoles = {Role.ROLE_ADMIN,
+            Role.ROLE_EDITOR}) MemberResponse memberResponse,
+        @PathVariable("id") Long id,
         @RequestBody MemberRequest memberRequest) {
-        authorize(memberResponse.role(), Role.ROLE_EDITOR, Role.ROLE_EDITOR);
-        Member updatedMember = memberService.updateMember(id, memberRequest);
+        MemberResponse updatedMember = memberService.updateMember(id, memberRequest);
         return ResponseEntity.ok(updatedMember);
     }
 
-    // admin & editor : 특정 사용자 삭제
+    @Operation(summary = "특정 사용자 삭제", description = "관리자 및 에디터가 특정 사용자를 삭제합니다.")
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteMember(@MemberInfo MemberResponse memberResponse,
-        @PathVariable Long id) {
-        authorize(memberResponse.role(), Role.ROLE_EDITOR, Role.ROLE_EDITOR);
+    public ResponseEntity<Void> deleteMember(
+        @Parameter(hidden = true) @MemberInfo(allowedRoles = {Role.ROLE_ADMIN,
+            Role.ROLE_EDITOR}) MemberResponse memberResponse,
+        @PathVariable("id") Long id) {
         memberService.deleteMember(id);
         return ResponseEntity.noContent().build();
-    }
-
-    private void authorize(Role role, Role... roles) {
-        if (!List.of(roles).contains(role)) {
-            throw new IllegalStateException("Unauthorized");
-        }
     }
 }
