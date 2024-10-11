@@ -6,11 +6,11 @@ import kakao.rebit.member.entity.Member;
 import kakao.rebit.member.repository.MemberRepository;
 import kakao.rebit.wishlist.entity.BookWishlist;
 import kakao.rebit.wishlist.repository.BookWishlistRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class BookWishlistService {
@@ -27,11 +27,9 @@ public class BookWishlistService {
     }
 
     @Transactional(readOnly = true)
-    public List<String> getBookWishlist(Long memberId) {
-        return bookWishlistRepository.findAll().stream()
-            .filter(bookWishlist -> bookWishlist.getMember().getId().equals(memberId))
-            .map(bookWishlist -> bookWishlist.getBook().getIsbn())
-            .collect(Collectors.toList());
+    public Page<String> getBookWishlist(Long memberId, Pageable pageable) {
+        return bookWishlistRepository.findByMemberId(memberId, pageable)
+            .map(bookWishlist -> bookWishlist.getBook().getIsbn());
     }
 
     @Transactional

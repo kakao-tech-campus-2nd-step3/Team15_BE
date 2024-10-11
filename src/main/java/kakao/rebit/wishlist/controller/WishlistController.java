@@ -7,10 +7,11 @@ import kakao.rebit.member.annotation.MemberInfo;
 import kakao.rebit.member.dto.MemberResponse;
 import kakao.rebit.wishlist.service.BookWishlistService;
 import kakao.rebit.wishlist.service.ChallengeWishlistService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/wishes")
@@ -28,9 +29,11 @@ public class WishlistController {
 
     @Operation(summary = "책 위시 목록 조회", description = "사용자가 찜한 책 목록을 조회합니다.")
     @GetMapping("/books")
-    public ResponseEntity<List<String>> getBookWishlist(
-        @Parameter(hidden = true) @MemberInfo MemberResponse memberResponse) {
-        List<String> bookWishlist = bookWishlistService.getBookWishlist(memberResponse.id());
+    public ResponseEntity<Page<String>> getBookWishlist(
+        @Parameter(hidden = true) @MemberInfo MemberResponse memberResponse,
+        @PageableDefault(size = 10) Pageable pageable) {
+        Page<String> bookWishlist = bookWishlistService.getBookWishlist(memberResponse.id(),
+            pageable);
         return ResponseEntity.ok(bookWishlist);
     }
 
@@ -54,10 +57,11 @@ public class WishlistController {
 
     @Operation(summary = "챌린지 위시 목록 조회", description = "사용자가 찜한 챌린지 목록을 조회합니다.")
     @GetMapping("/challenges")
-    public ResponseEntity<List<Long>> getChallengeWishlist(
-        @Parameter(hidden = true) @MemberInfo MemberResponse memberResponse) {
-        List<Long> challengeWishlist = challengeWishlistService.getChallengeWishlist(
-            memberResponse.id());
+    public ResponseEntity<Page<Long>> getChallengeWishlist(
+        @Parameter(hidden = true) @MemberInfo MemberResponse memberResponse,
+        @PageableDefault(size = 10) Pageable pageable) {
+        Page<Long> challengeWishlist = challengeWishlistService.getChallengeWishlist(
+            memberResponse.id(), pageable);
         return ResponseEntity.ok(challengeWishlist);
     }
 
