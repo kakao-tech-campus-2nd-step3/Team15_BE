@@ -49,7 +49,7 @@ public class MemberInfoArgumentResolver implements HandlerMethodArgumentResolver
         Member member = memberService.findMemberByEmailOrThrow(email);
         MemberResponse memberResponse = toMemberResponse(member);
 
-        // 역할 검증
+        // 예외처리추가
         MemberInfo memberInfo = parameter.getParameterAnnotation(MemberInfo.class);
         if (memberInfo != null) {
             Role[] allowedRoles = memberInfo.allowedRoles();
