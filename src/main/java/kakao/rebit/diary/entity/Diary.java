@@ -56,4 +56,9 @@ public class Diary extends BaseEntity {
     public Book getBook() {
         return book;
     }
+
+    public void updateDiary(String content, Book book) {
+        this.content = content;
+        this.book = book;
+    }
 }

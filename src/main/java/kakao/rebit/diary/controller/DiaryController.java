@@ -7,10 +7,11 @@ import kakao.rebit.diary.entity.Diary;
 import kakao.rebit.diary.service.DiaryService;
 import kakao.rebit.member.annotation.MemberInfo;
 import kakao.rebit.member.dto.MemberResponse;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/diaries")
@@ -25,8 +26,9 @@ public class DiaryController {
 
     @Operation(summary = "독서일기 목록 조회", description = "사용자의 모든 독서일기를 조회합니다.")
     @GetMapping
-    public ResponseEntity<List<Diary>> getDiaries(@Parameter(hidden = true) @MemberInfo MemberResponse memberResponse) {
-        List<Diary> diaries = diaryService.getDiaries(memberResponse.id());
+    public ResponseEntity<Page<Diary>> getDiaries(@Parameter(hidden = true) @MemberInfo MemberResponse memberResponse,
+        @PageableDefault Pageable pageable) {
+        Page<Diary> diaries = diaryService.getDiaries(memberResponse.id(), pageable);
         return ResponseEntity.ok(diaries);
     }
 

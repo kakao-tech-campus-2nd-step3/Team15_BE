@@ -6,10 +6,10 @@ import kakao.rebit.diary.entity.Diary;
 import kakao.rebit.diary.repository.DiaryRepository;
 import kakao.rebit.member.entity.Member;
 import kakao.rebit.member.repository.MemberRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 @Service
 public class DiaryService {
@@ -25,10 +25,8 @@ public class DiaryService {
     }
 
     @Transactional(readOnly = true)
-    public List<Diary> getDiaries(Long memberId) {
-        return diaryRepository.findAll().stream()
-            .filter(diary -> diary.getMember().getId().equals(memberId))
-            .toList();
+    public Page<Diary> getDiaries(Long memberId, Pageable pageable) {
+        return diaryRepository.findByMemberId(memberId, pageable);
     }
 
     @Transactional(readOnly = true)
@@ -48,13 +46,12 @@ public class DiaryService {
         diaryRepository.save(diary);
     }
 
-
     @Transactional
     public Diary updateDiary(Long memberId, Long id, Diary diaryRequest) {
         Diary diary = diaryRepository.findById(id)
             .filter(d -> d.getMember().getId().equals(memberId))
             .orElseThrow(() -> new IllegalArgumentException("Diary not found"));
-        diary = new Diary(diaryRequest.getContent(), diary.getMember(), diaryRequest.getBook());
+        diary.updateDiary(diaryRequest.getContent(), diaryRequest.getBook());
         return diaryRepository.save(diary);
     }
 
