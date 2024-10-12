@@ -5,8 +5,8 @@ import io.swagger.v3.oas.annotations.media.Schema;
 @Schema(description = "인생책 응답")
 public class FavoriteBookResponse extends FeedResponse {
 
-    private String briefReview;
-    private String fullReview;
+    private final String briefReview;
+    private final String fullReview;
 
     public FavoriteBookResponse(Long id, FeedAuthorResponse author, FeedBookResponse book,
             String type,
