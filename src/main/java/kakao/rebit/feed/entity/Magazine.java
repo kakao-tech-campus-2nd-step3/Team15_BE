@@ -5,8 +5,6 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
 import kakao.rebit.book.entity.Book;
 import kakao.rebit.common.domain.ImageKeyHolder;
-import kakao.rebit.feed.dto.request.update.UpdateFeedRequest;
-import kakao.rebit.feed.dto.request.update.UpdateMagazineRequest;
 import kakao.rebit.member.entity.Member;
 
 @Entity
@@ -28,11 +26,14 @@ public class Magazine extends Feed implements ImageKeyHolder {
         this.content = content;
     }
 
+    public void updateTextFields(String name, String content) {
+        this.name = name;
+        this.content = content;
+    }
+
     @Override
-    public void updateAllExceptBook(UpdateFeedRequest feedRequest) {
-        this.name = ((UpdateMagazineRequest) feedRequest).getName();
-        this.imageKey = ((UpdateMagazineRequest) feedRequest).getImageKey();
-        this.content = ((UpdateMagazineRequest) feedRequest).getContent();
+    public void changeImageKey(String imageKey) {
+        this.imageKey = imageKey;
     }
 
     public String getName() {
