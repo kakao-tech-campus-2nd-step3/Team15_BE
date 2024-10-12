@@ -52,7 +52,7 @@ public class MagazineController {
         return ResponseEntity.ok().body(magazineService.getMagazineById(magazineId));
     }
 
-    @Operation(summary = "메거진 텍스트 필드 수정", description = "메거진 택스트 필드들을 수정합니다.")
+    @Operation(summary = "메거진 수정", description = "메거진을 수정합니다.")
     @PutMapping("/{magazine-id}")
     public ResponseEntity<Void> updateMagazine(
             @Parameter(hidden = true) @MemberInfo MemberResponse memberResponse,

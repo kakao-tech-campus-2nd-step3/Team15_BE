@@ -52,7 +52,7 @@ public class StoryController {
         return ResponseEntity.ok().body(storyService.getStoryById(storyId));
     }
 
-    @Operation(summary = "스토리 텍스트 필드 수정", description = "스토리 택스트 필드들을 수정합니다.")
+    @Operation(summary = "스토리 수정", description = "스토리를 수정합니다.")
     @PutMapping("/{story-id}")
     public ResponseEntity<Void> updateStory(
             @Parameter(hidden = true) @MemberInfo MemberResponse memberResponse,
