@@ -40,7 +40,8 @@ public class S3Service {
 
     private static final String KEY = "feed/%s/%s";
     private static final String CONTENT_TYPE = "image/%s";
-    private static final List<String> ALLOWED_FILE_FORMAT = Arrays.asList("jpg", "jpeg", "png", "gif", "svg", "webp");
+    private static final List<String> ALLOWED_FILE_FORMAT = Arrays.asList("jpg", "jpeg", "png",
+            "gif", "svg", "webp");
 
     @Value("${cloud.aws.s3.bucket}")
     private String bucket;
