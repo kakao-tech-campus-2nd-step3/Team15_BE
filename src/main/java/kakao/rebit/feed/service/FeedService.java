@@ -6,14 +6,11 @@ import kakao.rebit.book.service.BookService;
 import kakao.rebit.common.domain.ImageKeyHolder;
 import kakao.rebit.feed.dto.request.create.CreateFavoriteBookRequest;
 import kakao.rebit.feed.dto.request.create.CreateFeedRequest;
-import kakao.rebit.feed.dto.request.update.UpdateFavoriteBookRequest;
-import kakao.rebit.feed.dto.request.update.UpdateFeedRequest;
 import kakao.rebit.feed.dto.response.FeedResponse;
 import kakao.rebit.feed.entity.Feed;
 import kakao.rebit.feed.exception.feed.DeleteNotAuthorizedException;
 import kakao.rebit.feed.exception.feed.FavoriteBookRequiredBookException;
 import kakao.rebit.feed.exception.feed.FeedNotFoundException;
-import kakao.rebit.feed.exception.feed.UpdateNotAuthorizedException;
 import kakao.rebit.feed.mapper.FeedMapper;
 import kakao.rebit.feed.repository.FeedRepository;
 import kakao.rebit.member.dto.MemberResponse;
@@ -68,30 +65,10 @@ public class FeedService {
         if (feedRequest instanceof CreateFavoriteBookRequest && feedRequest.getBookId() == null) {
             throw FavoriteBookRequiredBookException.EXCEPTION;
         }
+
         Book book = findBookIfBookIdExist(feedRequest.getBookId()).orElse(null);
         Feed feed = feedMapper.toFeed(member, book, feedRequest);
         return feedRepository.save(feed).getId();
-    }
-
-    @Transactional
-    public void updateFeed(MemberResponse memberResponse, Long feedId,
-            UpdateFeedRequest feedRequest) {
-        Member member = memberService.findMemberByIdOrThrow(memberResponse.id());
-        Feed feed = findFeedByIdOrThrow(feedId);
-
-        // 피드 작성자 확인
-        if (!feed.isWrittenBy(member)) {
-            throw UpdateNotAuthorizedException.EXCEPTION;
-        }
-
-        // 인생책 검증 - 반드시 책이 있어야 된다.
-        if (feedRequest instanceof UpdateFavoriteBookRequest && feedRequest.getBookId() == null) {
-            throw FavoriteBookRequiredBookException.EXCEPTION;
-        }
-
-        Book book = findBookIfBookIdExist(feedRequest.getBookId()).orElse(null);
-        feed.changeBook(book);
-        feed.updateAllExceptBook(feedRequest);
     }
 
     @Transactional
