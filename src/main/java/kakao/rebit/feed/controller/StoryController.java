@@ -40,7 +40,7 @@ public class StoryController {
     @Operation(summary = "스토리 목록 조회", description = "스토리 목록을 조회합니다.")
     @AllowAnonymous
     @GetMapping
-    public ResponseEntity<Page<FeedResponse>> getStories(
+    public ResponseEntity<Page<StoryResponse>> getStories(
             @PageableDefault(sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
         return ResponseEntity.ok().body(storyService.getStories(pageable));
     }
@@ -59,6 +59,6 @@ public class StoryController {
             @PathVariable("story-id") Long storyId,
             @Valid @RequestBody UpdateStoryRequest updateStoryRequest) {
         storyService.updateStory(memberResponse, storyId, updateStoryRequest);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.noContent().build();
     }
 }

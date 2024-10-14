@@ -2,15 +2,11 @@ package kakao.rebit.feed.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import kakao.rebit.common.annotation.AllowAnonymous;
 import kakao.rebit.feed.dto.request.update.UpdateFavoriteBookRequest;
 import kakao.rebit.feed.dto.response.FavoriteBookResponse;
-import kakao.rebit.feed.dto.response.FeedResponse;
 import kakao.rebit.feed.service.FavoriteBookService;
 import kakao.rebit.member.annotation.MemberInfo;
 import kakao.rebit.member.dto.MemberResponse;
@@ -40,15 +36,14 @@ public class FavoriteBookController {
     @Operation(summary = "인생책 목록 조회", description = "인생책 목록을 조회합니다.")
     @AllowAnonymous
     @GetMapping
-    public ResponseEntity<Page<FeedResponse>> getFavoriteBooks(
+    public ResponseEntity<Page<FavoriteBookResponse>> getFavoriteBooks(
             @PageableDefault(sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
         return ResponseEntity.ok().body(favoriteBookService.getFavoriteBooks(pageable));
     }
 
     @Operation(summary = "인생책 조회", description = "인생책을 조회합니다.")
-    @ApiResponse(content = @Content(schema = @Schema(implementation = FavoriteBookResponse.class)))
     @GetMapping("/{favorite-id}")
-    public ResponseEntity<FeedResponse> getFavoriteBook(
+    public ResponseEntity<FavoriteBookResponse> getFavoriteBook(
             @PathVariable("favorite-id") Long favoriteId) {
         return ResponseEntity.ok().body(favoriteBookService.getFavoriteBookById(favoriteId));
     }
