@@ -54,8 +54,7 @@ public class FeedController {
     }
 
     @Operation(summary = "피드 조회", description = "피드를 조회합니다.")
-    @ApiResponse(content = @Content(schema = @Schema(oneOf = {FavoriteBookResponse.class,
-            MagazineResponse.class, StoryResponse.class})))
+    @ApiResponse(content = @Content(schema = @Schema(oneOf = {FavoriteBookResponse.class, MagazineResponse.class, StoryResponse.class})))
     @GetMapping("/{feed-id}")
     public ResponseEntity<FeedResponse> getMagazine(@PathVariable("feed-id") Long feedId) {
         return ResponseEntity.ok().body(feedService.getFeedById(feedId));
