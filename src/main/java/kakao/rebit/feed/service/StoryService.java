@@ -3,7 +3,7 @@ package kakao.rebit.feed.service;
 import kakao.rebit.book.entity.Book;
 import kakao.rebit.book.service.BookService;
 import kakao.rebit.feed.dto.request.update.UpdateStoryRequest;
-import kakao.rebit.feed.dto.response.FeedResponse;
+import kakao.rebit.feed.dto.response.StoryResponse;
 import kakao.rebit.feed.entity.Story;
 import kakao.rebit.feed.exception.feed.FeedNotFoundException;
 import kakao.rebit.feed.exception.feed.UpdateNotAuthorizedException;
@@ -37,14 +37,15 @@ public class StoryService {
     }
 
     @Transactional(readOnly = true)
-    public Page<FeedResponse> getStories(Pageable pageable) {
-        return storyRepository.findAll(pageable).map(feedMapper::toFeedResponse);
+    public Page<StoryResponse> getStories(Pageable pageable) {
+        Page<Story> stories = storyRepository.findAll(pageable);
+        return stories.map(story -> (StoryResponse) feedMapper.toFeedResponse(story));
     }
 
     @Transactional(readOnly = true)
-    public FeedResponse getStoryById(Long storyId) {
+    public StoryResponse getStoryById(Long storyId) {
         Story story = findStoryByIdOrThrow(storyId);
-        return feedMapper.toFeedResponse(story);
+        return (StoryResponse) feedMapper.toFeedResponse(story);
     }
 
     @Transactional(readOnly = true)
@@ -67,7 +68,7 @@ public class StoryService {
         story.changeBook(book);
 
         // 이미지가 수정됐으면 기존의 S3에서 이전 이미지 삭제하기
-        if (!story.isImageKeyUpdated(updateRequest.imageKey())) {
+        if (story.isImageKeyUpdated(updateRequest.imageKey())) {
             s3Service.deleteObject(story.getImageKey());
         }
 

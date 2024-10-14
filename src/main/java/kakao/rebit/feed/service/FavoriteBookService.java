@@ -3,7 +3,7 @@ package kakao.rebit.feed.service;
 import kakao.rebit.book.entity.Book;
 import kakao.rebit.book.service.BookService;
 import kakao.rebit.feed.dto.request.update.UpdateFavoriteBookRequest;
-import kakao.rebit.feed.dto.response.FeedResponse;
+import kakao.rebit.feed.dto.response.FavoriteBookResponse;
 import kakao.rebit.feed.entity.FavoriteBook;
 import kakao.rebit.feed.exception.feed.FavoriteBookRequiredBookException;
 import kakao.rebit.feed.exception.feed.FeedNotFoundException;
@@ -36,15 +36,16 @@ public class FavoriteBookService {
     }
 
     @Transactional(readOnly = true)
-    public Page<FeedResponse> getFavoriteBooks(Pageable pageable) {
+    public Page<FavoriteBookResponse> getFavoriteBooks(Pageable pageable) {
         Page<FavoriteBook> favorites = favoriteBookRepository.findAll(pageable);
-        return favorites.map(feedMapper::toFeedResponse);
+        return favorites.map(
+                favoriteBook -> (FavoriteBookResponse) feedMapper.toFeedResponse(favoriteBook));
     }
 
     @Transactional(readOnly = true)
-    public FeedResponse getFavoriteBookById(Long favoriteBookId) {
+    public FavoriteBookResponse getFavoriteBookById(Long favoriteBookId) {
         FavoriteBook favoriteBook = findFavoriteBookByIdOrThrow(favoriteBookId);
-        return feedMapper.toFeedResponse(favoriteBook);
+        return (FavoriteBookResponse) feedMapper.toFeedResponse(favoriteBook);
     }
 
     @Transactional(readOnly = true)

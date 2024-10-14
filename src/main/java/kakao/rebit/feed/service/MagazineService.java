@@ -3,7 +3,7 @@ package kakao.rebit.feed.service;
 import kakao.rebit.book.entity.Book;
 import kakao.rebit.book.service.BookService;
 import kakao.rebit.feed.dto.request.update.UpdateMagazineRequest;
-import kakao.rebit.feed.dto.response.FeedResponse;
+import kakao.rebit.feed.dto.response.MagazineResponse;
 import kakao.rebit.feed.entity.Magazine;
 import kakao.rebit.feed.exception.feed.FeedNotFoundException;
 import kakao.rebit.feed.exception.feed.UpdateNotAuthorizedException;
@@ -37,14 +37,15 @@ public class MagazineService {
     }
 
     @Transactional(readOnly = true)
-    public Page<FeedResponse> getMagazines(Pageable pageable) {
-        return magazineRepository.findAll(pageable).map(feedMapper::toFeedResponse);
+    public Page<MagazineResponse> getMagazines(Pageable pageable) {
+        Page<Magazine> magazines = magazineRepository.findAll(pageable);
+        return magazines.map(magazine -> (MagazineResponse) feedMapper.toFeedResponse(magazine));
     }
 
     @Transactional(readOnly = true)
-    public FeedResponse getMagazineById(Long magazineId) {
+    public MagazineResponse getMagazineById(Long magazineId) {
         Magazine magazine = findMagazineByIdOrThrow(magazineId);
-        return feedMapper.toFeedResponse(magazine);
+        return (MagazineResponse) feedMapper.toFeedResponse(magazine);
     }
 
     @Transactional(readOnly = true)
@@ -67,7 +68,7 @@ public class MagazineService {
         magazine.changeBook(book);
 
         // 이미지가 수정됐으면 기존의 S3에서 이전 이미지 삭제하기
-        if (!magazine.isImageKeyUpdated(updateRequest.imageKey())) {
+        if (magazine.isImageKeyUpdated(updateRequest.imageKey())) {
             s3Service.deleteObject(magazine.getImageKey());
         }
 
