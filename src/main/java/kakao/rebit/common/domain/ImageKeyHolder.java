@@ -7,7 +7,7 @@ public interface ImageKeyHolder {
     String getImageKey();
 
     default boolean isImageKeyUpdated(String imageKey) {
-        return this.getImageKey().equals(imageKey);
+        return !this.getImageKey().equals(imageKey);
     }
 
     void changeImageKey(String imageKey);
