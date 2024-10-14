@@ -4,8 +4,6 @@ import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;
 import kakao.rebit.book.entity.Book;
 import kakao.rebit.common.domain.ImageKeyHolder;
-import kakao.rebit.feed.dto.request.update.UpdateFeedRequest;
-import kakao.rebit.feed.dto.request.update.UpdateStoryRequest;
 import kakao.rebit.member.entity.Member;
 
 @Entity
@@ -25,13 +23,15 @@ public class Story extends Feed implements ImageKeyHolder {
         this.content = content;
     }
 
-    @Override
-    public void updateAllExceptBook(UpdateFeedRequest feedRequest) {
-        this.imageKey = ((UpdateStoryRequest) feedRequest).getImageKey();
-        this.content = ((UpdateStoryRequest) feedRequest).getContent();
+    public void updateTextFields(String content) {
+        this.content = content;
     }
 
     @Override
+    public void changeImageKey(String imageKey) {
+        this.imageKey = imageKey;
+    }
+
     public String getImageKey() {
         return imageKey;
     }

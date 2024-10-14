@@ -10,7 +10,6 @@ import jakarta.validation.Valid;
 import java.net.URI;
 import kakao.rebit.common.annotation.AllowAnonymous;
 import kakao.rebit.feed.dto.request.create.CreateFeedRequest;
-import kakao.rebit.feed.dto.request.update.UpdateFeedRequest;
 import kakao.rebit.feed.dto.response.FavoriteBookResponse;
 import kakao.rebit.feed.dto.response.FeedResponse;
 import kakao.rebit.feed.dto.response.LikesMemberResponse;
@@ -29,7 +28,6 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -69,16 +67,6 @@ public class FeedController {
             @Valid @RequestBody CreateFeedRequest feedRequest) {
         Long feedId = feedService.createFeed(memberResponse, feedRequest);
         return ResponseEntity.created(URI.create("/feeds/" + feedId)).build();
-    }
-
-    @Operation(summary = "피드 수정", description = "피드를 수정합니다.")
-    @PutMapping("/{feed-id}")
-    public ResponseEntity<Void> updateFeed(
-            @Parameter(hidden = true) @MemberInfo MemberResponse memberResponse,
-            @PathVariable("feed-id") Long feedId,
-            @Valid @RequestBody UpdateFeedRequest feedRequest) {
-        feedService.updateFeed(memberResponse, feedId, feedRequest);
-        return ResponseEntity.ok().build();
     }
 
     @Operation(summary = "피드 삭제", description = "피드를 삭제합니다.")

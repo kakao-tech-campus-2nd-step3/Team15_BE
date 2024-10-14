@@ -19,7 +19,6 @@ import java.util.ArrayList;
 import java.util.List;
 import kakao.rebit.book.entity.Book;
 import kakao.rebit.common.persistence.BaseEntity;
-import kakao.rebit.feed.dto.request.update.UpdateFeedRequest;
 import kakao.rebit.member.entity.Member;
 import org.hibernate.annotations.Formula;
 
@@ -49,7 +48,7 @@ public abstract class Feed extends BaseEntity {
     private String type; // 상속 관계로 인해 생성된 type을 조회하기 위한 필드
 
     @OneToMany(mappedBy = "feed", cascade = CascadeType.REMOVE)
-    private List<Likes> likesList = new ArrayList<>();
+    private final List<Likes> likesList = new ArrayList<>();
 
     protected Feed() {
     }
@@ -66,8 +65,6 @@ public abstract class Feed extends BaseEntity {
     public void changeBook(Book book) {
         this.book = book;
     }
-
-    public abstract void updateAllExceptBook(UpdateFeedRequest feedRequest);
 
     public Long getId() {
         return id;

@@ -3,8 +3,6 @@ package kakao.rebit.feed.entity;
 import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;
 import kakao.rebit.book.entity.Book;
-import kakao.rebit.feed.dto.request.update.UpdateFavoriteBookRequest;
-import kakao.rebit.feed.dto.request.update.UpdateFeedRequest;
 import kakao.rebit.member.entity.Member;
 
 @Entity
@@ -24,10 +22,9 @@ public class FavoriteBook extends Feed {
         this.fullReview = fullReview;
     }
 
-    @Override
-    public void updateAllExceptBook(UpdateFeedRequest feedRequest) {
-        this.briefReview = ((UpdateFavoriteBookRequest) feedRequest).getBriefReview();
-        this.fullReview = ((UpdateFavoriteBookRequest) feedRequest).getFullReview();
+    public void updateTextFields(String briefReview, String fullReview) {
+        this.briefReview = briefReview;
+        this.fullReview = fullReview;
     }
 
     public String getBriefReview() {

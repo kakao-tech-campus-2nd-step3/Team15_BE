@@ -21,7 +21,7 @@ public class S3Controller {
     @GetMapping("/upload")
     public ResponseEntity<S3UploadUrlResponse> getUploadS3Url(
             @RequestParam("filename") String filename) {
-        S3UploadUrlResponse s3UrlDto = s3Service.getUploadUrl(filename);
-        return ResponseEntity.ok().body(s3UrlDto);
+        S3UploadUrlResponse s3UploadUrlResponse = s3Service.getUploadUrl(filename);
+        return ResponseEntity.ok().body(s3UploadUrlResponse);
     }
 }
