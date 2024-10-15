@@ -1,18 +1,26 @@
 package kakao.rebit.feed.dto.request.create;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
+import kakao.rebit.common.domain.ImageKeyHolder;
+
 public class CreateMagazineRequest extends CreateFeedRequest {
 
+    @NotBlank(message = "메거진 대상 이름은 필수 입력 값입니다.")
     private String name;
-    private String imageUrl;
+
+    @Pattern(regexp = ImageKeyHolder.IMAGE_KEY_FORMAT, message = "피드 imageKey는 'feed/%s/%s' 형식이어야 합니다.")
+    private String imageKey;
+    @NotBlank(message = "본문은 필수 입력 값입니다.")
     private String content;
 
     private CreateMagazineRequest() {
     }
 
-    public CreateMagazineRequest(Long bookId, String name, String imageUrl, String content) {
+    public CreateMagazineRequest(Long bookId, String name, String imageKey, String content) {
         super(bookId);
         this.name = name;
-        this.imageUrl = imageUrl;
+        this.imageKey = imageKey;
         this.content = content;
     }
 
@@ -20,8 +28,8 @@ public class CreateMagazineRequest extends CreateFeedRequest {
         return name;
     }
 
-    public String getImageUrl() {
-        return imageUrl;
+    public String getImageKey() {
+        return imageKey;
     }
 
     public String getContent() {

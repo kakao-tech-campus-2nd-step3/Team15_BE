@@ -1,10 +1,10 @@
 package kakao.rebit.auth.service;
 
 import jakarta.transaction.Transactional;
-import kakao.rebit.auth.token.AuthTokenGenerator;
 import kakao.rebit.auth.dto.KakaoUserInfo;
 import kakao.rebit.auth.dto.LoginResponse;
 import kakao.rebit.auth.token.AuthToken;
+import kakao.rebit.auth.token.AuthTokenGenerator;
 import kakao.rebit.member.entity.Member;
 import kakao.rebit.member.entity.Role;
 import kakao.rebit.member.repository.MemberRepository;
@@ -39,7 +39,7 @@ public class KakaoAuthService {
         // 4. JWT 토큰 생성
         AuthToken tokens = generateAuthToken(member);
 
-        return new LoginResponse(tokens);
+        return new LoginResponse(tokens, member.getId());
     }
 
     @Transactional

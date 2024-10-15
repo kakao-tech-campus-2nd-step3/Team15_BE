@@ -16,6 +16,9 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import java.time.LocalDateTime;
+import kakao.rebit.challenge.exception.challenge.EntryFeeNotEnoughException;
+import kakao.rebit.challenge.exception.challenge.FullException;
+import kakao.rebit.challenge.exception.challenge.NotRecruitingException;
 import kakao.rebit.common.persistence.BaseEntity;
 import kakao.rebit.member.entity.Member;
 import org.hibernate.annotations.Formula;
@@ -147,5 +150,19 @@ public class Challenge extends BaseEntity {
 
     public boolean isFull() {
         return headcountLimit.isFull(currentHeadcount);
+    }
+
+    public void validateParticipate(Integer entryFee) {
+        if (!isRecruiting(LocalDateTime.now())) {
+            throw NotRecruitingException.EXCEPTION;
+        }
+
+        if (isFull()) {
+            throw FullException.EXCEPTION;
+        }
+
+        if (entryFee < getMinimumEntryFee()) {
+            throw EntryFeeNotEnoughException.EXCEPTION;
+        }
     }
 }
