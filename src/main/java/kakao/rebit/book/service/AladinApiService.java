@@ -16,7 +16,7 @@ public class AladinApiService {
     private String TTB_KEY;
 
     private static final String BASE_API_URL = "http://www.aladin.co.kr/ttb/api";
-    private static final String QUERY_PARAMS_FORMAT = "&QueryType=%s&MaxResults=%s&start=%d&SearchTarget=Book&output=js&Version=20131101";
+    private static final String QUERY_PARAMS_FORMAT = "&QueryType=%s&MaxResults=%s&start=%d&SearchTarget=Book&output=js&Version=20131101&Cover=Big";
 
     private static final String ITEM_LOOKUP_ENDPOINT = "/ItemLookUp.aspx";
     private static final String ITEM_SEARCH_ENDPOINT = "/ItemSearch.aspx";
@@ -54,7 +54,8 @@ public class AladinApiService {
             + "&itemIdType=ISBN"
             + "&ItemId=" + isbn
             + "&output=js"
-            + "&Version=20131101";
+            + "&Version=20131101"
+            + "&Cover=Big";
     }
 
     private <T> T executeApiRequest(String url, Class<T> responseType) {
