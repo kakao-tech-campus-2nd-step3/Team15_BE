@@ -19,13 +19,14 @@ import java.time.LocalDateTime;
 import kakao.rebit.challenge.exception.challenge.EntryFeeNotEnoughException;
 import kakao.rebit.challenge.exception.challenge.FullException;
 import kakao.rebit.challenge.exception.challenge.NotRecruitingException;
+import kakao.rebit.common.domain.ImageKeyAccessor;
 import kakao.rebit.common.persistence.BaseEntity;
 import kakao.rebit.member.entity.Member;
 import org.hibernate.annotations.Formula;
 
 @Entity
 @Table(name = "challenge")
-public class Challenge extends BaseEntity {
+public class Challenge extends BaseEntity implements ImageKeyAccessor {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -39,7 +40,7 @@ public class Challenge extends BaseEntity {
 
     private String content;
 
-    private String imageUrl;
+    private String imageKey;
 
     @Enumerated(EnumType.STRING)
     private ChallengeType type;
@@ -70,13 +71,13 @@ public class Challenge extends BaseEntity {
     protected Challenge() {
     }
 
-    public Challenge(Member member, String title, String content, String imageUrl, ChallengeType type, Integer minimumEntryFee,
+    public Challenge(Member member, String title, String content, String imageKey, ChallengeType type, Integer minimumEntryFee,
             Period recruitmentPeriod,
             Period challengePeriod, HeadcountLimit headcountLimit) {
         this.member = member;
         this.title = title;
         this.content = content;
-        this.imageUrl = imageUrl;
+        this.imageKey = imageKey;
         this.type = type;
         this.minimumEntryFee = minimumEntryFee;
         this.recruitmentPeriod = recruitmentPeriod;
@@ -100,8 +101,9 @@ public class Challenge extends BaseEntity {
         return content;
     }
 
-    public String getImageUrl() {
-        return imageUrl;
+    @Override
+    public String getImageKey() {
+        return imageKey;
     }
 
     public ChallengeType getType() {
