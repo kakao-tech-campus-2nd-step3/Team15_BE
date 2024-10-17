@@ -82,7 +82,7 @@ public class FeedService {
 
         feedRepository.deleteById(feedId);
 
-        // 메거진과 스토리는 피드 삭제 전 S3에서 image 파일을 먼저 삭제한다.
+        // 트랜잭션 롤백을 사용하기 위해 피드 삭제 후 S3에서 image 파일을 삭제한다.
         if (feed instanceof ImageKeyAccessor imageKeyAccessor) {
             s3Service.deleteObject(imageKeyAccessor.getImageKey());
         }
