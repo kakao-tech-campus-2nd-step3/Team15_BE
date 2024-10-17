@@ -67,12 +67,14 @@ public class MagazineService {
         Book book = bookService.findBookIfBookIdExist(updateRequest.bookId()).orElse(null);
         magazine.changeBook(book);
 
-        // 이미지가 수정됐으면 기존의 S3에서 이전 이미지 삭제하기
-        if (magazine.isImageKeyUpdated(updateRequest.imageKey())) {
-            s3Service.deleteObject(magazine.getImageKey());
-        }
-
+        String preImageKey = magazine.getImageKey(); // 변경 전 imageKey 값 저장
         magazine.changeImageKey(updateRequest.imageKey());
+
         magazine.updateTextFields(updateRequest.name(), updateRequest.content());
+
+        // 이미지가 수정됐으면 기존의 S3에서 이전 이미지 삭제하기
+        if (magazine.isImageKeyUpdated(preImageKey)) {
+            s3Service.deleteObject(preImageKey);
+        }
     }
 }

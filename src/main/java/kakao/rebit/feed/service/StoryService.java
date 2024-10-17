@@ -67,12 +67,14 @@ public class StoryService {
         Book book = bookService.findBookIfBookIdExist(updateRequest.bookId()).orElse(null);
         story.changeBook(book);
 
+        String preImageKey = story.getImageKey(); // 변경 전 imageKey 값 저장
+        story.changeImageKey(updateRequest.imageKey());
+
         // 이미지가 수정됐으면 기존의 S3에서 이전 이미지 삭제하기
-        if (story.isImageKeyUpdated(updateRequest.imageKey())) {
-            s3Service.deleteObject(story.getImageKey());
+        if (story.isImageKeyUpdated(preImageKey)) {
+            s3Service.deleteObject(preImageKey);
         }
 
-        story.changeImageKey(updateRequest.imageKey());
         story.updateTextFields(updateRequest.content());
     }
 }
