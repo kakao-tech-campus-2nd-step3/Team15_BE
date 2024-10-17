@@ -1,10 +1,11 @@
 package kakao.rebit.s3.service;
 
 import java.time.Duration;
-import java.util.Arrays;
-import java.util.List;
-import java.util.UUID;
+import kakao.rebit.s3.domain.S3Type;
+import kakao.rebit.s3.dto.DownloadImageInfo;
 import kakao.rebit.s3.dto.S3DownloadUrlResponse;
+import kakao.rebit.s3.dto.S3UploadFileInfo;
+import kakao.rebit.s3.dto.S3UploadKeyRequest;
 import kakao.rebit.s3.dto.S3UploadUrlResponse;
 import kakao.rebit.s3.exception.S3DeleteClientErrorException;
 import kakao.rebit.s3.exception.S3DeleteErrorException;
@@ -14,16 +15,15 @@ import kakao.rebit.s3.exception.S3DownloadClientErrorException;
 import kakao.rebit.s3.exception.S3DownloadErrorException;
 import kakao.rebit.s3.exception.S3DownloadSdkErrorException;
 import kakao.rebit.s3.exception.S3DownloadUnknownErrorException;
-import kakao.rebit.s3.exception.S3NotAllowedFileFormatException;
 import kakao.rebit.s3.exception.S3UploadClientErrorException;
 import kakao.rebit.s3.exception.S3UploadErrorException;
 import kakao.rebit.s3.exception.S3UploadSdkErrorException;
 import kakao.rebit.s3.exception.S3UploadUnknownErrorException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import software.amazon.awssdk.core.exception.SdkClientException;
 import software.amazon.awssdk.core.exception.SdkException;
+import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
 import software.amazon.awssdk.services.s3.model.GetObjectRequest;
@@ -38,43 +38,37 @@ import software.amazon.awssdk.services.s3.presigner.model.PutObjectPresignReques
 @Service
 public class S3Service {
 
-    private static final String KEY = "feed/%s/%s";
-    private static final String CONTENT_TYPE = "image/%s";
-    private static final List<String> ALLOWED_FILE_FORMAT = Arrays.asList("jpg", "jpeg", "png", "gif", "svg", "webp");
-
-    @Value("${cloud.aws.s3.bucket}")
-    private String bucket;
-
     private final S3Presigner s3Presigner;
     private final S3Client s3Client;
+    @Value("${cloud.aws.s3.bucket}")
+    private String bucket;
 
     public S3Service(S3Presigner s3Presigner, S3Client s3Client) {
         this.s3Presigner = s3Presigner;
         this.s3Client = s3Client;
     }
 
-    public S3UploadUrlResponse getUploadUrl(String fullFilename) {
-        String extension = getExtension(fullFilename);
-        validUploadImageFileFormat(extension);
+    public S3UploadUrlResponse getUploadUrl(S3Type type, String fullFilename) {
+        S3UploadFileInfo s3UploadFileInfo = S3UploadFileInfo.from(fullFilename); // 확장자를 포함한 전체 파일이름에서 이름과 확장자를 분리하기
+        s3UploadFileInfo.validUploadImageFileFormat(); // 확장자를 이용해 사용 가능한 이미지 형식인지 검증
 
         // S3에 업로드할 객체 요청 생성
-        String key = createKey(getFilename(fullFilename));
-        String contentType = createContentType(extension);
+        S3UploadKeyRequest s3UploadUrlRequest = S3UploadKeyRequest.from(type, s3UploadFileInfo);
 
         try {
-            PutObjectRequest putObjectRequest = createPutObjectRequest(key, contentType);
+            PutObjectRequest putObjectRequest = createPutObjectRequest(
+                    s3UploadUrlRequest.imageKey(),
+                    s3UploadUrlRequest.contentType());
 
             // presigned URL의 유효 기간을 설정
-            PutObjectPresignRequest putObjectPresignRequest = createPutObjectPresignRequest(
-                    putObjectRequest);
+            PutObjectPresignRequest putObjectPresignRequest = createPutObjectPresignRequest(putObjectRequest);
 
             // S3 presigner를 사용하여 실제 presigned URL 생성
-            PresignedPutObjectRequest presignedPutObjectRequest = s3Presigner.presignPutObject(
-                    putObjectPresignRequest);
+            PresignedPutObjectRequest presignedPutObjectRequest = s3Presigner.presignPutObject(putObjectPresignRequest);
 
             String presignedUrl = presignedPutObjectRequest.url().toString();
 
-            return createS3UploadUrlResponse(presignedUrl, key);
+            return createS3UploadUrlResponse(presignedUrl, s3UploadUrlRequest.imageKey());
         } catch (S3Exception e) {
             throw S3UploadErrorException.EXCEPTION;
         } catch (SdkClientException e) {
@@ -86,15 +80,13 @@ public class S3Service {
         }
     }
 
-    public S3DownloadUrlResponse getDownloadUrl(String key) {
+    public S3DownloadUrlResponse getDownloadUrl(String imageKey) {
         try {
-            GetObjectRequest getObjectRequest = createGetObjectRequest(key);
+            GetObjectRequest getObjectRequest = createGetObjectRequest(imageKey);
 
-            GetObjectPresignRequest getObjectPresignRequest = createGetObjectPresignRequest(
-                    getObjectRequest);
+            GetObjectPresignRequest getObjectPresignRequest = createGetObjectPresignRequest(getObjectRequest);
 
-            PresignedGetObjectRequest presignedGetObjectRequest = s3Presigner.presignGetObject(
-                    getObjectPresignRequest);
+            PresignedGetObjectRequest presignedGetObjectRequest = s3Presigner.presignGetObject(getObjectPresignRequest);
 
             String presignedUrl = presignedGetObjectRequest.url().toString();
 
@@ -110,11 +102,38 @@ public class S3Service {
         }
     }
 
-    @Transactional
-    public void deleteObject(String key) {
+    public void deleteObject(String imageKey) {
         try {
-            DeleteObjectRequest deleteObjectRequest = createDeleteObjectRequest(key);
+            DeleteObjectRequest deleteObjectRequest = createDeleteObjectRequest(imageKey);
             s3Client.deleteObject(deleteObjectRequest);
+        } catch (S3Exception e) {
+            throw S3DeleteErrorException.EXCEPTION;
+        } catch (SdkClientException e) {
+            throw S3DeleteClientErrorException.EXCEPTION;
+        } catch (SdkException e) {
+            throw S3DeleteSdkErrorException.EXCEPTION;
+        } catch (Exception e) {
+            throw S3DeleteUnknownErrorException.EXCEPTION;
+        }
+    }
+
+    /**
+     * 다운받은 이미지를 파라미터로 받아서 S3에 업로드하는 메서드. 최초 로그인 시 카카오에서 받아온 프로필 이미지를 추출하여 S3에 저장에 때 사용
+     */
+    public void putObject(S3UploadKeyRequest s3UploadKeyRequest,
+            DownloadImageInfo downloadImageInfo) {
+        try {
+            PutObjectRequest objectRequest = PutObjectRequest.builder()
+                    .bucket(bucket)
+                    .contentType(s3UploadKeyRequest.contentType())
+                    .key(s3UploadKeyRequest.imageKey())
+                    .build();
+
+            s3Client.putObject(
+                    objectRequest,
+                    RequestBody.fromBytes(downloadImageInfo.imageBytes())
+            );
+
         } catch (S3Exception e) {
             throw S3DeleteErrorException.EXCEPTION;
         } catch (SdkClientException e) {
@@ -129,10 +148,10 @@ public class S3Service {
     /**
      * 업로드를 위한 PresignedUrl 생성
      */
-    private PutObjectRequest createPutObjectRequest(String key, String contentType) {
+    private PutObjectRequest createPutObjectRequest(String imageKey, String contentType) {
         return PutObjectRequest.builder() // S3에 업로드할 파일의 요청을 생성
                 .bucket(bucket)
-                .key(key)
+                .key(imageKey)
                 .contentType(contentType)
                 .build();
     }
@@ -166,49 +185,18 @@ public class S3Service {
     /**
      * 삭제를 위한 Request 생성
      */
-    private DeleteObjectRequest createDeleteObjectRequest(String key) {
+    private DeleteObjectRequest createDeleteObjectRequest(String imageKey) {
         return DeleteObjectRequest.builder()
                 .bucket(bucket)
-                .key(key)
+                .key(imageKey)
                 .build();
     }
 
-    /**
-     * key 생성
-     */
-    private String createKey(String filename) {
-        return String.format(KEY, UUID.randomUUID(), filename);
-    }
-
-    private String createContentType(String extension) {
-        return String.format(CONTENT_TYPE, extension);
-    }
-
-    /**
-     * 파일의 확장자 앞 이름 얻는 메서드
-     */
-    private String getFilename(String fullFileName) {
-        return fullFileName.substring(0, fullFileName.lastIndexOf("."));
-    }
-
-    /**
-     * 파일의 확장자 얻는 메서드
-     */
-    private String getExtension(String fullFileName) {
-        return fullFileName.substring(fullFileName.lastIndexOf(".") + 1);
-    }
-
-    private S3UploadUrlResponse createS3UploadUrlResponse(String presignedUrl, String key) {
-        return new S3UploadUrlResponse(presignedUrl, key);
+    private S3UploadUrlResponse createS3UploadUrlResponse(String presignedUrl, String imageKey) {
+        return new S3UploadUrlResponse(presignedUrl, imageKey);
     }
 
     private S3DownloadUrlResponse createS3DownloadUrlResponse(String presignedUrl) {
         return new S3DownloadUrlResponse(presignedUrl);
-    }
-
-    private void validUploadImageFileFormat(String extension) {
-        if (!ALLOWED_FILE_FORMAT.contains(extension)) {
-            throw S3NotAllowedFileFormatException.EXCEPTION;
-        }
     }
 }
