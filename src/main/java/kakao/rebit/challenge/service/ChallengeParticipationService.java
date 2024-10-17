@@ -11,6 +11,7 @@ import kakao.rebit.challenge.repository.ChallengeParticipationRepository;
 import kakao.rebit.member.dto.MemberResponse;
 import kakao.rebit.member.entity.Member;
 import kakao.rebit.member.service.MemberService;
+import kakao.rebit.s3.service.S3Service;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -21,12 +22,16 @@ public class ChallengeParticipationService {
 
     private final MemberService memberService;
     private final ChallengeService challengeService;
+    private final S3Service s3Service;
     private final ChallengeParticipationRepository challengeParticipationRepository;
 
-    public ChallengeParticipationService(MemberService memberService, ChallengeService challengeService,
+    public ChallengeParticipationService(MemberService memberService,
+            ChallengeService challengeService,
+            S3Service s3Service,
             ChallengeParticipationRepository challengeParticipationRepository) {
         this.memberService = memberService;
         this.challengeService = challengeService;
+        this.s3Service = s3Service;
         this.challengeParticipationRepository = challengeParticipationRepository;
     }
 
@@ -86,7 +91,8 @@ public class ChallengeParticipationService {
                 challengeParticipation.getId(),
                 member.getId(),
                 member.getNickname(),
-                member.getImageUrl(),
+                member.getImageKey(),
+                s3Service.getDownloadUrl(member.getImageKey()).presignedUrl(),
                 challengeParticipation.getCreatedAt(),
                 challengeParticipation.getEntryFee()
         );
