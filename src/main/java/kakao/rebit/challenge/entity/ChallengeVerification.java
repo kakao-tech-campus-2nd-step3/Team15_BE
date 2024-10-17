@@ -9,13 +9,14 @@ import jakarta.persistence.Index;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import kakao.rebit.common.domain.ImageKeyAccessor;
 import kakao.rebit.common.persistence.BaseEntity;
 
 @Entity
 @Table(name = "challenge_verification", indexes = {
         @Index(name = "idx_challenge_verification_created_at", columnList = "createdAt")
 })
-public class ChallengeVerification extends BaseEntity {
+public class ChallengeVerification extends BaseEntity implements ImageKeyAccessor {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -23,7 +24,7 @@ public class ChallengeVerification extends BaseEntity {
 
     private String title;
 
-    private String imageUrl;
+    private String imageKey;
 
     private String content;
 
@@ -34,9 +35,9 @@ public class ChallengeVerification extends BaseEntity {
     protected ChallengeVerification() {
     }
 
-    public ChallengeVerification(String title, String imageUrl, String content, ChallengeParticipation challengeParticipation) {
+    public ChallengeVerification(String title, String imageKey, String content, ChallengeParticipation challengeParticipation) {
         this.title = title;
-        this.imageUrl = imageUrl;
+        this.imageKey = imageKey;
         this.content = content;
         this.challengeParticipation = challengeParticipation;
     }
@@ -49,8 +50,9 @@ public class ChallengeVerification extends BaseEntity {
         return title;
     }
 
-    public String getImageUrl() {
-        return imageUrl;
+    @Override
+    public String getImageKey() {
+        return imageKey;
     }
 
     public String getContent() {
