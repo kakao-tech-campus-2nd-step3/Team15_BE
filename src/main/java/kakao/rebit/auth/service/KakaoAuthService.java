@@ -64,7 +64,7 @@ public class KakaoAuthService {
     private Member createNewMember(KakaoUserInfo userInfo, String accessToken) {
         // 사용자 정보를 바탕으로 새로운 회원 생성
         String nickname = userInfo.properties().nickname();
-        String profileImageUrl = userInfo.properties().profile_image();
+        String profileImageUrl = userInfo.properties().profileImage();
         String email = userInfo.kakaoAccount().email();
 
         S3UploadKeyRequest s3UploadKeyRequest = createS3UploadKeyRequestFromUrl(profileImageUrl); // imageUrl로부터 imageKey 및 contentType 획득
