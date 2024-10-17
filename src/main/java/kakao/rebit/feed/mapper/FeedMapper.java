@@ -95,7 +95,8 @@ public class FeedMapper {
         return new FeedAuthorResponse(
                 member.getId(),
                 member.getNickname(),
-                member.getImageUrl()
+                member.getImageKey(),
+                s3Service.getDownloadUrl(member.getImageKey()).presignedUrl()
         );
     }
 

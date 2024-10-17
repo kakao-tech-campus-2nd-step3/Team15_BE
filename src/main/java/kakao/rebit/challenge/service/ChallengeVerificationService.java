@@ -15,6 +15,7 @@ import kakao.rebit.challenge.repository.ChallengeVerificationRepository;
 import kakao.rebit.member.dto.MemberResponse;
 import kakao.rebit.member.entity.Member;
 import kakao.rebit.member.service.MemberService;
+import kakao.rebit.s3.service.S3Service;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -27,13 +28,17 @@ public class ChallengeVerificationService {
     private final MemberService memberService;
     private final ChallengeVerificationRepository challengeVerificationRepository;
     private final ChallengeParticipationService challengeParticipationService;
+    private final S3Service s3Service;
 
-    public ChallengeVerificationService(ChallengeService challengeService, MemberService memberService,
-            ChallengeVerificationRepository challengeVerificationRepository, ChallengeParticipationService challengeParticipationService) {
+    public ChallengeVerificationService(ChallengeService challengeService,
+            MemberService memberService,
+            ChallengeVerificationRepository challengeVerificationRepository,
+            ChallengeParticipationService challengeParticipationService, S3Service s3Service) {
         this.challengeService = challengeService;
         this.memberService = memberService;
         this.challengeVerificationRepository = challengeVerificationRepository;
         this.challengeParticipationService = challengeParticipationService;
+        this.s3Service = s3Service;
     }
 
     @Transactional(readOnly = true)
@@ -88,6 +93,9 @@ public class ChallengeVerificationService {
         }
 
         challengeVerificationRepository.delete(challengeVerification);
+
+        // S3에 저장된 이미지 삭제
+        s3Service.deleteObject(challengeVerification.getImageKey());
     }
 
     private ChallengeVerificationResponse toChallengeVerificationResponse(ChallengeVerification challengeVerification) {
@@ -96,7 +104,8 @@ public class ChallengeVerificationService {
                 challengeVerification.getChallengeParticipation().getId(),
                 toAuthorResponse(challengeVerification.getChallengeParticipation().getMember()),
                 challengeVerification.getTitle(),
-                challengeVerification.getImageUrl(),
+                challengeVerification.getImageKey(),
+                s3Service.getDownloadUrl(challengeVerification.getImageKey()).presignedUrl(),
                 challengeVerification.getContent(),
                 challengeVerification.getCreatedAt()
         );
@@ -106,7 +115,8 @@ public class ChallengeVerificationService {
         return new AuthorResponse(
                 member.getId(),
                 member.getNickname(),
-                member.getImageUrl()
+                member.getImageKey(),
+                s3Service.getDownloadUrl(member.getImageKey()).presignedUrl()
         );
     }
 
@@ -114,7 +124,7 @@ public class ChallengeVerificationService {
             ChallengeVerificationRequest challengeVerificationRequest) {
         return new ChallengeVerification(
                 challengeVerificationRequest.title(),
-                challengeVerificationRequest.imageUrl(),
+                challengeVerificationRequest.imageKey(),
                 challengeVerificationRequest.content(),
                 challengeParticipation
         );

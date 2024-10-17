@@ -65,7 +65,7 @@ public class MemberInfoArgumentResolver implements HandlerMethodArgumentResolver
         return new MemberResponse(
             member.getId(),
             member.getNickname(),
-            member.getImageUrl(),
+            member.getImageKey(),
             member.getBio(),
             member.getEmail(),
             member.getRole(),

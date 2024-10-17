@@ -6,7 +6,8 @@ public record ChallengeParticipationMemberResponse(
         Long participationId,
         Long memberId,
         String nickname,
-        String imageUrl,
+        String imageKey,
+        String presignedUrl,
         LocalDateTime participatedAt,
         Integer entryFee
 ) {

@@ -3,12 +3,12 @@ package kakao.rebit.feed.entity;
 import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;
 import kakao.rebit.book.entity.Book;
-import kakao.rebit.common.domain.ImageKeyHolder;
+import kakao.rebit.common.domain.ImageKeyModifier;
 import kakao.rebit.member.entity.Member;
 
 @Entity
 @DiscriminatorValue("S")
-public class Story extends Feed implements ImageKeyHolder {
+public class Story extends Feed implements ImageKeyModifier {
 
     private String imageKey;
 

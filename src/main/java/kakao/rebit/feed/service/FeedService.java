@@ -3,7 +3,7 @@ package kakao.rebit.feed.service;
 import java.util.Optional;
 import kakao.rebit.book.entity.Book;
 import kakao.rebit.book.service.BookService;
-import kakao.rebit.common.domain.ImageKeyHolder;
+import kakao.rebit.common.domain.ImageKeyAccessor;
 import kakao.rebit.feed.dto.request.create.CreateFavoriteBookRequest;
 import kakao.rebit.feed.dto.request.create.CreateFeedRequest;
 import kakao.rebit.feed.dto.response.FeedResponse;
@@ -80,12 +80,12 @@ public class FeedService {
             throw DeleteNotAuthorizedException.EXCEPTION;
         }
 
-        // 메거진과 스토리는 피드 삭제 전 S3에서 image 파일을 먼저 삭제한다.
-        if (feed instanceof ImageKeyHolder imageKeyHolder) {
-            s3Service.deleteObject(imageKeyHolder.getImageKey());
-        }
-
         feedRepository.deleteById(feedId);
+
+        // 트랜잭션 롤백을 사용하기 위해 피드 삭제 후 S3에서 image 파일을 삭제한다.
+        if (feed instanceof ImageKeyAccessor imageKeyAccessor) {
+            s3Service.deleteObject(imageKeyAccessor.getImageKey());
+        }
     }
 
     private Optional<Book> findBookIfBookIdExist(Long bookId) {

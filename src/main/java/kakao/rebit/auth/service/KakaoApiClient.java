@@ -41,12 +41,12 @@ public class KakaoApiClient {
         MultiValueMap<String, String> body = createTokenParams(code);
 
         ResponseEntity<KakaoToken> response = restClient.post()
-            .uri(kakaoAuthUrl + "/oauth/token")
-            .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-            .accept(MediaType.APPLICATION_JSON)
-            .body(body)
-            .retrieve()
-            .toEntity(KakaoToken.class);
+                .uri(kakaoAuthUrl + "/oauth/token")
+                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                .accept(MediaType.APPLICATION_JSON)
+                .body(body)
+                .retrieve()
+                .toEntity(KakaoToken.class);
 
         KakaoToken tokens = Objects.requireNonNull(response.getBody());
         return tokens.getAccessToken();
@@ -63,11 +63,11 @@ public class KakaoApiClient {
 
     public KakaoUserInfo getUserInfo(String accessToken) {
         ResponseEntity<KakaoUserInfo> response = restClient.get()
-            .uri(kakaoApiUrl + "/v2/user/me")
-            .header(HttpHeaders.AUTHORIZATION, BEARER_PREFIX + accessToken)
-            .accept(MediaType.APPLICATION_JSON)
-            .retrieve()
-            .toEntity(KakaoUserInfo.class);
+                .uri(kakaoApiUrl + "/v2/user/me")
+                .header(HttpHeaders.AUTHORIZATION, BEARER_PREFIX + accessToken)
+                .accept(MediaType.APPLICATION_JSON)
+                .retrieve()
+                .toEntity(KakaoUserInfo.class);
 
         KakaoUserInfo userInfo = response.getBody();
         if (userInfo == null) {
