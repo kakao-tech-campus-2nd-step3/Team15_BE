@@ -2,11 +2,13 @@ package kakao.rebit.member.service;
 
 import java.util.List;
 import java.util.stream.Collectors;
+import kakao.rebit.member.dto.MemberProfileResponse;
 import kakao.rebit.member.dto.MemberRequest;
 import kakao.rebit.member.dto.MemberResponse;
 import kakao.rebit.member.entity.Member;
 import kakao.rebit.member.mapper.MemberMapper;
 import kakao.rebit.member.repository.MemberRepository;
+import kakao.rebit.s3.service.S3Service;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -14,9 +16,14 @@ import org.springframework.transaction.annotation.Transactional;
 public class MemberService {
 
     private final MemberRepository memberRepository;
+    private final S3Service s3Service;
+    private final MemberMapper memberMapper;
 
-    public MemberService(MemberRepository memberRepository) {
+    public MemberService(MemberRepository memberRepository, S3Service s3Service,
+            MemberMapper memberMapper) {
         this.memberRepository = memberRepository;
+        this.s3Service = s3Service;
+        this.memberMapper = memberMapper;
     }
 
     // 포인트 조회
@@ -38,7 +45,7 @@ public class MemberService {
     @Transactional(readOnly = true)
     public List<MemberResponse> getAllMemberResponses() {
         return memberRepository.findAll().stream()
-            .map(MemberMapper::toDto)
+            .map(memberMapper::toMemberResponse)
             .collect(Collectors.toList());
     }
 
@@ -46,14 +53,14 @@ public class MemberService {
     @Transactional(readOnly = true)
     public MemberResponse getMemberResponseById(Long memberId) {
         Member member = findMemberByIdOrThrow(memberId);
-        return MemberMapper.toDto(member);
+        return memberMapper.toMemberResponse(member);
     }
 
     // 이메일로 특정 회원 정보 조회
     @Transactional(readOnly = true)
-    public MemberResponse getMemberResponseByEmail(String email) {
+    public MemberProfileResponse getMemberResponseByEmail(String email) {
         Member member = findMemberByEmailOrThrow(email);
-        return MemberMapper.toDto(member);
+        return memberMapper.toMemberProfileResponse(member);
     }
 
     // ID로 회원 조회
@@ -74,19 +81,25 @@ public class MemberService {
     @Transactional
     public MemberResponse updateMember(Long memberId, MemberRequest memberRequest) {
         Member member = findMemberByIdOrThrow(memberId);
-        member.updateProfile(memberRequest.nickname(), memberRequest.bio(), memberRequest.imageUrl());
+        member.updateProfile(memberRequest.nickname(), memberRequest.bio());
         member.addPoints(memberRequest.point());
         memberRepository.save(member);
-        return MemberMapper.toDto(member);
+        return memberMapper.toMemberResponse(member);
     }
 
     // 본인 정보 업데이트
     @Transactional
-    public MemberResponse updateMyMember(String email, MemberRequest memberRequest) {
+    public void updateMyMember(String email, MemberRequest memberRequest) {
         Member member = findMemberByEmailOrThrow(email);
-        member.updateProfile(memberRequest.nickname(), memberRequest.bio(), memberRequest.imageUrl());
-        memberRepository.save(member);
-        return MemberMapper.toDto(member);
+
+        String preImageKey = member.getImageKey();
+        member.changeImageKey(memberRequest.imageKey());
+        member.updateProfile(memberRequest.nickname(), memberRequest.bio());
+
+        // imageKey가 변경된 경우, S3에 기존 이미지 삭제
+        if( member.isImageKeyUpdated(memberRequest.imageKey())){
+            s3Service.deleteObject(preImageKey);
+        }
     }
 
     // 회원 삭제
@@ -94,5 +107,8 @@ public class MemberService {
     public void deleteMember(Long memberId) {
         Member member = findMemberByIdOrThrow(memberId);
         memberRepository.delete(member);
+
+        // S3에 저장된 이미지 삭제
+        s3Service.deleteObject(member.getImageKey());
     }
 }
