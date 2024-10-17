@@ -8,11 +8,11 @@ import kakao.rebit.auth.token.AuthTokenGenerator;
 import kakao.rebit.member.entity.Member;
 import kakao.rebit.member.repository.MemberRepository;
 import kakao.rebit.s3.domain.S3Type;
-import kakao.rebit.s3.dto.S3UploadFileInfo;
-import kakao.rebit.utils.file.FileUtil;
 import kakao.rebit.s3.dto.DownloadImageInfo;
+import kakao.rebit.s3.dto.S3UploadFileInfo;
 import kakao.rebit.s3.dto.S3UploadKeyRequest;
 import kakao.rebit.s3.service.S3Service;
+import kakao.rebit.utils.file.FileUtil;
 import kakao.rebit.utils.image.ImageDownloader;
 import org.springframework.stereotype.Service;
 
@@ -69,7 +69,7 @@ public class KakaoAuthService {
 
         S3UploadKeyRequest s3UploadKeyRequest = createS3UploadKeyRequestFromUrl(profileImageUrl); // imageUrl로부터 imageKey 및 contentType 획득
 
-       Member newMember = memberRepository.save(
+        Member newMember = memberRepository.save(
                 Member.init(nickname, s3UploadKeyRequest.imageKey(), email, accessToken)); // 새로운 멤버 생성 후 저장
 
         downloadImageAndUploadS3(profileImageUrl, s3UploadKeyRequest); // 카카오 프로필 이미지 다운 후 S3에 업로드
@@ -79,9 +79,9 @@ public class KakaoAuthService {
 
     private AuthToken generateAuthToken(Member member) {
         return authTokensGenerator.generate(
-            member.getId().toString(),
-            member.getEmail(),
-            member.getRole().name()
+                member.getId().toString(),
+                member.getEmail(),
+                member.getRole().name()
         );
     }
 

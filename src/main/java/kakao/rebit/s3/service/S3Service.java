@@ -120,8 +120,7 @@ public class S3Service {
     /**
      * 다운받은 이미지를 파라미터로 받아서 S3에 업로드하는 메서드. 최초 로그인 시 카카오에서 받아온 프로필 이미지를 추출하여 S3에 저장에 때 사용
      */
-    public void putObject(S3UploadKeyRequest s3UploadKeyRequest,
-            DownloadImageInfo downloadImageInfo) {
+    public void putObject(S3UploadKeyRequest s3UploadKeyRequest, DownloadImageInfo downloadImageInfo) {
         try {
             PutObjectRequest objectRequest = PutObjectRequest.builder()
                     .bucket(bucket)
@@ -156,8 +155,7 @@ public class S3Service {
                 .build();
     }
 
-    private PutObjectPresignRequest createPutObjectPresignRequest(
-            PutObjectRequest putObjectRequest) {
+    private PutObjectPresignRequest createPutObjectPresignRequest(PutObjectRequest putObjectRequest) {
         return PutObjectPresignRequest.builder()
                 .signatureDuration(Duration.ofMinutes(5)) // presigned URL 5분간 접근 허용
                 .putObjectRequest(putObjectRequest)
@@ -174,8 +172,7 @@ public class S3Service {
                 .build();
     }
 
-    private GetObjectPresignRequest createGetObjectPresignRequest(
-            GetObjectRequest getObjectRequest) {
+    private GetObjectPresignRequest createGetObjectPresignRequest(GetObjectRequest getObjectRequest) {
         return GetObjectPresignRequest.builder()
                 .signatureDuration(Duration.ofMinutes(5))
                 .getObjectRequest(getObjectRequest)
