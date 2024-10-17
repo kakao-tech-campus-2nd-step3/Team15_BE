@@ -3,6 +3,7 @@ package kakao.rebit.challenge.dto;
 import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Size;
 import java.time.LocalDateTime;
@@ -11,9 +12,9 @@ import kakao.rebit.challenge.exception.challenge.InvalidChallengePeriodException
 import kakao.rebit.challenge.exception.challenge.InvalidChallengeStartDateException;
 import kakao.rebit.challenge.exception.challenge.InvalidHeadcountRangeException;
 import kakao.rebit.challenge.exception.challenge.InvalidRecruitmentPeriodException;
-import org.hibernate.validator.constraints.URL;
+import kakao.rebit.common.domain.ImageKeyAccessor;
 
-public record ChallengeRequest(
+public record ChallengeRequest (
         @NotBlank(message = "제목은 필수입니다.")
         @Size(min = 2, max = 100, message = "제목은 2자 이상 100자 이하여야 합니다.")
         String title,
@@ -22,9 +23,9 @@ public record ChallengeRequest(
         @Size(max = 1000, message = "내용은 1000자 이하여야 합니다.")
         String content,
 
-        @NotBlank(message = "이미지 URL은 필수입니다.")
-        @URL(message = "올바른 URL 형식이어야 합니다.")
-        String imageUrl,
+        @NotBlank(message = "이미지는 필수입니다.")
+        @Pattern(regexp = "^challenge" + ImageKeyAccessor.BASE_IMAGE_KEY_FORMAT, message = "챌린지 imageKey는 'challenge/%s/%s' 형식이어야 합니다.")
+        String imageKey,
 
         @NotNull(message = "챌린지 유형은 필수입니다.")
         ChallengeType type,
