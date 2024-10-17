@@ -7,7 +7,8 @@ public record ChallengeVerificationResponse(
         Long participationId,
         AuthorResponse author,
         String title,
-        String imageUrl,
+        String imageKey,
+        String presignedUrl,
         String content,
         LocalDateTime createdAt
 ) {
