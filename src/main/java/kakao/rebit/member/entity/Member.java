@@ -7,12 +7,13 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import kakao.rebit.common.domain.ImageKeyModifier;
 import kakao.rebit.common.persistence.BaseEntity;
 import kakao.rebit.member.exception.NotEnoughPointsException;
 
 @Entity
 @Table(name = "member")
-public class Member extends BaseEntity {
+public class Member extends BaseEntity implements ImageKeyModifier {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -20,7 +21,7 @@ public class Member extends BaseEntity {
 
     private String nickname;
 
-    private String imageUrl;
+    private String imageKey;
 
     private String bio;
 
@@ -36,10 +37,10 @@ public class Member extends BaseEntity {
     protected Member() {
     }
 
-    public Member(String nickname, String imageUrl, String bio, String email, Role role,
+    public Member(String nickname, String imageKey, String bio, String email, Role role,
             Integer points, String kakaoToken) {
         this.nickname = nickname;
-        this.imageUrl = imageUrl;
+        this.imageKey = imageKey;
         this.bio = bio;
         this.email = email;
         this.role = role;
@@ -47,10 +48,13 @@ public class Member extends BaseEntity {
         this.kakaoToken = kakaoToken;
     }
 
-    public void updateProfile(String nickname, String bio, String imageUrl) {
+    public static Member init(String nickname, String imageKey, String email, String accessToken) {
+        return new Member(nickname, imageKey, "", email, Role.ROLE_USER, 0, accessToken);
+    }
+
+    public void updateProfile(String nickname, String bio) {
         this.nickname = nickname;
         this.bio = bio;
-        this.imageUrl = imageUrl;
     }
 
     public void addPoints(Integer pointsToAdd) {
@@ -72,8 +76,9 @@ public class Member extends BaseEntity {
         return nickname;
     }
 
-    public String getImageUrl() {
-        return imageUrl;
+    @Override
+    public String getImageKey() {
+        return imageKey;
     }
 
     public String getBio() {
@@ -94,6 +99,11 @@ public class Member extends BaseEntity {
 
     public String getKakaoToken() {
         return kakaoToken;
+    }
+
+    @Override
+    public void changeImageKey(String imageKey){
+        this.imageKey = imageKey;
     }
 
 }
