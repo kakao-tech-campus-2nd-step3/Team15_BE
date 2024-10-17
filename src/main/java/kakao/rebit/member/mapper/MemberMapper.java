@@ -9,7 +9,13 @@ import org.springframework.stereotype.Component;
 @Component
 public class MemberMapper {
 
-    public static MemberResponse toDto(Member member) {
+    private final S3Service s3Service;
+
+    public MemberMapper(S3Service s3Service) {
+        this.s3Service = s3Service;
+    }
+
+    public MemberResponse toMemberResponse(Member member) {
         return new MemberResponse(
             member.getId(),
             member.getNickname(),
