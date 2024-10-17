@@ -14,6 +14,7 @@ import kakao.rebit.challenge.repository.ChallengeRepository;
 import kakao.rebit.member.dto.MemberResponse;
 import kakao.rebit.member.entity.Member;
 import kakao.rebit.member.service.MemberService;
+import kakao.rebit.s3.service.S3Service;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -24,10 +25,13 @@ public class ChallengeService {
 
     private final ChallengeRepository challengeRepository;
     private final MemberService memberService;
+    private final S3Service s3Service;
 
-    public ChallengeService(ChallengeRepository challengeRepository, MemberService memberService) {
+    public ChallengeService(ChallengeRepository challengeRepository, MemberService memberService,
+            S3Service s3Service) {
         this.challengeRepository = challengeRepository;
         this.memberService = memberService;
+        this.s3Service = s3Service;
     }
 
     @Transactional(readOnly = true)
@@ -64,11 +68,14 @@ public class ChallengeService {
             throw DeleteNotAuthorizedException.EXCEPTION;
         }
 
-        if (challenge.canBeDeleted(LocalDateTime.now())) {
+        if (!challenge.canBeDeleted(LocalDateTime.now())) {
             throw DeleteNotAllowedException.EXCEPTION;
         }
 
         challengeRepository.deleteById(challengeId);
+
+        // S3에 저장된 이미지 삭제
+        s3Service.deleteObject(challenge.getImageKey());
     }
 
     private ChallengeResponse toChallengeResponse(Challenge challenge) {
@@ -77,7 +84,8 @@ public class ChallengeService {
                 toCreatorResponse(challenge.getMember()),
                 challenge.getTitle(),
                 challenge.getContent(),
-                challenge.getImageUrl(),
+                challenge.getImageKey(),
+                s3Service.getDownloadUrl(challenge.getImageKey()).presignedUrl(),
                 challenge.getType(),
                 challenge.getMinimumEntryFee(),
                 challenge.getRecruitmentPeriod().getStartDate(),
@@ -96,7 +104,7 @@ public class ChallengeService {
                 member,
                 challengeRequest.title(),
                 challengeRequest.content(),
-                challengeRequest.imageUrl(),
+                challengeRequest.imageKey(),
                 challengeRequest.type(),
                 challengeRequest.minimumEntryFee(),
                 new Period(challengeRequest.recruitmentStartDate(), challengeRequest.recruitmentEndDate()),
@@ -109,7 +117,8 @@ public class ChallengeService {
         return new CreatorResponse(
                 member.getId(),
                 member.getNickname(),
-                member.getImageUrl()
+                member.getImageKey(),
+                s3Service.getDownloadUrl(member.getImageKey()).presignedUrl()
         );
     }
 }
