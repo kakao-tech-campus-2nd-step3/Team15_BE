@@ -12,8 +12,12 @@ public record S3UploadFileInfo(
 
     private static final List<String> ALLOWED_FILE_FORMAT = Arrays.asList("jpg", "jpeg", "png", "gif", "svg", "webp");
 
-    public void validUploadImageFileFormat() {
-        if (!ALLOWED_FILE_FORMAT.contains(this.extension)) {
+    public S3UploadFileInfo {
+        validUploadImageFileFormat(extension);
+    }
+
+    private void validUploadImageFileFormat(String extension) {
+        if (!ALLOWED_FILE_FORMAT.contains(extension)) {
             throw S3NotAllowedFileFormatException.EXCEPTION;
         }
     }

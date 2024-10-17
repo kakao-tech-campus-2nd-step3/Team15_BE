@@ -50,7 +50,6 @@ public class S3Service {
 
     public S3UploadUrlResponse getUploadUrl(S3Type type, String fullFilename) {
         S3UploadFileInfo s3UploadFileInfo = S3UploadFileInfo.from(fullFilename); // 확장자를 포함한 전체 파일이름에서 이름과 확장자를 분리하기
-        s3UploadFileInfo.validUploadImageFileFormat(); // 확장자를 이용해 사용 가능한 이미지 형식인지 검증
 
         // S3에 업로드할 객체 요청 생성
         S3UploadKeyRequest s3UploadUrlRequest = S3UploadKeyRequest.from(type, s3UploadFileInfo);
