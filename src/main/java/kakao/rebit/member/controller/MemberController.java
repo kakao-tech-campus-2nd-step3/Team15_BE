@@ -3,6 +3,7 @@ package kakao.rebit.member.controller;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import java.util.List;
 import kakao.rebit.member.annotation.MemberInfo;
 import kakao.rebit.member.dto.ChargePointRequest;
 import kakao.rebit.member.dto.MemberProfileResponse;
@@ -11,9 +12,14 @@ import kakao.rebit.member.dto.MemberResponse;
 import kakao.rebit.member.entity.Role;
 import kakao.rebit.member.service.MemberService;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/members")
@@ -29,16 +35,16 @@ public class MemberController {
     @Operation(summary = "포인트 조회", description = "사용자의 포인트를 조회합니다.")
     @GetMapping("/points")
     public ResponseEntity<Integer> getMyPoints(
-        @Parameter(hidden = true) @MemberInfo MemberResponse memberResponse) {
+            @Parameter(hidden = true) @MemberInfo MemberResponse memberResponse) {
         Integer points = memberService.getPoints(memberResponse.email());
-        return ResponseEntity.ok(points);
+        return ResponseEntity.ok().body(points);
     }
 
     @Operation(summary = "포인트 충전", description = "사용자의 포인트를 충전합니다.")
     @PostMapping("/points")
     public ResponseEntity<Void> chargePoints(
-        @Parameter(hidden = true) @MemberInfo MemberResponse memberResponse,
-        @RequestBody ChargePointRequest request) {
+            @Parameter(hidden = true) @MemberInfo MemberResponse memberResponse,
+            @RequestBody ChargePointRequest request) {
         memberService.chargePoints(memberResponse.email(), request.points());
         return ResponseEntity.noContent().build();
     }
@@ -46,55 +52,52 @@ public class MemberController {
     @Operation(summary = "내 정보 조회", description = "사용자 자신의 정보를 조회합니다.")
     @GetMapping("/me")
     public ResponseEntity<MemberProfileResponse> getMyInfo(
-        @Parameter(hidden = true) @MemberInfo MemberResponse memberResponse) {
+            @Parameter(hidden = true) @MemberInfo MemberResponse memberResponse) {
         MemberProfileResponse response = memberService.getMemberResponseByEmail(memberResponse.email());
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok().body(response);
     }
 
     @Operation(summary = "내 정보 수정", description = "사용자 자신의 정보를 수정합니다.")
     @PutMapping("/me")
     public ResponseEntity<Void> updateMyInfo(
-        @Parameter(hidden = true) @MemberInfo MemberResponse memberResponse,
-        @RequestBody MemberRequest memberRequest) {
+            @Parameter(hidden = true) @MemberInfo MemberResponse memberResponse,
+            @RequestBody MemberRequest memberRequest) {
         memberService.updateMyMember(memberResponse.email(), memberRequest);
         return ResponseEntity.noContent().build();
     }
 
     @Operation(summary = "모든 사용자 조회", description = "관리자 및 에디터가 모든 사용자를 조회합니다.")
     @GetMapping
-    public ResponseEntity<List<MemberResponse>> getAllMembers(
-        @Parameter(hidden = true) @MemberInfo(allowedRoles = {Role.ROLE_ADMIN,
-            Role.ROLE_EDITOR}) MemberResponse memberResponse) {
-        List<MemberResponse> members = memberService.getAllMemberResponses();
-        return ResponseEntity.ok(members);
+    public ResponseEntity<List<MemberProfileResponse>> getAllMembers(
+            @Parameter(hidden = true) @MemberInfo(allowedRoles = {Role.ROLE_ADMIN, Role.ROLE_EDITOR}) MemberResponse memberResponse) {
+        List<MemberProfileResponse> members = memberService.getAllMemberResponses();
+        return ResponseEntity.ok().body(members);
     }
 
     @Operation(summary = "특정 사용자 조회", description = "관리자 및 에디터가 특정 사용자를 조회합니다.")
     @GetMapping("/{member-id}")
-    public ResponseEntity<MemberResponse> getMemberById(
-        @Parameter(hidden = true) @MemberInfo(allowedRoles = {Role.ROLE_ADMIN,
-            Role.ROLE_EDITOR}) MemberResponse memberResponse,
-        @PathVariable("member-id") Long memberId) {
-        MemberResponse response = memberService.getMemberResponseById(memberId);
-        return ResponseEntity.ok(response);
+    public ResponseEntity<MemberProfileResponse> getMemberById(
+            @Parameter(hidden = true) @MemberInfo(allowedRoles = {Role.ROLE_ADMIN, Role.ROLE_EDITOR}) MemberResponse memberResponse,
+            @PathVariable("member-id") Long memberId) {
+        MemberProfileResponse response = memberService.getMemberResponseById(memberId);
+        return ResponseEntity.ok().body(response);
     }
 
     @Operation(summary = "특정 사용자 수정", description = "관리자 및 에디터가 특정 사용자의 정보를 수정합니다.")
     @PutMapping("/{member-id}")
-    public ResponseEntity<MemberResponse> updateMember(
-        @Parameter(hidden = true) @MemberInfo(allowedRoles = {Role.ROLE_ADMIN,
-            Role.ROLE_EDITOR}) MemberResponse memberResponse,
-        @PathVariable("member-id") Long memberId,
-        @RequestBody MemberRequest memberRequest) {
-        MemberResponse updatedMember = memberService.updateMember(memberId, memberRequest);
-        return ResponseEntity.ok(updatedMember);
+    public ResponseEntity<MemberProfileResponse> updateMember(
+            @Parameter(hidden = true) @MemberInfo(allowedRoles = {Role.ROLE_ADMIN, Role.ROLE_EDITOR}) MemberResponse memberResponse,
+            @PathVariable("member-id") Long memberId,
+            @RequestBody MemberRequest memberRequest) {
+        memberService.updateMember(memberId, memberRequest);
+        return ResponseEntity.noContent().build();
     }
 
     @Operation(summary = "특정 사용자 삭제", description = "관리자 및 에디터가 특정 사용자를 삭제합니다.")
     @DeleteMapping("/{member-id}")
     public ResponseEntity<Void> deleteMember(
-        @Parameter(hidden = true) @MemberInfo(allowedRoles = {Role.ROLE_ADMIN, Role.ROLE_EDITOR}) MemberResponse memberResponse,
-        @PathVariable("member-id") Long memberId) {
+            @Parameter(hidden = true) @MemberInfo(allowedRoles = {Role.ROLE_ADMIN, Role.ROLE_EDITOR}) MemberResponse memberResponse,
+            @PathVariable("member-id") Long memberId) {
         memberService.deleteMember(memberId);
         return ResponseEntity.noContent().build();
     }
