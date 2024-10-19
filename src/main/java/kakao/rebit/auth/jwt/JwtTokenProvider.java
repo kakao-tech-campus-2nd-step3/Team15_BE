@@ -10,13 +10,15 @@ import java.util.Date;
 import javax.crypto.SecretKey;
 import kakao.rebit.auth.jwt.exception.ExpiredTokenException;
 import kakao.rebit.auth.jwt.exception.InvalidTokenException;
+import kakao.rebit.auth.jwt.exception.MissingTokenException;
 import kakao.rebit.auth.jwt.exception.SignatureValidationFailedException;
+import kakao.rebit.auth.jwt.exception.UnsupportedTokenException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 @Component
 public class JwtTokenProvider {
-
+    private static final String BEARER_PREFIX = "Bearer ";
     private final SecretKey key;
 
     public JwtTokenProvider(@Value("${custom.jwt.secretKey}") String base64Secret) {
@@ -56,6 +58,16 @@ public class JwtTokenProvider {
         } catch (Exception e) {
             throw InvalidTokenException.EXCEPTION;
         }
+    }
+
+    public String extractToken(String token){
+        if (token == null) {
+            throw MissingTokenException.EXCEPTION;
+        }
+        if (!token.startsWith(BEARER_PREFIX)) {
+            throw UnsupportedTokenException.EXCEPTION;
+        }
+        return token.substring(BEARER_PREFIX.length());
     }
 
     // 토큰에서 클레임 정보 추출

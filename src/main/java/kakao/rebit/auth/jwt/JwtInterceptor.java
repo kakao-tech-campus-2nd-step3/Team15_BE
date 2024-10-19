@@ -2,8 +2,6 @@ package kakao.rebit.auth.jwt;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import kakao.rebit.auth.jwt.exception.MissingTokenException;
-import kakao.rebit.auth.jwt.exception.UnsupportedTokenException;
 import kakao.rebit.common.annotation.AllowAnonymous;
 import org.springframework.stereotype.Component;
 import org.springframework.web.cors.CorsUtils;
@@ -14,7 +12,6 @@ import org.springframework.web.servlet.HandlerInterceptor;
 public class JwtInterceptor implements HandlerInterceptor {
 
     private static final String AUTHORIZATION_HEADER = "Authorization";
-    private static final String BEARER_PREFIX = "Bearer ";
 
     private final JwtTokenProvider jwtTokenProvider;
 
@@ -36,16 +33,8 @@ public class JwtInterceptor implements HandlerInterceptor {
             return true;
         }
 
-        String token = request.getHeader(AUTHORIZATION_HEADER);
+        String token = jwtTokenProvider.extractToken(request.getHeader(AUTHORIZATION_HEADER));
 
-        if (token == null) {
-            throw MissingTokenException.EXCEPTION;
-        }
-
-        if (!token.startsWith(BEARER_PREFIX)) {
-            throw UnsupportedTokenException.EXCEPTION;
-        }
-
-        return jwtTokenProvider.validateToken(token.substring(BEARER_PREFIX.length()));
+        return jwtTokenProvider.validateToken(token);
     }
 }

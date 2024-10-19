@@ -43,8 +43,7 @@ public class MemberInfoArgumentResolver implements HandlerMethodArgumentResolver
 
         HttpServletRequest request = (HttpServletRequest) webRequest.getNativeRequest();
 
-        String token = request.getHeader(AUTHORIZATION_HEADER);
-        token = token.substring(BEARER_PREFIX.length());  // Bearer 제거
+        String token = jwtTokenProvider.extractToken(request.getHeader(AUTHORIZATION_HEADER));
 
         String email = jwtTokenProvider.getEmailFromToken(token);
         Member member = memberService.findMemberByEmailOrThrow(email);
