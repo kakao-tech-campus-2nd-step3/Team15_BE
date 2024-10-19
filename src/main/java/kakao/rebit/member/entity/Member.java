@@ -52,7 +52,7 @@ public class Member extends BaseEntity implements ImageKeyModifier {
         return new Member(nickname, imageKey, "", email, Role.ROLE_USER, 0, accessToken);
     }
 
-    public void updateProfile(String nickname, String bio) {
+    public void updateNicknameAndBio(String nickname, String bio) {
         this.nickname = nickname;
         this.bio = bio;
     }
