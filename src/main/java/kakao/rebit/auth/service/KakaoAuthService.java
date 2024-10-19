@@ -9,7 +9,6 @@ import kakao.rebit.member.entity.Member;
 import kakao.rebit.member.repository.MemberRepository;
 import kakao.rebit.s3.domain.S3Type;
 import kakao.rebit.s3.dto.DownloadImageInfo;
-import kakao.rebit.s3.dto.S3UploadFileInfo;
 import kakao.rebit.s3.dto.S3UploadKeyRequest;
 import kakao.rebit.s3.service.S3Service;
 import kakao.rebit.utils.file.FileUtil;
@@ -67,7 +66,7 @@ public class KakaoAuthService {
         String profileImageUrl = userInfo.properties().profileImage();
         String email = userInfo.kakaoAccount().email();
 
-        S3UploadKeyRequest s3UploadKeyRequest = createS3UploadKeyRequestFromUrl(profileImageUrl); // imageUrl로부터 imageKey 및 contentType 획득
+        S3UploadKeyRequest s3UploadKeyRequest = s3Service.createS3UploadKeyRequestFromTypeAndFilename(S3Type.MEMBER, FileUtil.getFilenameFromUrl(profileImageUrl)); // imageUrl로부터 imageKey 및 contentType 획득
 
         Member newMember = memberRepository.save(
                 Member.init(nickname, s3UploadKeyRequest.imageKey(), email, accessToken)); // 새로운 멤버 생성 후 저장
@@ -88,10 +87,5 @@ public class KakaoAuthService {
     private void downloadImageAndUploadS3(String imageUrl, S3UploadKeyRequest s3UploadKeyRequest) {
         DownloadImageInfo downloadImageInfo = imageDownloader.downloadImageFromUrl(imageUrl); // imageUrl로부터 이미지 가져오기
         s3Service.putObject(s3UploadKeyRequest, downloadImageInfo); // S3에 저장
-    }
-
-    private S3UploadKeyRequest createS3UploadKeyRequestFromUrl(String imageUrl) {
-        S3UploadFileInfo s3UploadFileInfo = S3UploadFileInfo.from(FileUtil.getFilenameFromUrl(imageUrl));
-        return S3UploadKeyRequest.from(S3Type.MEMBER, s3UploadFileInfo);
     }
 }
