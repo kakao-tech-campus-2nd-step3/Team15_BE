@@ -1,12 +1,14 @@
 package kakao.rebit.member.resolver;
 
 import jakarta.servlet.http.HttpServletRequest;
+import java.util.List;
+import kakao.rebit.auth.jwt.JwtTokenProvider;
+import kakao.rebit.auth.jwt.exception.AccessDeniedException;
 import kakao.rebit.member.annotation.MemberInfo;
 import kakao.rebit.member.dto.MemberResponse;
 import kakao.rebit.member.entity.Member;
 import kakao.rebit.member.entity.Role;
 import kakao.rebit.member.service.MemberService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.MethodParameter;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.support.WebDataBinderFactory;
@@ -14,16 +16,18 @@ import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.method.support.ModelAndViewContainer;
 
-import java.util.List;
-
 @Component
 public class MemberInfoArgumentResolver implements HandlerMethodArgumentResolver {
 
+    private static final String AUTHORIZATION_HEADER = "Authorization";
+    private static final String BEARER_PREFIX = "Bearer ";
     private final MemberService memberService;
+    private final JwtTokenProvider jwtTokenProvider;
 
-    @Autowired
-    public MemberInfoArgumentResolver(MemberService memberService) {
+    public MemberInfoArgumentResolver(MemberService memberService,
+            JwtTokenProvider jwtTokenProvider) {
         this.memberService = memberService;
+        this.jwtTokenProvider = jwtTokenProvider;
     }
 
     @Override
@@ -33,43 +37,43 @@ public class MemberInfoArgumentResolver implements HandlerMethodArgumentResolver
 
     @Override
     public Object resolveArgument(MethodParameter parameter,
-        ModelAndViewContainer mavContainer,
-        NativeWebRequest webRequest,
-        WebDataBinderFactory binderFactory) throws Exception {
+            ModelAndViewContainer mavContainer,
+            NativeWebRequest webRequest,
+            WebDataBinderFactory binderFactory) throws Exception {
 
         HttpServletRequest request = (HttpServletRequest) webRequest.getNativeRequest();
-        String email = (String) request.getAttribute("email");
-        String role = (String) request.getAttribute("role");
 
-        if (email == null || role == null) {
-            throw new IllegalStateException("JWT 토큰이 유효하지 않거나 누락되었습니다.");
-        }
+        String token = request.getHeader(AUTHORIZATION_HEADER);
+        token = token.substring(BEARER_PREFIX.length());  // Bearer 제거
 
-        // 데이터베이스에서 회원 정보 조회 후 MemberResponse로 반환
+        String email = jwtTokenProvider.getEmailFromToken(token);
         Member member = memberService.findMemberByEmailOrThrow(email);
-        MemberResponse memberResponse = toMemberResponse(member);
 
         // 예외처리추가
+        checkMemberRole(member, parameter);
+
+        return toMemberResponse(member);
+    }
+
+    private void checkMemberRole(Member member, MethodParameter parameter) {
         MemberInfo memberInfo = parameter.getParameterAnnotation(MemberInfo.class);
         if (memberInfo != null) {
             Role[] allowedRoles = memberInfo.allowedRoles();
             if (!List.of(allowedRoles).contains(member.getRole())) {
-                throw new IllegalStateException("Unauthorized");
+                throw AccessDeniedException.EXCEPTION;
             }
         }
-
-        return memberResponse;
     }
 
     private MemberResponse toMemberResponse(Member member) {
         return new MemberResponse(
-            member.getId(),
-            member.getNickname(),
-            member.getImageKey(),
-            member.getBio(),
-            member.getEmail(),
-            member.getRole(),
-            member.getPoints()
+                member.getId(),
+                member.getNickname(),
+                member.getImageKey(),
+                member.getBio(),
+                member.getEmail(),
+                member.getRole(),
+                member.getPoints()
         );
     }
 }
