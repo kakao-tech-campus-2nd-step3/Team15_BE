@@ -49,10 +49,8 @@ public class S3Service {
     }
 
     public S3UploadUrlResponse getUploadUrl(S3Type type, String fullFilename) {
-        S3UploadFileInfo s3UploadFileInfo = S3UploadFileInfo.from(fullFilename); // 확장자를 포함한 전체 파일이름에서 이름과 확장자를 분리하기
-
         // S3에 업로드할 객체 요청 생성
-        S3UploadKeyRequest s3UploadUrlRequest = S3UploadKeyRequest.from(type, s3UploadFileInfo);
+        S3UploadKeyRequest s3UploadUrlRequest = createS3UploadKeyRequestFromTypeAndFilename(type, fullFilename);
 
         try {
             PutObjectRequest putObjectRequest = createPutObjectRequest(
@@ -141,6 +139,14 @@ public class S3Service {
         } catch (Exception e) {
             throw S3DeleteUnknownErrorException.EXCEPTION;
         }
+    }
+
+    /**
+     * S3UploadKeyRequest를 생성하는 메서드
+     */
+    public S3UploadKeyRequest createS3UploadKeyRequestFromTypeAndFilename(S3Type type, String filename) {
+        S3UploadFileInfo s3UploadFileInfo = S3UploadFileInfo.from(filename);
+        return S3UploadKeyRequest.from(type, s3UploadFileInfo);
     }
 
     /**
