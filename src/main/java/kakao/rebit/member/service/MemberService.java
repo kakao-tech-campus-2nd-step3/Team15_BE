@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 import kakao.rebit.member.dto.MemberProfileResponse;
 import kakao.rebit.member.dto.MemberRequest;
-import kakao.rebit.member.dto.MemberResponse;
 import kakao.rebit.member.entity.Member;
 import kakao.rebit.member.mapper.MemberMapper;
 import kakao.rebit.member.repository.MemberRepository;
@@ -43,17 +42,17 @@ public class MemberService {
 
     // 모든 회원 정보 조회
     @Transactional(readOnly = true)
-    public List<MemberResponse> getAllMemberResponses() {
+    public List<MemberProfileResponse> getAllMemberResponses() {
         return memberRepository.findAll().stream()
-            .map(memberMapper::toMemberResponse)
+            .map(memberMapper::toMemberProfileResponse)
             .collect(Collectors.toList());
     }
 
     // ID로 특정 회원 정보 조회
     @Transactional(readOnly = true)
-    public MemberResponse getMemberResponseById(Long memberId) {
+    public MemberProfileResponse getMemberResponseById(Long memberId) {
         Member member = findMemberByIdOrThrow(memberId);
-        return memberMapper.toMemberResponse(member);
+        return memberMapper.toMemberProfileResponse(member);
     }
 
     // 이메일로 특정 회원 정보 조회
@@ -79,12 +78,10 @@ public class MemberService {
 
     // 회원 정보 업데이트
     @Transactional
-    public MemberResponse updateMember(Long memberId, MemberRequest memberRequest) {
+    public void updateMember(Long memberId, MemberRequest memberRequest) {
         Member member = findMemberByIdOrThrow(memberId);
-        member.updateProfile(memberRequest.nickname(), memberRequest.bio());
+        member.updateNicknameAndBio(memberRequest.nickname(), memberRequest.bio());
         member.addPoints(memberRequest.point());
-        memberRepository.save(member);
-        return memberMapper.toMemberResponse(member);
     }
 
     // 본인 정보 업데이트
@@ -94,7 +91,7 @@ public class MemberService {
 
         String preImageKey = member.getImageKey();
         member.changeImageKey(memberRequest.imageKey());
-        member.updateProfile(memberRequest.nickname(), memberRequest.bio());
+        member.updateNicknameAndBio(memberRequest.nickname(), memberRequest.bio());
 
         // imageKey가 변경된 경우, S3에 기존 이미지 삭제
         if( member.isImageKeyUpdated(memberRequest.imageKey())){
