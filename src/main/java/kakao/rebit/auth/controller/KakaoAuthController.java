@@ -6,9 +6,12 @@ import kakao.rebit.auth.dto.LoginResponse;
 import kakao.rebit.auth.service.KakaoAuthService;
 import kakao.rebit.common.annotation.AllowAnonymous;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -45,5 +48,12 @@ public class KakaoAuthController {
     @ResponseBody
     public LoginResponse kakaoLogin(@RequestParam("code") String code) {
         return kakaoAuthService.kakaoLogin(code);
+    }
+
+    @Operation(summary = "카카오 로그아웃", description = "카카오 계정 로그아웃을 처리합니다.")
+    @GetMapping("/logout")
+    public ResponseEntity<String> kakaoLogout(@RequestHeader("Authorization") String accessToken) {
+        kakaoAuthService.kakaoLogout(accessToken);
+        return ResponseEntity.noContent().build();
     }
 }
