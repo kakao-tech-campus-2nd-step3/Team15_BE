@@ -17,6 +17,7 @@ import org.springframework.web.client.RestClient;
 public class KakaoApiClient {
 
     private static final String BEARER_PREFIX = "Bearer ";
+    private static final String LOGOUT_URL_TEMPLATE = "https://kauth.kakao.com/oauth/logout?client_id=%s&logout_redirect_uri=%s";
 
     @Value("${OAUTH_KAKAO_CLIENT_ID}")
     private String clientId;
@@ -41,12 +42,12 @@ public class KakaoApiClient {
         MultiValueMap<String, String> body = createTokenParams(code);
 
         ResponseEntity<KakaoToken> response = restClient.post()
-                .uri(kakaoAuthUrl + "/oauth/token")
-                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-                .accept(MediaType.APPLICATION_JSON)
-                .body(body)
-                .retrieve()
-                .toEntity(KakaoToken.class);
+            .uri(kakaoAuthUrl + "/oauth/token")
+            .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+            .accept(MediaType.APPLICATION_JSON)
+            .body(body)
+            .retrieve()
+            .toEntity(KakaoToken.class);
 
         KakaoToken tokens = Objects.requireNonNull(response.getBody());
         return tokens.getAccessToken();
@@ -63,11 +64,11 @@ public class KakaoApiClient {
 
     public KakaoUserInfo getUserInfo(String accessToken) {
         ResponseEntity<KakaoUserInfo> response = restClient.get()
-                .uri(kakaoApiUrl + "/v2/user/me")
-                .header(HttpHeaders.AUTHORIZATION, BEARER_PREFIX + accessToken)
-                .accept(MediaType.APPLICATION_JSON)
-                .retrieve()
-                .toEntity(KakaoUserInfo.class);
+            .uri(kakaoApiUrl + "/v2/user/me")
+            .header(HttpHeaders.AUTHORIZATION, BEARER_PREFIX + accessToken)
+            .accept(MediaType.APPLICATION_JSON)
+            .retrieve()
+            .toEntity(KakaoUserInfo.class);
 
         KakaoUserInfo userInfo = response.getBody();
         if (userInfo == null) {
@@ -78,10 +79,7 @@ public class KakaoApiClient {
     }
 
     public void logout(String accessToken) {
-        String logoutUrl = String.format(
-            "https://kauth.kakao.com/oauth/logout?client_id=%s&logout_redirect_uri=%s",
-            clientId, redirectUri
-        );
+        String logoutUrl = String.format(LOGOUT_URL_TEMPLATE, clientId, redirectUri);
 
         restClient.get()
             .uri(logoutUrl)
