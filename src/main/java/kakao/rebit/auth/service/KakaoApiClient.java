@@ -76,4 +76,17 @@ public class KakaoApiClient {
 
         return userInfo;
     }
+
+    public void logout(String accessToken) {
+        String logoutUrl = String.format(
+            "https://kauth.kakao.com/oauth/logout?client_id=%s&logout_redirect_uri=%s",
+            clientId, redirectUri
+        );
+
+        restClient.get()
+            .uri(logoutUrl)
+            .accept(MediaType.APPLICATION_JSON)
+            .retrieve()
+            .toBodilessEntity();
+    }
 }

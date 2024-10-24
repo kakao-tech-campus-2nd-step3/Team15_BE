@@ -88,4 +88,8 @@ public class KakaoAuthService {
         DownloadImageInfo downloadImageInfo = imageDownloader.downloadImageFromUrl(imageUrl); // imageUrl로부터 이미지 가져오기
         s3Service.putObject(s3UploadKeyRequest, downloadImageInfo); // S3에 저장
     }
+
+    public void kakaoLogout(String accessToken) {
+        kakaoApiClient.logout(accessToken);
+    }
 }
