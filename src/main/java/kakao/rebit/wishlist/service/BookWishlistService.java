@@ -44,8 +44,7 @@ public class BookWishlistService {
     @Transactional
     public void deleteBookWishlist(Long memberId, String isbn) {
         bookWishlistRepository.findAll().stream()
-            .filter(bookWishlist -> bookWishlist.getMember().getId().equals(memberId)
-                && bookWishlist.getBook().getIsbn().equals(isbn))
+            .filter(bookWishlist -> bookWishlist.hasBook(memberId, isbn))
             .findFirst()
             .ifPresent(bookWishlistRepository::delete);
     }

@@ -29,4 +29,8 @@ public class BookWishlist extends Wishlist {
     public Book getBook() {
         return book;
     }
+
+    public boolean hasBook(Long memberId, String isbn) {
+        return getMember().getId().equals(memberId) && book.getIsbn().equals(isbn);
+    }
 }
