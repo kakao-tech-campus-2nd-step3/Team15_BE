@@ -1,9 +1,12 @@
 package kakao.rebit.common.config;
 
+import java.time.Duration;
 import java.util.List;
 import kakao.rebit.auth.jwt.JwtInterceptor;
 import kakao.rebit.member.resolver.MemberInfoArgumentResolver;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.web.client.ClientHttpRequestFactories;
+import org.springframework.boot.web.client.ClientHttpRequestFactorySettings;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.client.RestClient;
@@ -25,8 +28,15 @@ public class WebConfig implements WebMvcConfigurer {
     }
 
     @Bean
-    public RestClient restClient() {
-        return RestClient.builder().build();
+    public RestClient restClient(RestClient.Builder restClientBuilder) {
+        // 타임아웃 설정
+        return restClientBuilder
+            .requestFactory(ClientHttpRequestFactories.get(
+                ClientHttpRequestFactorySettings.DEFAULTS
+                    .withConnectTimeout(Duration.ofSeconds(5))
+                    .withReadTimeout(Duration.ofMinutes(2))
+            ))
+            .build();
     }
 
     // CORS 설정
