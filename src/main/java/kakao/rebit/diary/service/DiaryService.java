@@ -2,6 +2,9 @@ package kakao.rebit.diary.service;
 
 import kakao.rebit.book.entity.Book;
 import kakao.rebit.book.repository.BookRepository;
+import kakao.rebit.common.exception.BusinessException;
+import kakao.rebit.common.exception.DiaryErrorCode;
+import kakao.rebit.common.exception.BookErrorCode;
 import kakao.rebit.diary.dto.DiaryRequest;
 import kakao.rebit.diary.dto.DiaryResponse;
 import kakao.rebit.diary.entity.Diary;
@@ -16,8 +19,6 @@ import org.springframework.util.StringUtils;
 
 @Service
 public class DiaryService {
-
-    private static final String DIARY_NOT_FOUND_MESSAGE = "회원 ID %d 에 해당하는 다이어리 ID %d 를 찾을 수 없습니다.";
 
     private final DiaryRepository diaryRepository;
     private final MemberService memberService;
@@ -40,8 +41,8 @@ public class DiaryService {
 
     @Transactional(readOnly = true)
     public DiaryResponse getDiaryById(Long memberId, Long id) {
-        Diary diary = diaryRepository.findByIdAndMemberId(id, memberId).orElseThrow(() ->
-            new IllegalArgumentException(String.format(DIARY_NOT_FOUND_MESSAGE, memberId, id)));
+        Diary diary = diaryRepository.findByIdAndMemberId(id, memberId)
+            .orElseThrow(() -> new BusinessException(DiaryErrorCode.DIARY_NOT_FOUND));
         return new DiaryResponse(diary.getId(), diary.getContent(), diary.getMember().getId(),
             diary.getBook().getIsbn());
     }
@@ -52,8 +53,8 @@ public class DiaryService {
 
         Member member = memberService.findMemberByIdOrThrow(memberId);
 
-        Book book = bookRepository.findByIsbn(diaryRequest.isbn()).orElseThrow(() ->
-            new IllegalArgumentException(String.format("ISBN %s 에 해당하는 책을 찾을 수 없습니다.", diaryRequest.isbn())));
+        Book book = bookRepository.findByIsbn(diaryRequest.isbn())
+            .orElseThrow(() -> new BusinessException(BookErrorCode.BOOK_NOT_FOUND));
 
         Diary diary = new Diary(diaryRequest.content(), member, book);
         Diary savedDiary = diaryRepository.save(diary);
@@ -64,11 +65,11 @@ public class DiaryService {
     public void updateDiary(Long memberId, Long id, DiaryRequest diaryRequest) {
         validateDiaryRequest(diaryRequest);
 
-        Diary diary = diaryRepository.findByIdAndMemberId(id, memberId).orElseThrow(() ->
-            new IllegalArgumentException(String.format(DIARY_NOT_FOUND_MESSAGE, memberId, id)));
+        Diary diary = diaryRepository.findByIdAndMemberId(id, memberId)
+            .orElseThrow(() -> new BusinessException(DiaryErrorCode.DIARY_NOT_FOUND));
 
-        Book book = bookRepository.findByIsbn(diaryRequest.isbn()).orElseThrow(() ->
-            new IllegalArgumentException(String.format("ISBN %s 에 해당하는 책을 찾을 수 없습니다.", diaryRequest.isbn())));
+        Book book = bookRepository.findByIsbn(diaryRequest.isbn())
+            .orElseThrow(() -> new BusinessException(BookErrorCode.BOOK_NOT_FOUND));
 
         diary.updateDiary(diaryRequest.content(), book);
         diaryRepository.save(diary);
@@ -76,17 +77,17 @@ public class DiaryService {
 
     @Transactional
     public void deleteDiary(Long memberId, Long id) {
-        Diary diary = diaryRepository.findByIdAndMemberId(id, memberId).orElseThrow(() ->
-            new IllegalArgumentException(String.format(DIARY_NOT_FOUND_MESSAGE, memberId, id)));
+        Diary diary = diaryRepository.findByIdAndMemberId(id, memberId)
+            .orElseThrow(() -> new BusinessException(DiaryErrorCode.DIARY_NOT_FOUND));
         diaryRepository.delete(diary);
     }
 
     private void validateDiaryRequest(DiaryRequest diaryRequest) {
         if (!StringUtils.hasText(diaryRequest.isbn())) {
-            throw new IllegalArgumentException("ISBN 값은 필수입니다.");
+            throw new BusinessException(DiaryErrorCode.DIARY_VALIDATION_FAILED);
         }
         if (!StringUtils.hasText(diaryRequest.content())) {
-            throw new IllegalArgumentException("일기 내용은 필수입니다.");
+            throw new BusinessException(DiaryErrorCode.DIARY_VALIDATION_FAILED);
         }
     }
 }
