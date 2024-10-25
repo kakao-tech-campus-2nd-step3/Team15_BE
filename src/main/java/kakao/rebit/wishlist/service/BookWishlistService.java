@@ -1,9 +1,9 @@
 package kakao.rebit.wishlist.service;
 
 import kakao.rebit.book.entity.Book;
-import kakao.rebit.book.repository.BookRepository;
+import kakao.rebit.book.service.BookService;
 import kakao.rebit.member.entity.Member;
-import kakao.rebit.member.repository.MemberRepository;
+import kakao.rebit.member.service.MemberService;
 import kakao.rebit.wishlist.entity.BookWishlist;
 import kakao.rebit.wishlist.repository.BookWishlistRepository;
 import org.springframework.data.domain.Page;
@@ -11,19 +11,19 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-
 @Service
 public class BookWishlistService {
 
     private final BookWishlistRepository bookWishlistRepository;
-    private final MemberRepository memberRepository;
-    private final BookRepository bookRepository;
+    private final MemberService memberService;
+    private final BookService bookService;
 
     public BookWishlistService(BookWishlistRepository bookWishlistRepository,
-        MemberRepository memberRepository, BookRepository bookRepository) {
+        MemberService memberService,
+        BookService bookService) {
         this.bookWishlistRepository = bookWishlistRepository;
-        this.memberRepository = memberRepository;
-        this.bookRepository = bookRepository;
+        this.memberService = memberService;
+        this.bookService = bookService;
     }
 
     @Transactional(readOnly = true)
@@ -34,18 +34,18 @@ public class BookWishlistService {
 
     @Transactional
     public void addBookWishlist(Long memberId, String isbn) {
-        Member member = memberRepository.findById(memberId)
-            .orElseThrow(() -> new IllegalArgumentException("Member not found"));
-        Book book = bookRepository.findByIsbn(isbn)
-            .orElseThrow(() -> new IllegalArgumentException("Book not found"));
+        Member member = memberService.findMemberByIdOrThrow(memberId);
+        Book book = bookService.findByIsbnOrThrow(isbn);
         bookWishlistRepository.save(new BookWishlist(member, book));
     }
 
     @Transactional
     public void deleteBookWishlist(Long memberId, String isbn) {
-        bookWishlistRepository.findAll().stream()
-            .filter(bookWishlist -> bookWishlist.hasBook(memberId, isbn))
-            .findFirst()
+
+        memberService.findMemberByIdOrThrow(memberId);
+        bookService.findByIsbnOrThrow(isbn);
+
+        bookWishlistRepository.findByMemberIdAndBookIsbn(memberId, isbn)
             .ifPresent(bookWishlistRepository::delete);
     }
 }
