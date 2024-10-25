@@ -104,4 +104,11 @@ public class BookService {
         }
         return Optional.empty();
     }
+
+    @Transactional(readOnly = true)
+    public Book findByIsbnOrThrow(String isbn) {
+        return bookRepository.findByIsbn(isbn)
+            .orElseThrow(() -> BookNotFoundException.EXCEPTION);
+    }
+
 }
