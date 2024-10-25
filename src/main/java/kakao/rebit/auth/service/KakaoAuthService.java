@@ -89,7 +89,7 @@ public class KakaoAuthService {
         s3Service.putObject(s3UploadKeyRequest, downloadImageInfo); // S3에 저장
     }
 
-    public void kakaoLogout(String accessToken) {
-        kakaoApiClient.logout(accessToken);
+    public void kakaoLogout() {
+        kakaoApiClient.logout();
     }
 }

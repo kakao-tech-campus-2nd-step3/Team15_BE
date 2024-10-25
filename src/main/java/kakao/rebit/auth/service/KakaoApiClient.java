@@ -78,7 +78,7 @@ public class KakaoApiClient {
         return userInfo;
     }
 
-    public void logout(String accessToken) {
+    public void logout() {
         String logoutUrl = String.format(LOGOUT_URL_TEMPLATE, clientId, redirectUri);
 
         restClient.get()

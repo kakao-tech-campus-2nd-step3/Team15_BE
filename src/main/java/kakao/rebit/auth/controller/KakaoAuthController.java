@@ -51,8 +51,8 @@ public class KakaoAuthController {
 
     @Operation(summary = "카카오 로그아웃", description = "카카오 계정 로그아웃을 처리합니다.")
     @GetMapping("/logout")
-    public ResponseEntity<String> kakaoLogout(@RequestHeader("Authorization") String accessToken) {
-        kakaoAuthService.kakaoLogout(accessToken);
+    public ResponseEntity<String> kakaoLogout() {
+        kakaoAuthService.kakaoLogout();
         return ResponseEntity.noContent().build();
     }
 }
