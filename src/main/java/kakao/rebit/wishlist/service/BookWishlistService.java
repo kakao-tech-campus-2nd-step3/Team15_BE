@@ -1,6 +1,7 @@
 package kakao.rebit.wishlist.service;
 
 import kakao.rebit.book.entity.Book;
+import kakao.rebit.wishlist.exception.BookWishlistNotFoundException;
 import kakao.rebit.book.service.BookService;
 import kakao.rebit.member.entity.Member;
 import kakao.rebit.member.service.MemberService;
@@ -41,11 +42,12 @@ public class BookWishlistService {
 
     @Transactional
     public void deleteBookWishlist(Long memberId, String isbn) {
+        Member member = memberService.findMemberByIdOrThrow(memberId);
+        Book book = bookService.findByIsbnOrThrow(isbn);
 
-        memberService.findMemberByIdOrThrow(memberId);
-        bookService.findByIsbnOrThrow(isbn);
+        BookWishlist bookWishlist = bookWishlistRepository.findByMemberAndBook(member, book)
+            .orElseThrow(() -> BookWishlistNotFoundException.EXCEPTION);
 
-        bookWishlistRepository.findByMemberIdAndBookIsbn(memberId, isbn)
-            .ifPresent(bookWishlistRepository::delete);
+        bookWishlistRepository.delete(bookWishlist);
     }
 }
