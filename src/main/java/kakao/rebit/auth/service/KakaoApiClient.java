@@ -17,7 +17,6 @@ import org.springframework.web.client.RestClient;
 public class KakaoApiClient {
 
     private static final String BEARER_PREFIX = "Bearer ";
-    private static final String LOGOUT_URL_TEMPLATE = "https://kauth.kakao.com/oauth/logout?client_id=%s&logout_redirect_uri=%s";
 
     @Value("${OAUTH_KAKAO_CLIENT_ID}")
     private String clientId;
@@ -30,6 +29,9 @@ public class KakaoApiClient {
 
     @Value("${OAUTH_KAKAO_API_URL}")
     private String kakaoApiUrl;
+
+    @Value("${OAUTH_KAKAO_LOGOUT_URL_TEMPLATE}")
+    private String logoutUrlTemplate;
 
     private final RestClient restClient;
 
@@ -79,7 +81,7 @@ public class KakaoApiClient {
     }
 
     public void logout() {
-        String logoutUrl = String.format(LOGOUT_URL_TEMPLATE, clientId, redirectUri);
+        String logoutUrl = String.format(logoutUrlTemplate, clientId, redirectUri);
 
         restClient.get()
             .uri(logoutUrl)
