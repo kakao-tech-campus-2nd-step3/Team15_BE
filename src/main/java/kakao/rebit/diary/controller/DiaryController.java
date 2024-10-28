@@ -3,6 +3,7 @@ package kakao.rebit.diary.controller;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import kakao.rebit.diary.dto.DiaryRequest;
 import kakao.rebit.diary.dto.DiaryResponse;
 import kakao.rebit.diary.service.DiaryService;
@@ -49,7 +50,7 @@ public class DiaryController {
     @PostMapping
     public ResponseEntity<Void> createDiary(
         @Parameter(hidden = true) @MemberInfo MemberResponse memberResponse,
-        @RequestBody DiaryRequest diaryRequest) {
+        @Valid @RequestBody DiaryRequest diaryRequest) {
         Long diaryId = diaryService.createDiary(memberResponse.id(), diaryRequest);
         return ResponseEntity.created(URI.create("/api/diaries/" + diaryId)).build();
     }
@@ -58,7 +59,8 @@ public class DiaryController {
     @PutMapping("/{diaryId}")
     public ResponseEntity<Void> updateDiary(
         @Parameter(hidden = true) @MemberInfo MemberResponse memberResponse,
-        @PathVariable("diaryId") Long diaryId, @RequestBody DiaryRequest diaryRequest) {
+        @PathVariable("diaryId") Long diaryId,
+        @Valid @RequestBody DiaryRequest diaryRequest) {
         diaryService.updateDiary(memberResponse.id(), diaryId, diaryRequest);
         return ResponseEntity.noContent().build();
     }
