@@ -1,9 +1,10 @@
-package kakao.rebit.common.exception;
+package kakao.rebit.diary.exception;
 
+import kakao.rebit.common.exception.ErrorCode;
 import org.springframework.http.HttpStatus;
 
 public enum DiaryErrorCode implements ErrorCode {
-    DIARY_NOT_FOUND("D001", HttpStatus.NOT_FOUND, "회원 ID %d 에 해당하는 다이어리 ID %d 를 찾을 수 없습니다."),
+    DIARY_NOT_FOUND("D001", HttpStatus.NOT_FOUND, "해당 독서 일기를 찾을 수 없습니다."),
     DIARY_VALIDATION_FAILED("D002", HttpStatus.BAD_REQUEST, "다이어리 데이터 검증에 실패하였습니다.");
 
     private final String code;
@@ -31,4 +32,3 @@ public enum DiaryErrorCode implements ErrorCode {
         return message;
     }
 }
-
