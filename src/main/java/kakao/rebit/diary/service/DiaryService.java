@@ -72,7 +72,6 @@ public class DiaryService {
             .orElseThrow(() -> new BusinessException(BookErrorCode.BOOK_NOT_FOUND));
 
         diary.updateDiary(diaryRequest.content(), book);
-        diaryRepository.save(diary);
     }
 
     @Transactional
