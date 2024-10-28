@@ -1,13 +1,12 @@
 package kakao.rebit.diary.service;
 
 import kakao.rebit.book.entity.Book;
+import kakao.rebit.book.exception.book.BookNotFoundException;
 import kakao.rebit.book.repository.BookRepository;
-import kakao.rebit.common.exception.BusinessException;
-import kakao.rebit.common.exception.DiaryErrorCode;
-import kakao.rebit.common.exception.BookErrorCode;
 import kakao.rebit.diary.dto.DiaryRequest;
 import kakao.rebit.diary.dto.DiaryResponse;
 import kakao.rebit.diary.entity.Diary;
+import kakao.rebit.diary.exception.DiaryNotFoundException;
 import kakao.rebit.diary.repository.DiaryRepository;
 import kakao.rebit.member.entity.Member;
 import kakao.rebit.member.service.MemberService;
@@ -15,7 +14,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.StringUtils;
 
 @Service
 public class DiaryService {
@@ -42,19 +40,17 @@ public class DiaryService {
     @Transactional(readOnly = true)
     public DiaryResponse getDiaryById(Long memberId, Long id) {
         Diary diary = diaryRepository.findByIdAndMemberId(id, memberId)
-            .orElseThrow(() -> new BusinessException(DiaryErrorCode.DIARY_NOT_FOUND));
+            .orElseThrow(() -> DiaryNotFoundException.EXCEPTION);
         return new DiaryResponse(diary.getId(), diary.getContent(), diary.getMember().getId(),
             diary.getBook().getIsbn());
     }
 
     @Transactional
     public Long createDiary(Long memberId, DiaryRequest diaryRequest) {
-        validateDiaryRequest(diaryRequest);
-
         Member member = memberService.findMemberByIdOrThrow(memberId);
 
         Book book = bookRepository.findByIsbn(diaryRequest.isbn())
-            .orElseThrow(() -> new BusinessException(BookErrorCode.BOOK_NOT_FOUND));
+            .orElseThrow(() -> BookNotFoundException.EXCEPTION);
 
         Diary diary = new Diary(diaryRequest.content(), member, book);
         Diary savedDiary = diaryRepository.save(diary);
@@ -63,13 +59,11 @@ public class DiaryService {
 
     @Transactional
     public void updateDiary(Long memberId, Long id, DiaryRequest diaryRequest) {
-        validateDiaryRequest(diaryRequest);
-
         Diary diary = diaryRepository.findByIdAndMemberId(id, memberId)
-            .orElseThrow(() -> new BusinessException(DiaryErrorCode.DIARY_NOT_FOUND));
+            .orElseThrow(() -> DiaryNotFoundException.EXCEPTION);
 
         Book book = bookRepository.findByIsbn(diaryRequest.isbn())
-            .orElseThrow(() -> new BusinessException(BookErrorCode.BOOK_NOT_FOUND));
+            .orElseThrow(() -> BookNotFoundException.EXCEPTION);
 
         diary.updateDiary(diaryRequest.content(), book);
     }
@@ -77,16 +71,7 @@ public class DiaryService {
     @Transactional
     public void deleteDiary(Long memberId, Long id) {
         Diary diary = diaryRepository.findByIdAndMemberId(id, memberId)
-            .orElseThrow(() -> new BusinessException(DiaryErrorCode.DIARY_NOT_FOUND));
+            .orElseThrow(() -> DiaryNotFoundException.EXCEPTION);
         diaryRepository.delete(diary);
-    }
-
-    private void validateDiaryRequest(DiaryRequest diaryRequest) {
-        if (!StringUtils.hasText(diaryRequest.isbn())) {
-            throw new BusinessException(DiaryErrorCode.DIARY_VALIDATION_FAILED);
-        }
-        if (!StringUtils.hasText(diaryRequest.content())) {
-            throw new BusinessException(DiaryErrorCode.DIARY_VALIDATION_FAILED);
-        }
     }
 }
