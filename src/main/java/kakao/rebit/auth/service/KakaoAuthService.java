@@ -110,8 +110,7 @@ public class KakaoAuthService {
         String token = jwtTokenProvider.extractToken(request.getHeader("Authorization"));
 
         // JWT 토큰을 블랙리스트에 추가
-        long expiration = jwtTokenProvider.getExpiration(token);
-        tokenBlacklistRepository.addToBlacklist(token, expiration);
+        jwtTokenProvider.addToBlacklist(token);
 
         // 카카오 API를 사용하여 카카오 로그아웃 수행
         kakaoApiClient.logout();
