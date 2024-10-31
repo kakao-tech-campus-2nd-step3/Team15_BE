@@ -20,9 +20,12 @@ import org.springframework.stereotype.Component;
 public class JwtTokenProvider {
     private static final String BEARER_PREFIX = "Bearer ";
     private final SecretKey key;
+    private final TokenBlacklistRepository tokenBlacklistRepository;
 
-    public JwtTokenProvider(@Value("${custom.jwt.secretKey}") String base64Secret) {
+    public JwtTokenProvider(@Value("${custom.jwt.secretKey}") String base64Secret,
+        TokenBlacklistRepository tokenBlacklistRepository) {
         this.key = Keys.hmacShaKeyFor(java.util.Base64.getDecoder().decode(base64Secret));
+        this.tokenBlacklistRepository = tokenBlacklistRepository;
     }
 
     public String accessTokenGenerate(String uid, String email, String role, Date expiryDate) {
@@ -47,8 +50,21 @@ public class JwtTokenProvider {
         return extractClaim(token).get("email", String.class);
     }
 
+    public long getExpiration(String token) {
+        Date expirationDate = extractClaim(token).getExpiration();
+        return expirationDate.getTime();
+    }
+
+    public void addToBlacklist(String token) {
+        long expirationTime = getExpiration(token) - System.currentTimeMillis();
+        tokenBlacklistRepository.addToBlacklist(token, expirationTime);
+    }
+
     public boolean validateToken(String token) {
         try {
+            if (tokenBlacklistRepository.isBlacklisted(token)) {
+                throw InvalidTokenException.EXCEPTION;
+            }
             Jwts.parser().setSigningKey(key).build().parseClaimsJws(token);
             return true;
         } catch (SignatureException e) {
