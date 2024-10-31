@@ -3,6 +3,8 @@ package kakao.rebit.auth.service;
 import jakarta.transaction.Transactional;
 import kakao.rebit.auth.dto.KakaoUserInfo;
 import kakao.rebit.auth.dto.LoginResponse;
+import kakao.rebit.auth.jwt.JwtTokenProvider;
+import kakao.rebit.auth.jwt.TokenBlacklistRepository;
 import kakao.rebit.auth.token.AuthToken;
 import kakao.rebit.auth.token.AuthTokenGenerator;
 import kakao.rebit.member.entity.Member;
@@ -14,6 +16,10 @@ import kakao.rebit.s3.service.S3Service;
 import kakao.rebit.utils.file.FileUtil;
 import kakao.rebit.utils.image.ImageDownloader;
 import org.springframework.stereotype.Service;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
+
+import jakarta.servlet.http.HttpServletRequest;
 
 @Service
 public class KakaoAuthService {
@@ -23,15 +29,24 @@ public class KakaoAuthService {
     private final AuthTokenGenerator authTokensGenerator;
     private final S3Service s3Service;
     private final ImageDownloader imageDownloader;
+    private final JwtTokenProvider jwtTokenProvider;
+    private final TokenBlacklistRepository tokenBlacklistRepository;
 
-    public KakaoAuthService(KakaoApiClient kakaoApiClient, MemberRepository memberRepository,
-            AuthTokenGenerator authTokensGenerator, S3Service s3Service,
-            ImageDownloader imageDownloader) {
+    public KakaoAuthService(
+        KakaoApiClient kakaoApiClient,
+        MemberRepository memberRepository,
+        AuthTokenGenerator authTokensGenerator,
+        S3Service s3Service,
+        ImageDownloader imageDownloader,
+        JwtTokenProvider jwtTokenProvider,
+        TokenBlacklistRepository tokenBlacklistRepository) {
         this.kakaoApiClient = kakaoApiClient;
         this.memberRepository = memberRepository;
         this.authTokensGenerator = authTokensGenerator;
         this.s3Service = s3Service;
         this.imageDownloader = imageDownloader;
+        this.jwtTokenProvider = jwtTokenProvider;
+        this.tokenBlacklistRepository = tokenBlacklistRepository;
     }
 
     @Transactional
@@ -89,7 +104,16 @@ public class KakaoAuthService {
         s3Service.putObject(s3UploadKeyRequest, downloadImageInfo); // S3에 저장
     }
 
-    public void kakaoLogout() {
+    public void kakaoLogout(String jwtToken) {
+        // 현재 요청에서 Authorization 헤더에서 JWT 토큰을 추출
+        HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
+        String token = jwtTokenProvider.extractToken(request.getHeader("Authorization"));
+
+        // JWT 토큰을 블랙리스트에 추가
+        long expiration = jwtTokenProvider.getExpiration(token);
+        tokenBlacklistRepository.addToBlacklist(token, expiration);
+
+        // 카카오 API를 사용하여 카카오 로그아웃 수행
         kakaoApiClient.logout();
     }
 }
