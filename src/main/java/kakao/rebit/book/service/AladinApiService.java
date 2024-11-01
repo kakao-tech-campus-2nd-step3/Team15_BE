@@ -36,34 +36,33 @@ public class AladinApiService {
         int pageSize = pageable.getPageSize();
         int pageNumber = pageable.getPageNumber() + 1;  // API에서 1부터 시작하는 페이지 번호를 기대
         return BASE_API_URL + ITEM_SEARCH_ENDPOINT
-            + "?ttbkey=" + TTB_KEY
-            + "&Query=" + title
-            + String.format(QUERY_PARAMS_FORMAT, "Title", pageSize, pageNumber);
+                + "?ttbkey=" + TTB_KEY
+                + "&Query=" + title
+                + String.format(QUERY_PARAMS_FORMAT, "Title", pageSize, pageNumber);
     }
 
     public AladinApiResponseResponse searchBookByIsbn(String isbn) {
         String url = buildIsbnLookupUrl(isbn);
-        AladinApiResponseListResponse response = executeApiRequest(url,
-            AladinApiResponseListResponse.class);
+        AladinApiResponseListResponse response = executeApiRequest(url, AladinApiResponseListResponse.class);
         return extractFirstBookFromResponse(response);
     }
 
     private String buildIsbnLookupUrl(String isbn) {
         return BASE_API_URL + ITEM_LOOKUP_ENDPOINT
-            + "?ttbkey=" + TTB_KEY
-            + "&itemIdType=ISBN"
-            + "&ItemId=" + isbn
-            + "&output=js"
-            + "&Version=20131101"
-            + "&Cover=Big";
+                + "?ttbkey=" + TTB_KEY
+                + "&itemIdType=ISBN"
+                + "&ItemId=" + isbn
+                + "&output=js"
+                + "&Version=20131101"
+                + "&Cover=Big";
     }
 
     private <T> T executeApiRequest(String url, Class<T> responseType) {
         try {
             return restClient.get()
-                .uri(url)
-                .retrieve()
-                .body(responseType);
+                    .uri(url)
+                    .retrieve()
+                    .body(responseType);
         } catch (Exception e) {
             throw ApiErrorException.EXCEPTION;
         }
@@ -71,8 +70,7 @@ public class AladinApiService {
 
     // API 응답에서 첫 번째 책 정보를 추출
     // 알라딘 api 에서 item필드 아래의 책 정보를 가져와야 정상 작동. 첫 번째 항목에 책의 상세 정보가 위치
-    private AladinApiResponseResponse extractFirstBookFromResponse(
-        AladinApiResponseListResponse response) {
+    private AladinApiResponseResponse extractFirstBookFromResponse(AladinApiResponseListResponse response) {
         if (response.item() == null || response.item().isEmpty()) {
             throw InvalidIsbnException.EXCEPTION;
         }

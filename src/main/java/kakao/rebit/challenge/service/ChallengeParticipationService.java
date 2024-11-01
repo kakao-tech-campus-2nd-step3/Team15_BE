@@ -70,7 +70,10 @@ public class ChallengeParticipationService {
             throw ParticipationAlreadyExistsException.EXCEPTION;
         }
 
+        // 참여 가능 여부 검증 수행
         ChallengeParticipation challengeParticipation = ChallengeParticipation.of(challenge, member, entryFee);
+        member.usePoints(entryFee); // 포인트 차감
+
         return challengeParticipationRepository.save(challengeParticipation).getId();
     }
 

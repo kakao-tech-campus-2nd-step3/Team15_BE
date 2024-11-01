@@ -37,8 +37,7 @@ public class BookController {
     @Operation(summary = "책 제목으로 검색", description = "제목을 기준으로 책을 검색하고 결과를 페이지네이션 처리하여 반환합니다.")
     @GetMapping("/search")
     public ResponseEntity<Page<BookResponse>> searchBooksByTitle(
-        @Parameter(description = "검색할 책 제목") @RequestParam(name = "title") String title,
-        Pageable pageable) {
+            @Parameter(description = "검색할 책 제목") @RequestParam(name = "title") String title, Pageable pageable) {
         Page<BookResponse> books = bookService.searchAndSaveBooksByTitle(title, pageable);
         return ResponseEntity.ok(books);
     }
@@ -53,8 +52,7 @@ public class BookController {
     // ISBN으로 해당 책의 작성 된 한줄평을 모두 조회
     @Operation(summary = "책의 한줄평 조회", description = "ISBN을 기준으로 해당 책의 모든 한줄평을 페이지네이션 처리하여 조회합니다.")
     @GetMapping("/{isbn}/brief-reviews")
-    public ResponseEntity<Page<String>> getAllBriefReviews(@PathVariable("isbn") String isbn,
-        Pageable pageable) {
+    public ResponseEntity<Page<String>> getAllBriefReviews(@PathVariable("isbn") String isbn, Pageable pageable) {
         Page<String> briefReviews = bookService.getBriefReviewsByIsbn(isbn, pageable);
         return ResponseEntity.ok(briefReviews);
     }
@@ -63,7 +61,7 @@ public class BookController {
     @Operation(summary = "책의 상세 정보 및 서평 조회", description = "ISBN을 기준으로 좋아요가 가장 많은 서평을 포함한 책의 상세 정보를 조회합니다.")
     @GetMapping("/detail/{isbn}")
     public ResponseEntity<BookDetailResponse> getBookDetailReview(
-        @PathVariable(name = "isbn") String isbn) {
+            @PathVariable(name = "isbn") String isbn) {
         BookDetailResponse bookDetail = bookService.getBookDetailReview(isbn);
         return ResponseEntity.ok(bookDetail);
     }
