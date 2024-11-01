@@ -85,8 +85,7 @@ public class BookService {
     @Transactional
     public BookDetailResponse getBookDetailReview(String isbn) {
         Book book = searchAndSaveBookByIsbn(isbn);
-        Optional<FavoriteBook> topFavoriteBook = favoriteBookRepository.findTopByBookOrderByLikesDesc(
-                book);
+        Optional<FavoriteBook> topFavoriteBook = favoriteBookRepository.findTopByBookOrderByLikesDesc(book);
         return BookMapper.toBookDetailResponse(book, topFavoriteBook.orElse(null));
     }
 
