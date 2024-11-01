@@ -51,8 +51,7 @@ public class JwtTokenProvider {
     }
 
     public long getExpiration(String token) {
-        Date expirationDate = extractClaim(token).getExpiration();
-        return expirationDate.getTime();
+        return extractClaim(token).getExpiration().getTime();
     }
 
     public void addToBlacklist(String token) {
