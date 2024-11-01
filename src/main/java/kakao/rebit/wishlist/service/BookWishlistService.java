@@ -1,7 +1,6 @@
 package kakao.rebit.wishlist.service;
 
 import kakao.rebit.book.entity.Book;
-import kakao.rebit.wishlist.exception.BookWishlistNotFoundException;
 import kakao.rebit.book.service.BookService;
 import kakao.rebit.member.entity.Member;
 import kakao.rebit.member.service.MemberService;
@@ -45,8 +44,7 @@ public class BookWishlistService {
         Member member = memberService.findMemberByIdOrThrow(memberId);
         Book book = bookService.findByIsbnOrThrow(isbn);
 
-        BookWishlist bookWishlist = bookWishlistRepository.findByMemberAndBook(member, book)
-            .orElseThrow(() -> BookWishlistNotFoundException.EXCEPTION);
+        BookWishlist bookWishlist = bookWishlistRepository.findByMemberAndBookOrThrow(member, book);
 
         bookWishlistRepository.delete(bookWishlist);
     }
