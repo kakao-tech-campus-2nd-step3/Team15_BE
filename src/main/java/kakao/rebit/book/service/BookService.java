@@ -96,7 +96,7 @@ public class BookService {
                 .map(FavoriteBook::getBriefReview);
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public Optional<Book> findBookIfBookIdExist(Long bookId) {
         if (bookId != null) {
             Book book = findBookByIdOrThrow(bookId);
