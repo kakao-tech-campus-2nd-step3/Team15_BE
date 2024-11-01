@@ -5,7 +5,6 @@ import kakao.rebit.book.service.BookService;
 import kakao.rebit.feed.dto.request.update.UpdateFavoriteBookRequest;
 import kakao.rebit.feed.dto.response.FavoriteBookResponse;
 import kakao.rebit.feed.entity.FavoriteBook;
-import kakao.rebit.feed.exception.feed.FavoriteBookRequiredBookException;
 import kakao.rebit.feed.exception.feed.FeedNotFoundException;
 import kakao.rebit.feed.exception.feed.UpdateNotAuthorizedException;
 import kakao.rebit.feed.mapper.FeedMapper;
@@ -62,10 +61,6 @@ public class FavoriteBookService {
 
         if (!favoriteBook.isWrittenBy(member)) {
             throw UpdateNotAuthorizedException.EXCEPTION;
-        }
-
-        if (updateRequest.bookId() == null) {
-            throw FavoriteBookRequiredBookException.EXCEPTION;
         }
 
         Book book = bookService.findBookByIdOrThrow(updateRequest.bookId());
