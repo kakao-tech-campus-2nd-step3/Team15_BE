@@ -30,9 +30,9 @@ public record TestPeriod(
     public static TestPeriod ongoing() {
         LocalDateTime now = LocalDateTime.now();
         return new TestPeriod(
-                new Period( // 모집 기간: 7일 전부터 1일 후까지 -> 모집 마감된 상태
+                new Period( // 모집 기간: 7일 전부터 1일 전까지 -> 모집 마감된 상태
                         now.minusDays(DEFAULT_RECRUITMENT_DAYS - 1),
-                        now.plusDays(1)
+                        now.minusDays(1)
                 ),
                 new Period( // 챌린지 기간: 모집 마감 다음날부터 14일 후까지 -> 챌린지 진행 중
                         now.plusDays(2),
