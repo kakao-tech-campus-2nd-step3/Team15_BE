@@ -29,7 +29,7 @@ public class ProfileImageUploadEventHandler {
 
     @Async
     @TransactionalEventListener
-    @Transactional(TxType.REQUIRES_NEW)
+    @Transactional
     public void uploadProfileImage(RegisteredEvent event) {
         DownloadImageInfo downloadImageInfo = imageDownloader.downloadImageFromUrl(event.profileImageUrl());
 
