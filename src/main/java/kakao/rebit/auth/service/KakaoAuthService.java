@@ -16,10 +16,6 @@ import kakao.rebit.s3.service.S3Service;
 import kakao.rebit.utils.file.FileUtil;
 import kakao.rebit.utils.image.ImageDownloader;
 import org.springframework.stereotype.Service;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
-
-import jakarta.servlet.http.HttpServletRequest;
 
 @Service
 public class KakaoAuthService {
@@ -105,11 +101,8 @@ public class KakaoAuthService {
     }
 
     public void kakaoLogout(String jwtToken) {
-        // 현재 요청에서 Authorization 헤더에서 JWT 토큰을 추출
-        HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
-        String token = jwtTokenProvider.extractToken(request.getHeader("Authorization"));
-
-        // JWT 토큰을 블랙리스트에 추가
+        // 전달받은 JWT 토큰을 블랙리스트에 추가
+        String token = jwtTokenProvider.extractToken(jwtToken);
         jwtTokenProvider.addToBlacklist(token);
 
         // 카카오 API를 사용하여 카카오 로그아웃 수행
