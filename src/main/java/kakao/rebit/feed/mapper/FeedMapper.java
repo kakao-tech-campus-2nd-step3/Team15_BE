@@ -45,10 +45,8 @@ public class FeedMapper {
      */
     public Feed toFeed(Member member, Book book, CreateFeedRequest feedRequest) {
         return switch (feedRequest) {
-            case CreateFavoriteBookRequest favoriteBookRequest ->
-                    createFavoriteBook(member, book, favoriteBookRequest);
-            case CreateMagazineRequest magazineRequest ->
-                    createMagazine(member, book, magazineRequest);
+            case CreateFavoriteBookRequest favoriteBookRequest -> createFavoriteBook(member, book, favoriteBookRequest);
+            case CreateMagazineRequest magazineRequest -> createMagazine(member, book, magazineRequest);
             case CreateStoryRequest storyRequest -> createStory(member, book, storyRequest);
             default -> throw new IllegalStateException("유효하지 않는 피드입니다.");
         };
