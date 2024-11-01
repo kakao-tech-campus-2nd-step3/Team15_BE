@@ -42,8 +42,7 @@ public class BookService {
 
     @Transactional
     public Page<BookResponse> searchAndSaveBooksByTitle(String title, Pageable pageable) {
-        AladinApiResponseListResponse bookList = aladinApiService.searchBooksByTitle(title,
-                pageable);
+        AladinApiResponseListResponse bookList = aladinApiService.searchBooksByTitle(title, pageable);
 
         List<Book> foundBooks = bookList.item().stream()
                 .map(book -> bookRepository.findByIsbn(book.isbn())

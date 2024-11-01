@@ -43,8 +43,7 @@ public class AladinApiService {
 
     public AladinApiResponseResponse searchBookByIsbn(String isbn) {
         String url = buildIsbnLookupUrl(isbn);
-        AladinApiResponseListResponse response = executeApiRequest(url,
-                AladinApiResponseListResponse.class);
+        AladinApiResponseListResponse response = executeApiRequest(url, AladinApiResponseListResponse.class);
         return extractFirstBookFromResponse(response);
     }
 
@@ -71,8 +70,7 @@ public class AladinApiService {
 
     // API 응답에서 첫 번째 책 정보를 추출
     // 알라딘 api 에서 item필드 아래의 책 정보를 가져와야 정상 작동. 첫 번째 항목에 책의 상세 정보가 위치
-    private AladinApiResponseResponse extractFirstBookFromResponse(
-            AladinApiResponseListResponse response) {
+    private AladinApiResponseResponse extractFirstBookFromResponse(AladinApiResponseListResponse response) {
         if (response.item() == null || response.item().isEmpty()) {
             throw InvalidIsbnException.EXCEPTION;
         }

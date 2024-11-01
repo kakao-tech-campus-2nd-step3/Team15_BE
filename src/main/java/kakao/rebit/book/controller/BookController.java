@@ -37,8 +37,7 @@ public class BookController {
     @Operation(summary = "책 제목으로 검색", description = "제목을 기준으로 책을 검색하고 결과를 페이지네이션 처리하여 반환합니다.")
     @GetMapping("/search")
     public ResponseEntity<Page<BookResponse>> searchBooksByTitle(
-            @Parameter(description = "검색할 책 제목") @RequestParam(name = "title") String title,
-            Pageable pageable) {
+            @Parameter(description = "검색할 책 제목") @RequestParam(name = "title") String title, Pageable pageable) {
         Page<BookResponse> books = bookService.searchAndSaveBooksByTitle(title, pageable);
         return ResponseEntity.ok(books);
     }
