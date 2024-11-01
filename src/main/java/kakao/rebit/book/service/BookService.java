@@ -27,7 +27,7 @@ public class BookService {
     private final FavoriteBookRepository favoriteBookRepository;
 
     public BookService(BookRepository bookRepository, AladinApiService aladinApiService,
-        FavoriteBookRepository favoriteBookRepository) {
+            FavoriteBookRepository favoriteBookRepository) {
         this.bookRepository = bookRepository;
         this.aladinApiService = aladinApiService;
         this.favoriteBookRepository = favoriteBookRepository;
@@ -36,23 +36,23 @@ public class BookService {
     @Transactional(readOnly = true)
     public List<BookResponse> getAllBooks() {
         return bookRepository.findAll().stream()
-            .map(BookMapper::toBookResponse)
-            .collect(Collectors.toList());
+                .map(BookMapper::toBookResponse)
+                .collect(Collectors.toList());
     }
 
     @Transactional
     public Page<BookResponse> searchAndSaveBooksByTitle(String title, Pageable pageable) {
         AladinApiResponseListResponse bookList = aladinApiService.searchBooksByTitle(title,
-            pageable);
+                pageable);
 
         List<Book> foundBooks = bookList.item().stream()
-            .map(book -> bookRepository.findByIsbn(book.isbn())
-                .orElseGet(() -> bookRepository.save(BookMapper.toBookEntity(book))))
-            .toList();
+                .map(book -> bookRepository.findByIsbn(book.isbn())
+                        .orElseGet(() -> bookRepository.save(BookMapper.toBookEntity(book))))
+                .toList();
 
         List<BookResponse> bookResponses = foundBooks.stream()
-            .map(BookMapper::toBookResponse)
-            .collect(Collectors.toList());
+                .map(BookMapper::toBookResponse)
+                .collect(Collectors.toList());
 
         return new PageImpl<>(bookResponses, pageable, bookList.item().size());
     }
@@ -65,10 +65,10 @@ public class BookService {
 
     private Book searchAndSaveBookByIsbn(String isbn) {
         return bookRepository.findByIsbn(isbn)
-            .orElseGet(() -> {
-                AladinApiResponseResponse bookResponse = aladinApiService.searchBookByIsbn(isbn);
-                return saveBook(bookResponse);
-            });
+                .orElseGet(() -> {
+                    AladinApiResponseResponse bookResponse = aladinApiService.searchBookByIsbn(isbn);
+                    return saveBook(bookResponse);
+                });
     }
 
     private Book saveBook(AladinApiResponseResponse bookResponse) {
@@ -78,7 +78,7 @@ public class BookService {
     @Transactional(readOnly = true)
     public Book findBookByIdOrThrow(Long bookId) {
         return bookRepository.findById(bookId)
-            .orElseThrow(() -> BookNotFoundException.EXCEPTION);
+                .orElseThrow(() -> BookNotFoundException.EXCEPTION);
     }
 
     // 새로운 한줄평과 서평을 가져오는 메서드
@@ -86,14 +86,14 @@ public class BookService {
     public BookDetailResponse getBookDetailReview(String isbn) {
         Book book = searchAndSaveBookByIsbn(isbn);
         Optional<FavoriteBook> topFavoriteBook = favoriteBookRepository.findTopByBookOrderByLikesDesc(
-            book);
+                book);
         return BookMapper.toBookDetailResponse(book, topFavoriteBook.orElse(null));
     }
 
     @Transactional(readOnly = true)
     public Page<String> getBriefReviewsByIsbn(String isbn, Pageable pageable) {
         return favoriteBookRepository.findAllByBookIsbnOrderByLikesDesc(isbn, pageable)
-            .map(FavoriteBook::getBriefReview);
+                .map(FavoriteBook::getBriefReview);
     }
 
     @Transactional
@@ -108,7 +108,6 @@ public class BookService {
     @Transactional(readOnly = true)
     public Book findByIsbnOrThrow(String isbn) {
         return bookRepository.findByIsbn(isbn)
-            .orElseThrow(() -> BookNotFoundException.EXCEPTION);
+                .orElseThrow(() -> BookNotFoundException.EXCEPTION);
     }
-
 }
