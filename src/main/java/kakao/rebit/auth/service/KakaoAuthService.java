@@ -3,9 +3,8 @@ package kakao.rebit.auth.service;
 import jakarta.transaction.Transactional;
 import kakao.rebit.auth.dto.KakaoUserInfo;
 import kakao.rebit.auth.dto.LoginResponse;
-import kakao.rebit.auth.jwt.JwtTokenProvider;
-import kakao.rebit.auth.jwt.TokenBlacklistRepository;
 import kakao.rebit.auth.event.RegisteredEvent;
+import kakao.rebit.auth.jwt.JwtTokenProvider;
 import kakao.rebit.auth.token.AuthToken;
 import kakao.rebit.auth.token.AuthTokenGenerator;
 import kakao.rebit.member.entity.Member;
@@ -21,22 +20,19 @@ public class KakaoAuthService {
     private final MemberRepository memberRepository;
     private final AuthTokenGenerator authTokensGenerator;
     private final JwtTokenProvider jwtTokenProvider;
-    private final TokenBlacklistRepository tokenBlacklistRepository;
     private final ApplicationEventPublisher publisher;
-  
+
     public KakaoAuthService(
-        KakaoApiClient kakaoApiClient,
-        MemberRepository memberRepository,
-        AuthTokenGenerator authTokensGenerator,
-        JwtTokenProvider jwtTokenProvider,
-        TokenBlacklistRepository tokenBlacklistRepository,
-        ApplicationEventPublisher publisher
+            KakaoApiClient kakaoApiClient,
+            MemberRepository memberRepository,
+            AuthTokenGenerator authTokensGenerator,
+            JwtTokenProvider jwtTokenProvider,
+            ApplicationEventPublisher publisher
     ) {
         this.kakaoApiClient = kakaoApiClient;
         this.memberRepository = memberRepository;
         this.authTokensGenerator = authTokensGenerator;
         this.jwtTokenProvider = jwtTokenProvider;
-        this.tokenBlacklistRepository = tokenBlacklistRepository;
         this.publisher = publisher;
     }
 
@@ -86,11 +82,6 @@ public class KakaoAuthService {
                 member.getEmail(),
                 member.getRole().name()
         );
-    }
-
-    private void downloadImageAndUploadS3(String imageUrl, S3UploadKeyRequest s3UploadKeyRequest) {
-        DownloadImageInfo downloadImageInfo = imageDownloader.downloadImageFromUrl(imageUrl); // imageUrl로부터 이미지 가져오기
-        s3Service.putObject(s3UploadKeyRequest, downloadImageInfo); // S3에 저장
     }
 
     public void kakaoLogout(String jwtToken) {
