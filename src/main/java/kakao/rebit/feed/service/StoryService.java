@@ -1,5 +1,6 @@
 package kakao.rebit.feed.service;
 
+import java.util.Optional;
 import kakao.rebit.book.entity.Book;
 import kakao.rebit.book.service.BookService;
 import kakao.rebit.feed.dto.request.update.UpdateStoryRequest;
@@ -27,8 +28,8 @@ public class StoryService {
     private final FeedMapper feedMapper;
     private final S3Service s3Service;
 
-    public StoryService(StoryRepository storyRepository, MemberService memberService,
-            BookService bookService, FeedMapper feedMapper, S3Service s3Service) {
+    public StoryService(StoryRepository storyRepository, MemberService memberService, BookService bookService, FeedMapper feedMapper,
+            S3Service s3Service) {
         this.storyRepository = storyRepository;
         this.memberService = memberService;
         this.bookService = bookService;
@@ -37,30 +38,29 @@ public class StoryService {
     }
 
     @Transactional(readOnly = true)
-    public Page<StoryResponse> getStories(Pageable pageable) {
-        Page<Story> stories = storyRepository.findAll(pageable);
-        return stories.map(story -> (StoryResponse) feedMapper.toFeedResponse(story));
+    public Page<StoryResponse> getStories(MemberResponse memberResponse, Pageable pageable) {
+        Optional<Member> viewer = Optional.ofNullable(memberResponse).map(response -> memberService.findMemberByIdOrThrow(response.id()));
+        return storyRepository.findAll(pageable).map(story -> (StoryResponse) feedMapper.toFeedResponse(viewer.orElse(null), story));
     }
 
     @Transactional(readOnly = true)
-    public StoryResponse getStoryById(Long storyId) {
+    public StoryResponse getStoryById(MemberResponse memberResponse, Long storyId) {
+        Member viewer = memberService.findMemberByIdOrThrow(memberResponse.id());
         Story story = findStoryByIdOrThrow(storyId);
-        return (StoryResponse) feedMapper.toFeedResponse(story);
+        return (StoryResponse) feedMapper.toFeedResponse(viewer, story);
     }
 
     @Transactional(readOnly = true)
     public Story findStoryByIdOrThrow(Long magazineId) {
-        return storyRepository.findById(magazineId)
-                .orElseThrow(() -> FeedNotFoundException.EXCEPTION);
+        return storyRepository.findById(magazineId).orElseThrow(() -> FeedNotFoundException.EXCEPTION);
     }
 
     @Transactional
-    public void updateStory(MemberResponse memberResponse, Long storyId,
-            UpdateStoryRequest updateRequest) {
-        Member member = memberService.findMemberByIdOrThrow(memberResponse.id());
+    public void updateStory(MemberResponse memberResponse, Long storyId, UpdateStoryRequest updateRequest) {
+        Member author = memberService.findMemberByIdOrThrow(memberResponse.id());
         Story story = findStoryByIdOrThrow(storyId);
 
-        if (!story.isWrittenBy(member)) {
+        if (!story.isWrittenBy(author)) {
             throw UpdateNotAuthorizedException.EXCEPTION;
         }
 

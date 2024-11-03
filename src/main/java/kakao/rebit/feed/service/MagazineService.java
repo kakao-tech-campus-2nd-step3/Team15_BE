@@ -1,5 +1,6 @@
 package kakao.rebit.feed.service;
 
+import java.util.Optional;
 import kakao.rebit.book.entity.Book;
 import kakao.rebit.book.service.BookService;
 import kakao.rebit.feed.dto.request.update.UpdateMagazineRequest;
@@ -37,15 +38,18 @@ public class MagazineService {
     }
 
     @Transactional(readOnly = true)
-    public Page<MagazineResponse> getMagazines(Pageable pageable) {
-        Page<Magazine> magazines = magazineRepository.findAll(pageable);
-        return magazines.map(magazine -> (MagazineResponse) feedMapper.toFeedResponse(magazine));
+    public Page<MagazineResponse> getMagazines(MemberResponse memberResponse, Pageable pageable) {
+        Optional<Member> viewer = Optional.ofNullable(memberResponse)
+                .map(response -> memberService.findMemberByIdOrThrow(response.id()));
+        return magazineRepository.findAll(pageable)
+                .map(magazine -> (MagazineResponse) feedMapper.toFeedResponse(viewer.orElse(null), magazine));
     }
 
     @Transactional(readOnly = true)
-    public MagazineResponse getMagazineById(Long magazineId) {
+    public MagazineResponse getMagazineById(MemberResponse memberResponse, Long magazineId) {
+        Member viewer = memberService.findMemberByIdOrThrow(memberResponse.id());
         Magazine magazine = findMagazineByIdOrThrow(magazineId);
-        return (MagazineResponse) feedMapper.toFeedResponse(magazine);
+        return (MagazineResponse) feedMapper.toFeedResponse(viewer, magazine);
     }
 
     @Transactional(readOnly = true)
@@ -55,12 +59,11 @@ public class MagazineService {
     }
 
     @Transactional
-    public void updateMagazine(MemberResponse memberResponse, Long magazineId,
-            UpdateMagazineRequest updateRequest) {
-        Member member = memberService.findMemberByIdOrThrow(memberResponse.id());
+    public void updateMagazine(MemberResponse memberResponse, Long magazineId, UpdateMagazineRequest updateRequest) {
+        Member author = memberService.findMemberByIdOrThrow(memberResponse.id());
         Magazine magazine = findMagazineByIdOrThrow(magazineId);
 
-        if (!magazine.isWrittenBy(member)) {
+        if (!magazine.isWrittenBy(author)) {
             throw UpdateNotAuthorizedException.EXCEPTION;
         }
 

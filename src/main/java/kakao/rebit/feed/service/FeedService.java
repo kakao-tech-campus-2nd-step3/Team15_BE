@@ -41,14 +41,18 @@ public class FeedService {
     }
 
     @Transactional(readOnly = true)
-    public Page<FeedResponse> getFeeds(Pageable pageable) {
-        return feedRepository.findAll(pageable).map(feedMapper::toFeedResponse);
+    public Page<FeedResponse> getFeeds(MemberResponse memberResponse, Pageable pageable) {
+        Optional<Member> viewer = Optional.ofNullable(memberResponse)
+                .map(response -> memberService.findMemberByIdOrThrow(response.id()));
+        return feedRepository.findAll(pageable)
+                .map(feed -> feedMapper.toFeedResponse(viewer.orElse(null), feed));
     }
 
     @Transactional(readOnly = true)
-    public FeedResponse getFeedById(Long feedId) {
+    public FeedResponse getFeedById(MemberResponse memberResponse, Long feedId) {
+        Member viewer = memberService.findMemberByIdOrThrow(memberResponse.id());
         Feed feed = findFeedByIdOrThrow(feedId);
-        return feedMapper.toFeedResponse(feed);
+        return feedMapper.toFeedResponse(viewer, feed);
     }
 
     @Transactional(readOnly = true)
@@ -59,7 +63,7 @@ public class FeedService {
 
     @Transactional
     public Long createFeed(MemberResponse memberResponse, CreateFeedRequest feedRequest) {
-        Member member = memberService.findMemberByIdOrThrow(memberResponse.id());
+        Member author = memberService.findMemberByIdOrThrow(memberResponse.id());
 
         // 인생책 검증 - 반드시 책이 있어야 된다.
         if (feedRequest instanceof CreateFavoriteBookRequest && feedRequest.getBookId() == null) {
@@ -67,16 +71,16 @@ public class FeedService {
         }
 
         Book book = findBookIfBookIdExist(feedRequest.getBookId()).orElse(null);
-        Feed feed = feedMapper.toFeed(member, book, feedRequest);
+        Feed feed = feedMapper.toFeed(author, book, feedRequest);
         return feedRepository.save(feed).getId();
     }
 
     @Transactional
     public void deleteFeedById(MemberResponse memberResponse, Long feedId) {
-        Member member = memberService.findMemberByIdOrThrow(memberResponse.id());
+        Member author = memberService.findMemberByIdOrThrow(memberResponse.id());
         Feed feed = findFeedByIdOrThrow(feedId);
 
-        if (!feed.isWrittenBy(member)) {
+        if (!feed.isWrittenBy(author)) {
             throw DeleteNotAuthorizedException.EXCEPTION;
         }
 

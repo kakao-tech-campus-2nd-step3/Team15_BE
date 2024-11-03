@@ -1,5 +1,6 @@
 package kakao.rebit.feed.service;
 
+import java.util.Optional;
 import kakao.rebit.book.entity.Book;
 import kakao.rebit.book.service.BookService;
 import kakao.rebit.feed.dto.request.update.UpdateFavoriteBookRequest;
@@ -35,16 +36,18 @@ public class FavoriteBookService {
     }
 
     @Transactional(readOnly = true)
-    public Page<FavoriteBookResponse> getFavoriteBooks(Pageable pageable) {
-        Page<FavoriteBook> favorites = favoriteBookRepository.findAll(pageable);
-        return favorites.map(
-                favoriteBook -> (FavoriteBookResponse) feedMapper.toFeedResponse(favoriteBook));
+    public Page<FavoriteBookResponse> getFavoriteBooks(MemberResponse memberResponse, Pageable pageable) {
+        Optional<Member> viewer = Optional.ofNullable(memberResponse)
+                .map(response -> memberService.findMemberByIdOrThrow(response.id()));
+        return favoriteBookRepository.findAll(pageable)
+                .map(favoriteBook -> (FavoriteBookResponse) feedMapper.toFeedResponse(viewer.orElse(null), favoriteBook));
     }
 
     @Transactional(readOnly = true)
-    public FavoriteBookResponse getFavoriteBookById(Long favoriteBookId) {
+    public FavoriteBookResponse getFavoriteBookById(MemberResponse memberResponse, Long favoriteBookId) {
+        Member viewer = memberService.findMemberByIdOrThrow(memberResponse.id());
         FavoriteBook favoriteBook = findFavoriteBookByIdOrThrow(favoriteBookId);
-        return (FavoriteBookResponse) feedMapper.toFeedResponse(favoriteBook);
+        return (FavoriteBookResponse) feedMapper.toFeedResponse(viewer, favoriteBook);
     }
 
     @Transactional(readOnly = true)
@@ -54,12 +57,11 @@ public class FavoriteBookService {
     }
 
     @Transactional
-    public void updateFavoriteBook(MemberResponse memberResponse, Long favoriteBookId,
-            UpdateFavoriteBookRequest updateRequest) {
-        Member member = memberService.findMemberByIdOrThrow(memberResponse.id());
+    public void updateFavoriteBook(MemberResponse memberResponse, Long favoriteBookId, UpdateFavoriteBookRequest updateRequest) {
+        Member author = memberService.findMemberByIdOrThrow(memberResponse.id());
         FavoriteBook favoriteBook = findFavoriteBookByIdOrThrow(favoriteBookId);
 
-        if (!favoriteBook.isWrittenBy(member)) {
+        if (!favoriteBook.isWrittenBy(author)) {
             throw UpdateNotAuthorizedException.EXCEPTION;
         }
 

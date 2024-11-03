@@ -3,9 +3,11 @@ package kakao.rebit.feed.service;
 import kakao.rebit.feed.dto.response.LikesMemberResponse;
 import kakao.rebit.feed.entity.Feed;
 import kakao.rebit.feed.entity.Likes;
+import kakao.rebit.feed.exception.feed.FeedNotFoundException;
 import kakao.rebit.feed.exception.likes.FindNotAuthorizedException;
 import kakao.rebit.feed.exception.likes.LikesAlreadyPressedException;
 import kakao.rebit.feed.exception.likes.LikesNotPressedException;
+import kakao.rebit.feed.repository.FeedRepository;
 import kakao.rebit.feed.repository.LikesRepository;
 import kakao.rebit.member.dto.MemberResponse;
 import kakao.rebit.member.entity.Member;
@@ -20,33 +22,29 @@ public class LikesService {
 
     private final LikesRepository likesRepository;
     private final MemberService memberService;
-    private final FeedService feedService;
+    private final FeedRepository feedRepository;
 
-    public LikesService(LikesRepository likesRepository, MemberService memberService,
-            FeedService feedService) {
+    public LikesService(LikesRepository likesRepository, MemberService memberService, FeedRepository feedRepository) {
         this.likesRepository = likesRepository;
         this.memberService = memberService;
-        this.feedService = feedService;
+        this.feedRepository = feedRepository;
     }
 
     @Transactional(readOnly = true)
-    public Page<LikesMemberResponse> getLikesMembers(MemberResponse memberResponse, Long feedId,
-            Pageable pageable) {
+    public Page<LikesMemberResponse> getLikesMembers(MemberResponse memberResponse, Long feedId, Pageable pageable) {
         Member member = memberService.findMemberByIdOrThrow(memberResponse.id());
-        Feed feed = feedService.findFeedByIdOrThrow(feedId);
+        Feed feed = findByIdOrThrow(feedId);
 
         if (!feed.isWrittenBy(member)) {
             throw FindNotAuthorizedException.EXCEPTION;
         }
-        return likesRepository.findAllByFeedWithMember(feed, pageable)
-                .map(this::toLikesMemberResponse);
+        return likesRepository.findAllByFeedWithMember(feed, pageable).map(this::toLikesMemberResponse);
     }
 
     @Transactional
     public Long createLikes(MemberResponse memberResponse, Long feedId) {
         Member member = memberService.findMemberByIdOrThrow(memberResponse.id());
-        Feed feed = feedService.findFeedByIdOrThrow(feedId);
-
+        Feed feed = findByIdOrThrow(feedId);
         if (likesRepository.existsByMemberAndFeed(member, feed)) {
             throw LikesAlreadyPressedException.EXCEPTION;
         }
@@ -57,13 +55,21 @@ public class LikesService {
     @Transactional
     public void deleteLikes(MemberResponse memberResponse, Long feedId) {
         Member member = memberService.findMemberByIdOrThrow(memberResponse.id());
-        Feed feed = feedService.findFeedByIdOrThrow(feedId);
+        Feed feed = findByIdOrThrow(feedId);
 
         if (!likesRepository.existsByMemberAndFeed(member, feed)) {
             throw LikesNotPressedException.EXCEPTION;
         }
 
         likesRepository.deleteByMemberAndFeed(member, feed);
+    }
+
+    @Transactional(readOnly = true)
+    public boolean isLiked(Member viewer, Feed feed) {
+        if (viewer == null) {
+            return false;
+        }
+        return likesRepository.existsByMemberAndFeed(viewer, feed);
     }
 
     private LikesMemberResponse toLikesMemberResponse(Likes likes) {
@@ -73,5 +79,9 @@ public class LikesService {
 
     private Likes createLikes(Member member, Feed feed) {
         return new Likes(member, feed);
+    }
+
+    private Feed findByIdOrThrow(Long feedId) {
+        return feedRepository.findById(feedId).orElseThrow(() -> FeedNotFoundException.EXCEPTION);
     }
 }
