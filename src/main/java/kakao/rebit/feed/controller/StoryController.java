@@ -13,6 +13,7 @@ import kakao.rebit.feed.dto.response.FeedResponse;
 import kakao.rebit.feed.dto.response.StoryResponse;
 import kakao.rebit.feed.service.StoryService;
 import kakao.rebit.member.annotation.MemberInfo;
+import kakao.rebit.member.annotation.MemberInfoIfPresent;
 import kakao.rebit.member.dto.MemberResponse;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -41,15 +42,18 @@ public class StoryController {
     @AllowAnonymous
     @GetMapping
     public ResponseEntity<Page<StoryResponse>> getStories(
+            @Parameter(hidden = true) @MemberInfoIfPresent MemberResponse memberResponseIfPresent,
             @PageableDefault(sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
-        return ResponseEntity.ok().body(storyService.getStories(pageable));
+        return ResponseEntity.ok().body(storyService.getStories(memberResponseIfPresent, pageable));
     }
 
     @Operation(summary = "스토리 조회", description = "스토리를 조회합니다.")
     @ApiResponse(content = @Content(schema = @Schema(implementation = StoryResponse.class)))
     @GetMapping("/{story-id}")
-    public ResponseEntity<FeedResponse> getStory(@PathVariable("story-id") Long storyId) {
-        return ResponseEntity.ok().body(storyService.getStoryById(storyId));
+    public ResponseEntity<FeedResponse> getStory(
+            @Parameter(hidden = true) @MemberInfo MemberResponse memberResponse,
+            @PathVariable("story-id") Long storyId) {
+        return ResponseEntity.ok().body(storyService.getStoryById(memberResponse, storyId));
     }
 
     @Operation(summary = "스토리 수정", description = "스토리를 수정합니다.")

@@ -18,6 +18,7 @@ import kakao.rebit.feed.dto.response.StoryResponse;
 import kakao.rebit.feed.service.FeedService;
 import kakao.rebit.feed.service.LikesService;
 import kakao.rebit.member.annotation.MemberInfo;
+import kakao.rebit.member.annotation.MemberInfoIfPresent;
 import kakao.rebit.member.dto.MemberResponse;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -49,15 +50,18 @@ public class FeedController {
     @AllowAnonymous
     @GetMapping
     public ResponseEntity<Page<FeedResponse>> getFeeds(
+            @Parameter(hidden = true) @MemberInfoIfPresent MemberResponse memberResponse,
             @PageableDefault(sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
-        return ResponseEntity.ok().body(feedService.getFeeds(pageable));
+        return ResponseEntity.ok().body(feedService.getFeeds(memberResponse, pageable));
     }
 
     @Operation(summary = "피드 조회", description = "피드를 조회합니다.")
     @ApiResponse(content = @Content(schema = @Schema(oneOf = {FavoriteBookResponse.class, MagazineResponse.class, StoryResponse.class})))
     @GetMapping("/{feed-id}")
-    public ResponseEntity<FeedResponse> getMagazine(@PathVariable("feed-id") Long feedId) {
-        return ResponseEntity.ok().body(feedService.getFeedById(feedId));
+    public ResponseEntity<FeedResponse> getFeed(
+            @Parameter(hidden = true) @MemberInfo MemberResponse memberResponse,
+            @PathVariable("feed-id") Long feedId) {
+        return ResponseEntity.ok().body(feedService.getFeedById(memberResponse, feedId));
     }
 
     @Operation(summary = "피드 생성", description = "피드를 생성합니다.")
