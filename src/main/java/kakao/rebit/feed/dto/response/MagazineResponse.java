@@ -11,8 +11,8 @@ public class MagazineResponse extends FeedResponse {
     private final String content;
 
     public MagazineResponse(Long id, FeedAuthorResponse author, FeedBookResponse book, String type,
-            int likes, String name, String imagekey, String presignedUrl, String content) {
-        super(id, author, book, type, likes);
+            int likes, boolean isLiked, String name, String imagekey, String presignedUrl, String content) {
+        super(id, author, book, type, likes, isLiked);
         this.name = name;
         this.imagekey = imagekey;
         this.presignedUrl = presignedUrl;

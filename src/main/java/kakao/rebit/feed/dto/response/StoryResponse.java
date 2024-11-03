@@ -10,8 +10,8 @@ public class StoryResponse extends FeedResponse {
     private final String content;
 
     public StoryResponse(Long id, FeedAuthorResponse author, FeedBookResponse book, String type,
-            int likes, String imageKey, String presignedUrl, String content) {
-        super(id, author, book, type, likes);
+            int likes, boolean isLiked, String imageKey, String presignedUrl, String content) {
+        super(id, author, book, type, likes, isLiked);
         this.imageKey = imageKey;
         this.presignedUrl = presignedUrl;
         this.content = content;
