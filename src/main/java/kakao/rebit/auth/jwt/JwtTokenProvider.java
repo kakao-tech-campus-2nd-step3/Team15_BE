@@ -85,6 +85,13 @@ public class JwtTokenProvider {
         return token.substring(BEARER_PREFIX.length());
     }
 
+    public String extractTokenIfTokenPresent(String token){
+        if (token == null){
+            return null;
+        }
+        return extractToken(token);
+    }
+
     // 토큰에서 클레임 정보 추출
     private Claims extractClaim(String token) {
         return Jwts.parser()
