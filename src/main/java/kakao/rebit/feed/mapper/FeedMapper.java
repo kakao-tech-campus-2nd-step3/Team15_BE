@@ -16,7 +16,6 @@ import kakao.rebit.feed.entity.Feed;
 import kakao.rebit.feed.entity.Magazine;
 import kakao.rebit.feed.entity.Story;
 import kakao.rebit.feed.exception.feed.InvalidFeedFormatException;
-import kakao.rebit.feed.service.LikesService;
 import kakao.rebit.member.entity.Member;
 import kakao.rebit.s3.service.S3Service;
 import org.springframework.stereotype.Component;
@@ -25,21 +24,19 @@ import org.springframework.stereotype.Component;
 public class FeedMapper {
 
     private final S3Service s3Service;
-    private final LikesService likesService;
 
-    public FeedMapper(S3Service s3Service, LikesService likesService) {
+    public FeedMapper(S3Service s3Service) {
         this.s3Service = s3Service;
-        this.likesService = likesService;
     }
 
     /**
      * Entity -> DTO(Response) 변환
      */
-    public FeedResponse toFeedResponse(Member viewer, Feed feed) {
+    public FeedResponse toFeedResponse(boolean isLiked, Feed feed) {
         return switch (feed) {
-            case FavoriteBook favoriteBook -> toFavoriteBookResponse(viewer, favoriteBook);
-            case Magazine magazine -> toMagazineResponse(viewer, magazine);
-            case Story story -> toStoryResponse(viewer, story);
+            case FavoriteBook favoriteBook -> toFavoriteBookResponse(isLiked, favoriteBook);
+            case Magazine magazine -> toMagazineResponse(isLiked, magazine);
+            case Story story -> toStoryResponse(isLiked, story);
             default -> throw InvalidFeedFormatException.EXCEPTION;
         };
     }
@@ -56,27 +53,27 @@ public class FeedMapper {
         };
     }
 
-    private FavoriteBookResponse toFavoriteBookResponse(Member viewer, FavoriteBook favoriteBook) {
+    private FavoriteBookResponse toFavoriteBookResponse(boolean isLiked, FavoriteBook favoriteBook) {
         return new FavoriteBookResponse(
                 favoriteBook.getId(),
                 this.toAuthorResponse(favoriteBook.getMember()),
                 this.toBookResponse(favoriteBook.getBook()),
                 favoriteBook.getType(),
                 favoriteBook.getLikes(),
-                likesService.isLiked(viewer, favoriteBook),
+                isLiked,
                 favoriteBook.getBriefReview(),
                 favoriteBook.getFullReview()
         );
     }
 
-    private MagazineResponse toMagazineResponse(Member viewer, Magazine magazine) {
+    private MagazineResponse toMagazineResponse(boolean isLiked, Magazine magazine) {
         return new MagazineResponse(
                 magazine.getId(),
                 this.toAuthorResponse(magazine.getMember()),
                 this.toBookResponse(magazine.getBook()),
                 magazine.getType(),
                 magazine.getLikes(),
-                likesService.isLiked(viewer, magazine),
+                isLiked,
                 magazine.getName(),
                 magazine.getImageKey(),
                 s3Service.getDownloadUrl(magazine.getImageKey()).presignedUrl(),
@@ -84,14 +81,14 @@ public class FeedMapper {
         );
     }
 
-    private StoryResponse toStoryResponse(Member viewer, Story story) {
+    private StoryResponse toStoryResponse(boolean isLiked, Story story) {
         return new StoryResponse(
                 story.getId(),
                 this.toAuthorResponse(story.getMember()),
                 this.toBookResponse(story.getBook()),
                 story.getType(),
                 story.getLikes(),
-                likesService.isLiked(viewer, story),
+                isLiked,
                 story.getImageKey(),
                 s3Service.getDownloadUrl(story.getImageKey()).presignedUrl(),
                 story.getContent()
