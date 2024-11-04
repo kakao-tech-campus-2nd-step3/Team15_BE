@@ -39,11 +39,13 @@ public class OptionalMemberResolver implements HandlerMethodArgumentResolver {
 
         HttpServletRequest request = (HttpServletRequest) webRequest.getNativeRequest();
 
-        String token = jwtTokenProvider.extractTokenIfTokenPresent(request.getHeader(AUTHORIZATION_HEADER));
+        String headerToken = request.getHeader(AUTHORIZATION_HEADER);
 
-        if (token == null) {
+        if (headerToken == null) {
             return null;
         }
+
+        String token = jwtTokenProvider.extractToken(headerToken);
 
         String email = jwtTokenProvider.getEmailFromToken(token);
         Member member = memberService.findMemberByEmailOrThrow(email);
