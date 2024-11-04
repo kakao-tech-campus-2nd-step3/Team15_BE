@@ -1,6 +1,6 @@
 package kakao.rebit.feed.service;
 
-import java.util.Optional;
+import java.util.Set;
 import kakao.rebit.book.entity.Book;
 import kakao.rebit.book.service.BookService;
 import kakao.rebit.feed.dto.request.update.UpdateFavoriteBookRequest;
@@ -24,30 +24,38 @@ public class FavoriteBookService {
     private final FavoriteBookRepository favoriteBookRepository;
     private final BookService bookService;
     private final MemberService memberService;
+    private final LikesService likesService;
     private final FeedMapper feedMapper;
 
-    public FavoriteBookService(FavoriteBookRepository favoriteBookRepository,
-            BookService bookService,
-            MemberService memberService, FeedMapper feedMapper) {
+    public FavoriteBookService(FavoriteBookRepository favoriteBookRepository, BookService bookService, MemberService memberService,
+            LikesService likesService, FeedMapper feedMapper) {
         this.favoriteBookRepository = favoriteBookRepository;
         this.bookService = bookService;
         this.memberService = memberService;
+        this.likesService = likesService;
         this.feedMapper = feedMapper;
     }
 
     @Transactional(readOnly = true)
     public Page<FavoriteBookResponse> getFavoriteBooks(MemberResponse memberResponse, Pageable pageable) {
-        Optional<Member> viewer = Optional.ofNullable(memberResponse)
-                .map(response -> memberService.findMemberByIdOrThrow(response.id()));
-        return favoriteBookRepository.findAll(pageable)
-                .map(favoriteBook -> (FavoriteBookResponse) feedMapper.toFeedResponse(viewer.orElse(null), favoriteBook));
+        Page<FavoriteBook> feedPage = favoriteBookRepository.findAll(pageable);
+
+        if (memberResponse != null) {
+            Member viewer = memberService.findMemberByIdOrThrow(memberResponse.id());
+            Set<Long> likedFeedIds = likesService.getLikedFeedIdsByMember(viewer); // 멤버가 좋아요를 누른 모든 피드를 가져온다.
+
+            return feedPage.map(feed -> (FavoriteBookResponse)
+                    feedMapper.toFeedResponse(likesService.isLikedBySet(likedFeedIds, feed), feed));
+        }
+
+        return feedPage.map(feed -> (FavoriteBookResponse) feedMapper.toFeedResponse(false, feed));
     }
 
     @Transactional(readOnly = true)
     public FavoriteBookResponse getFavoriteBookById(MemberResponse memberResponse, Long favoriteBookId) {
         Member viewer = memberService.findMemberByIdOrThrow(memberResponse.id());
         FavoriteBook favoriteBook = findFavoriteBookByIdOrThrow(favoriteBookId);
-        return (FavoriteBookResponse) feedMapper.toFeedResponse(viewer, favoriteBook);
+        return (FavoriteBookResponse) feedMapper.toFeedResponse(likesService.isLiked(viewer, favoriteBook), favoriteBook);
     }
 
     @Transactional(readOnly = true)

@@ -1,6 +1,6 @@
 package kakao.rebit.feed.service;
 
-import java.util.Optional;
+import java.util.Set;
 import kakao.rebit.book.entity.Book;
 import kakao.rebit.book.service.BookService;
 import kakao.rebit.feed.dto.request.update.UpdateStoryRequest;
@@ -26,28 +26,39 @@ public class StoryService {
     private final MemberService memberService;
     private final BookService bookService;
     private final FeedMapper feedMapper;
+    private final LikesService likesService;
     private final S3Service s3Service;
 
     public StoryService(StoryRepository storyRepository, MemberService memberService, BookService bookService, FeedMapper feedMapper,
-            S3Service s3Service) {
+            LikesService likesService, S3Service s3Service) {
         this.storyRepository = storyRepository;
         this.memberService = memberService;
         this.bookService = bookService;
         this.feedMapper = feedMapper;
+        this.likesService = likesService;
         this.s3Service = s3Service;
     }
 
     @Transactional(readOnly = true)
     public Page<StoryResponse> getStories(MemberResponse memberResponse, Pageable pageable) {
-        Optional<Member> viewer = Optional.ofNullable(memberResponse).map(response -> memberService.findMemberByIdOrThrow(response.id()));
-        return storyRepository.findAll(pageable).map(story -> (StoryResponse) feedMapper.toFeedResponse(viewer.orElse(null), story));
+        Page<Story> feedPage = storyRepository.findAll(pageable);
+
+        if (memberResponse != null) {
+            Member viewer = memberService.findMemberByIdOrThrow(memberResponse.id());
+            Set<Long> likedFeedIds = likesService.getLikedFeedIdsByMember(viewer); // 멤버가 좋아요를 누른 모든 피드를 가져온다.
+
+            return feedPage.map(feed -> (StoryResponse)
+                    feedMapper.toFeedResponse(likesService.isLikedBySet(likedFeedIds, feed), feed));
+        }
+
+        return feedPage.map(feed -> (StoryResponse) feedMapper.toFeedResponse(false, feed));
     }
 
     @Transactional(readOnly = true)
     public StoryResponse getStoryById(MemberResponse memberResponse, Long storyId) {
         Member viewer = memberService.findMemberByIdOrThrow(memberResponse.id());
         Story story = findStoryByIdOrThrow(storyId);
-        return (StoryResponse) feedMapper.toFeedResponse(viewer, story);
+        return (StoryResponse) feedMapper.toFeedResponse(likesService.isLiked(viewer, story), story);
     }
 
     @Transactional(readOnly = true)

@@ -1,16 +1,19 @@
 package kakao.rebit.feed.service;
 
 import java.util.Optional;
+import java.util.Set;
 import kakao.rebit.book.entity.Book;
 import kakao.rebit.book.service.BookService;
 import kakao.rebit.common.domain.ImageKeyAccessor;
 import kakao.rebit.feed.dto.request.create.CreateFavoriteBookRequest;
 import kakao.rebit.feed.dto.request.create.CreateFeedRequest;
 import kakao.rebit.feed.dto.response.FeedResponse;
+import kakao.rebit.feed.dto.response.LikesMemberResponse;
 import kakao.rebit.feed.entity.Feed;
 import kakao.rebit.feed.exception.feed.DeleteNotAuthorizedException;
 import kakao.rebit.feed.exception.feed.FavoriteBookRequiredBookException;
 import kakao.rebit.feed.exception.feed.FeedNotFoundException;
+import kakao.rebit.feed.exception.likes.FindNotAuthorizedException;
 import kakao.rebit.feed.mapper.FeedMapper;
 import kakao.rebit.feed.repository.FeedRepository;
 import kakao.rebit.member.dto.MemberResponse;
@@ -30,29 +33,39 @@ public class FeedService {
     private final BookService bookService;
     private final FeedMapper feedMapper;
     private final S3Service s3Service;
+    private final LikesService likesService;
 
-    public FeedService(FeedRepository feedRepository, MemberService memberService,
-            BookService bookService, FeedMapper feedMapper, S3Service s3Service) {
+    public FeedService(FeedRepository feedRepository, MemberService memberService, BookService bookService, FeedMapper feedMapper,
+            S3Service s3Service,
+            LikesService likesService) {
         this.feedRepository = feedRepository;
         this.memberService = memberService;
         this.bookService = bookService;
         this.feedMapper = feedMapper;
         this.s3Service = s3Service;
+        this.likesService = likesService;
     }
 
     @Transactional(readOnly = true)
     public Page<FeedResponse> getFeeds(MemberResponse memberResponse, Pageable pageable) {
-        Optional<Member> viewer = Optional.ofNullable(memberResponse)
-                .map(response -> memberService.findMemberByIdOrThrow(response.id()));
-        return feedRepository.findAll(pageable)
-                .map(feed -> feedMapper.toFeedResponse(viewer.orElse(null), feed));
+        Page<Feed> feedPage = feedRepository.findAll(pageable);
+
+        if (memberResponse != null) {
+            Member viewer = memberService.findMemberByIdOrThrow(memberResponse.id());
+            Set<Long> likedFeedIds = likesService.getLikedFeedIdsByMember(viewer); // 멤버가 좋아요를 누른 모든 피드를 가져온다.
+
+            return feedPage.map(feed ->
+                    feedMapper.toFeedResponse(likesService.isLikedBySet(likedFeedIds, feed), feed));
+        }
+
+        return feedPage.map(feed -> feedMapper.toFeedResponse(false, feed));
     }
 
     @Transactional(readOnly = true)
     public FeedResponse getFeedById(MemberResponse memberResponse, Long feedId) {
         Member viewer = memberService.findMemberByIdOrThrow(memberResponse.id());
         Feed feed = findFeedByIdOrThrow(feedId);
-        return feedMapper.toFeedResponse(viewer, feed);
+        return feedMapper.toFeedResponse(likesService.isLiked(viewer, feed), feed);
     }
 
     @Transactional(readOnly = true)
@@ -90,6 +103,33 @@ public class FeedService {
         if (feed instanceof ImageKeyAccessor imageKeyAccessor) {
             s3Service.deleteObject(imageKeyAccessor.getImageKey());
         }
+    }
+
+    @Transactional(readOnly = true)
+    public Page<LikesMemberResponse> getLikesMembers(MemberResponse memberResponse, Long feedId, Pageable pageable) {
+        Member member = memberService.findMemberByIdOrThrow(memberResponse.id());
+        Feed feed = findFeedByIdOrThrow(feedId);
+
+        if (!feed.isWrittenBy(member)) {
+            throw FindNotAuthorizedException.EXCEPTION;
+        }
+        return likesService.findLikesMembers(feed, pageable);
+    }
+
+    @Transactional
+    public Long createLikes(MemberResponse memberResponse, Long feedId) {
+        Member member = memberService.findMemberByIdOrThrow(memberResponse.id());
+        Feed feed = findFeedByIdOrThrow(feedId);
+
+        return likesService.createLikes(member, feed);
+    }
+
+    @Transactional
+    public void deleteLikes(MemberResponse memberResponse, Long feedId) {
+        Member member = memberService.findMemberByIdOrThrow(memberResponse.id());
+        Feed feed = findFeedByIdOrThrow(feedId);
+
+        likesService.deleteLikes(member, feed);
     }
 
     private Optional<Book> findBookIfBookIdExist(Long bookId) {
