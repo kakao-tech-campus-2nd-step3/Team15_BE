@@ -102,7 +102,7 @@ public class Member extends BaseEntity implements ImageKeyModifier {
     }
 
     @Override
-    public void changeImageKey(String imageKey){
+    public void changeImageKey(String imageKey) {
         this.imageKey = imageKey;
     }
 

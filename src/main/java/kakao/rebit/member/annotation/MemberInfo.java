@@ -9,5 +9,6 @@ import kakao.rebit.member.entity.Role;
 @Target(ElementType.PARAMETER)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface MemberInfo {
+
     Role[] allowedRoles() default {Role.ROLE_USER, Role.ROLE_ADMIN, Role.ROLE_EDITOR};
 }

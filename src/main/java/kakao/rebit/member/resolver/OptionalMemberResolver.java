@@ -3,7 +3,6 @@ package kakao.rebit.member.resolver;
 import jakarta.servlet.http.HttpServletRequest;
 import kakao.rebit.auth.jwt.JwtTokenProvider;
 import kakao.rebit.member.annotation.MemberInfoIfPresent;
-import kakao.rebit.member.dto.MemberResponse;
 import kakao.rebit.member.entity.Member;
 import kakao.rebit.member.mapper.MemberMapper;
 import kakao.rebit.member.service.MemberService;
