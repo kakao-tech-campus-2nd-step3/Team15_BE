@@ -55,6 +55,15 @@ public class MagazineService {
     }
 
     @Transactional(readOnly = true)
+    public Page<MagazineResponse> getMyMagazines(MemberResponse memberResponse, Pageable pageable) {
+        Member author = memberService.findMemberByIdOrThrow(memberResponse.id());
+        Set<Long> likedFeedIds = likesService.getLikedFeedIdsByMember(author);
+
+        return magazineRepository.findAllByMember(author, pageable)
+                .map(feed -> (MagazineResponse) feedMapper.toFeedResponse(likesService.isLikedBySet(likedFeedIds, feed), feed));
+    }
+
+    @Transactional(readOnly = true)
     public MagazineResponse getMagazineById(MemberResponse memberResponse, Long magazineId) {
         Member viewer = memberService.findMemberByIdOrThrow(memberResponse.id());
         Magazine magazine = findMagazineByIdOrThrow(magazineId);

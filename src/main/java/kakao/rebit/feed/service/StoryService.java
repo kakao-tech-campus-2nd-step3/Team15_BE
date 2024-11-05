@@ -55,6 +55,15 @@ public class StoryService {
     }
 
     @Transactional(readOnly = true)
+    public Page<StoryResponse> getMyStories(MemberResponse memberResponse, Pageable pageable) {
+        Member author = memberService.findMemberByIdOrThrow(memberResponse.id());
+        Set<Long> likedFeedIds = likesService.getLikedFeedIdsByMember(author);
+
+        return storyRepository.findAllByMember(author, pageable)
+                .map(feed -> (StoryResponse) feedMapper.toFeedResponse(likesService.isLikedBySet(likedFeedIds, feed), feed));
+    }
+
+    @Transactional(readOnly = true)
     public StoryResponse getStoryById(MemberResponse memberResponse, Long storyId) {
         Member viewer = memberService.findMemberByIdOrThrow(memberResponse.id());
         Story story = findStoryByIdOrThrow(storyId);

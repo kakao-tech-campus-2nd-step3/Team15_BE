@@ -62,6 +62,15 @@ public class FeedService {
     }
 
     @Transactional(readOnly = true)
+    public Page<FeedResponse> getMyFeeds(MemberResponse memberResponse, Pageable pageable) {
+        Member author = memberService.findMemberByIdOrThrow(memberResponse.id());
+        Set<Long> likedFeedIds = likesService.getLikedFeedIdsByMember(author);
+
+        return feedRepository.findAllByMember(author, pageable)
+                .map(feed -> feedMapper.toFeedResponse(likesService.isLikedBySet(likedFeedIds, feed), feed));
+    }
+
+    @Transactional(readOnly = true)
     public FeedResponse getFeedById(MemberResponse memberResponse, Long feedId) {
         Member viewer = memberService.findMemberByIdOrThrow(memberResponse.id());
         Feed feed = findFeedByIdOrThrow(feedId);

@@ -52,6 +52,15 @@ public class FavoriteBookService {
     }
 
     @Transactional(readOnly = true)
+    public Page<FavoriteBookResponse> getMyFavoriteBooks(MemberResponse memberResponse, Pageable pageable) {
+        Member author = memberService.findMemberByIdOrThrow(memberResponse.id());
+        Set<Long> likedFeedIds = likesService.getLikedFeedIdsByMember(author);
+
+        return favoriteBookRepository.findAllByMember(author, pageable)
+                .map(feed -> (FavoriteBookResponse) feedMapper.toFeedResponse(likesService.isLikedBySet(likedFeedIds, feed), feed));
+    }
+
+    @Transactional(readOnly = true)
     public FavoriteBookResponse getFavoriteBookById(MemberResponse memberResponse, Long favoriteBookId) {
         Member viewer = memberService.findMemberByIdOrThrow(memberResponse.id());
         FavoriteBook favoriteBook = findFavoriteBookByIdOrThrow(favoriteBookId);
