@@ -2,14 +2,10 @@ package kakao.rebit.feed.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import kakao.rebit.common.annotation.AllowAnonymous;
 import kakao.rebit.feed.dto.request.update.UpdateStoryRequest;
-import kakao.rebit.feed.dto.response.FeedResponse;
 import kakao.rebit.feed.dto.response.StoryResponse;
 import kakao.rebit.feed.service.StoryService;
 import kakao.rebit.member.annotation.MemberInfo;
@@ -48,9 +44,8 @@ public class StoryController {
     }
 
     @Operation(summary = "스토리 조회", description = "스토리를 조회합니다.")
-    @ApiResponse(content = @Content(schema = @Schema(implementation = StoryResponse.class)))
     @GetMapping("/{story-id}")
-    public ResponseEntity<FeedResponse> getStory(
+    public ResponseEntity<StoryResponse> getStory(
             @Parameter(hidden = true) @MemberInfo MemberResponse memberResponse,
             @PathVariable("story-id") Long storyId) {
         return ResponseEntity.ok().body(storyService.getStoryById(memberResponse, storyId));
