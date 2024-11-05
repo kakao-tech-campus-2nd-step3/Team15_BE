@@ -11,7 +11,7 @@ public record S3UploadKeyRequest(
     private static final String KEY = "%s/%s/%s";
     private static final String CONTENT_TYPE = "image/%s";
 
-    public static S3UploadKeyRequest from(S3Type type, S3UploadFileInfo fileInfo) {
+    public static S3UploadKeyRequest of(S3Type type, S3UploadFileInfo fileInfo) {
         return new S3UploadKeyRequest(
                 createKey(type, fileInfo.filename()),
                 createContentType(fileInfo.extension())

@@ -35,7 +35,7 @@ public class Likes extends BaseEntity {
         this.feed = feed;
     }
 
-    public static Likes init(Member member, Feed feed) {
+    public static Likes of(Member member, Feed feed) {
         return new Likes(member, feed);
     }
 

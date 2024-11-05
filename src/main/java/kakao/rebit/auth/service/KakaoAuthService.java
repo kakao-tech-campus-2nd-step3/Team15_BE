@@ -69,7 +69,7 @@ public class KakaoAuthService {
         String email = userInfo.kakaoAccount().email();
 
         Member newMember = memberRepository.save(
-                Member.init(nickname, DEFAULT_PROFILE_IMAGE_KEY, email, accessToken)); // 새로운 멤버 생성 후 저장
+                Member.of(nickname, DEFAULT_PROFILE_IMAGE_KEY, email, accessToken)); // 새로운 멤버 생성 후 저장
 
         publisher.publishEvent(RegisteredEvent.init(email, profileImageUrl));
 

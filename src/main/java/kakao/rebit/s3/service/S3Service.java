@@ -146,7 +146,7 @@ public class S3Service {
      */
     public S3UploadKeyRequest createS3UploadKeyRequestFromTypeAndFilename(S3Type type, String filename) {
         S3UploadFileInfo s3UploadFileInfo = S3UploadFileInfo.from(filename);
-        return S3UploadKeyRequest.from(type, s3UploadFileInfo);
+        return S3UploadKeyRequest.of(type, s3UploadFileInfo);
     }
 
     /**

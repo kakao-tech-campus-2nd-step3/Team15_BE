@@ -33,7 +33,7 @@ public class LikesService {
             throw LikesAlreadyPressedException.EXCEPTION;
         }
 
-        return likesRepository.save(Likes.init(member, feed)).getId();
+        return likesRepository.save(Likes.of(member, feed)).getId();
     }
 
     @Transactional
