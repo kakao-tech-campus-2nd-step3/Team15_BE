@@ -17,7 +17,8 @@ public class BookMapper {
                 book.getCover(),
                 book.getDescription(),
                 book.getPublisher(),
-                book.getPubDate()
+                book.getPubDate(),
+                book.getLink()
         );
     }
 
@@ -29,9 +30,11 @@ public class BookMapper {
                 response.author(),
                 response.publisher(),
                 response.cover(),
-                response.pubDate()
+                response.pubDate(),
+                response.link()
         );
     }
+
 
     public static BookDetailResponse toBookDetailResponse(Book book, FavoriteBook topFavoriteBook) {
         String briefReview =
@@ -48,7 +51,8 @@ public class BookMapper {
                 book.getDescription(),
                 book.getPublisher(),
                 book.getPubDate(),
-                topFullReview
+                topFullReview,
+                book.getLink()
         );
     }
 }

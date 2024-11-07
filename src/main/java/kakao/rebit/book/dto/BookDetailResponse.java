@@ -9,7 +9,8 @@ public record BookDetailResponse(
         String description,
         String publisher,
         String pubDate,
-        String topFullReview
+        String topFullReview,
+        String link
 ) {
 
 }

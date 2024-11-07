@@ -34,11 +34,13 @@ public class Book extends BaseEntity {
 
     private String pubDate;
 
+    private String link;
+
     protected Book() {
     }
 
     public Book(String isbn, String title, String description, String author, String publisher,
-            String cover, String pubDate) {
+            String cover, String pubDate, String link) {
         this.isbn = isbn;
         this.title = title;
         this.description = description;
@@ -46,6 +48,7 @@ public class Book extends BaseEntity {
         this.publisher = publisher;
         this.cover = cover;
         this.pubDate = pubDate;
+        this.link = link;
     }
 
     public Long getId() {
@@ -78,5 +81,9 @@ public class Book extends BaseEntity {
 
     public String getPubDate() {
         return pubDate;
+    }
+
+    public String getLink() {
+        return link;
     }
 }
