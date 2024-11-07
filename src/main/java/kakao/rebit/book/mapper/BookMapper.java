@@ -64,6 +64,6 @@ public class BookMapper {
                 briefReviewAuthor,
                 briefReviewAuthorImage,
                 createdAt
-                );
+        );
     }
 }
