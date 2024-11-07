@@ -6,6 +6,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
 import kakao.rebit.book.dto.BookDetailResponse;
 import kakao.rebit.book.dto.BookResponse;
+import kakao.rebit.book.dto.BriefReviewResponse;
 import kakao.rebit.book.service.BookService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -52,8 +53,8 @@ public class BookController {
     // ISBN으로 해당 책의 작성 된 한줄평을 모두 조회
     @Operation(summary = "책의 한줄평 조회", description = "ISBN을 기준으로 해당 책의 모든 한줄평을 페이지네이션 처리하여 조회합니다.")
     @GetMapping("/{isbn}/brief-reviews")
-    public ResponseEntity<Page<String>> getAllBriefReviews(@PathVariable("isbn") String isbn, Pageable pageable) {
-        Page<String> briefReviews = bookService.getBriefReviewsByIsbn(isbn, pageable);
+    public ResponseEntity<Page<BriefReviewResponse>> getAllBriefReviews(@PathVariable("isbn") String isbn, Pageable pageable) {
+        Page<BriefReviewResponse> briefReviews = bookService.getBriefReviewsByIsbn(isbn, pageable);
         return ResponseEntity.ok(briefReviews);
     }
 

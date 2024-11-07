@@ -41,6 +41,10 @@ public class BookMapper {
                 topFavoriteBook != null ? topFavoriteBook.getBriefReview() : "한줄평이 없습니다.";
         String topFullReview =
                 topFavoriteBook != null ? topFavoriteBook.getFullReview() : "서평이 없습니다.";
+        String briefReviewAuthor =
+                topFavoriteBook != null ? topFavoriteBook.getMember().getNickname() : "작성자 정보 없음";
+        String briefReviewAuthorImage =
+                topFavoriteBook != null ? topFavoriteBook.getMember().getImageKey() : null;
 
         return new BookDetailResponse(
                 book.getId(),
@@ -52,7 +56,10 @@ public class BookMapper {
                 book.getPublisher(),
                 book.getPubDate(),
                 topFullReview,
-                book.getLink()
-        );
+                book.getLink(),
+                briefReview,
+                briefReviewAuthor,
+                briefReviewAuthorImage
+                );
     }
 }
