@@ -3,8 +3,9 @@ package kakao.rebit.common.config;
 import java.time.Duration;
 import java.util.List;
 import kakao.rebit.auth.jwt.JwtInterceptor;
+import kakao.rebit.auth.jwt.JwtArgumentResolver;
 import kakao.rebit.member.resolver.MemberInfoArgumentResolver;
-import kakao.rebit.member.resolver.OptionalMemberResolver;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.client.ClientHttpRequestFactories;
 import org.springframework.boot.web.client.ClientHttpRequestFactorySettings;
 import org.springframework.context.annotation.Bean;
@@ -20,13 +21,15 @@ public class WebConfig implements WebMvcConfigurer {
 
     private final JwtInterceptor jwtInterceptor;
     private final MemberInfoArgumentResolver memberInfoArgumentResolver;
-    private final OptionalMemberResolver optionalMemberResolver;
+    private final JwtArgumentResolver jwtArgumentResolver;
 
-    public WebConfig(JwtInterceptor jwtInterceptor, MemberInfoArgumentResolver memberInfoArgumentResolver,
-            OptionalMemberResolver optionalMemberResolver) {
+    @Autowired
+    public WebConfig(JwtInterceptor jwtInterceptor,
+            MemberInfoArgumentResolver memberInfoArgumentResolver,
+            JwtArgumentResolver jwtArgumentResolver) {
         this.jwtInterceptor = jwtInterceptor;
         this.memberInfoArgumentResolver = memberInfoArgumentResolver;
-        this.optionalMemberResolver = optionalMemberResolver;
+        this.jwtArgumentResolver = jwtArgumentResolver;
     }
 
     @Bean
@@ -67,6 +70,6 @@ public class WebConfig implements WebMvcConfigurer {
     @Override
     public void addArgumentResolvers(List<HandlerMethodArgumentResolver> resolvers) {
         resolvers.add(memberInfoArgumentResolver);
-        resolvers.add(optionalMemberResolver);
+        resolvers.add(jwtArgumentResolver);
     }
 }
