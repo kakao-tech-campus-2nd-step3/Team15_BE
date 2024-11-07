@@ -1,5 +1,6 @@
 package kakao.rebit.book.mapper;
 
+import java.time.LocalDateTime;
 import kakao.rebit.book.dto.AladinApiResponseResponse;
 import kakao.rebit.book.dto.BookDetailResponse;
 import kakao.rebit.book.dto.BookResponse;
@@ -45,6 +46,8 @@ public class BookMapper {
                 topFavoriteBook != null ? topFavoriteBook.getMember().getNickname() : "작성자 정보 없음";
         String briefReviewAuthorImage =
                 topFavoriteBook != null ? topFavoriteBook.getMember().getImageKey() : null;
+        LocalDateTime createdAt =
+                topFavoriteBook != null ? topFavoriteBook.getCreatedAt() : null;
 
         return new BookDetailResponse(
                 book.getId(),
@@ -59,7 +62,8 @@ public class BookMapper {
                 book.getLink(),
                 briefReview,
                 briefReviewAuthor,
-                briefReviewAuthorImage
+                briefReviewAuthorImage,
+                createdAt
                 );
     }
 }

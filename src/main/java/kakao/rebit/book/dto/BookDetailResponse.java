@@ -1,5 +1,7 @@
 package kakao.rebit.book.dto;
 
+import java.time.LocalDateTime;
+
 public record BookDetailResponse(
         Long id,
         String isbn,
@@ -13,7 +15,8 @@ public record BookDetailResponse(
         String link,
         String briefReview,
         String briefReviewAuthor,
-        String briefReviewAuthorImage
+        String briefReviewAuthorImage,
+        LocalDateTime createdAt
 ) {
 
 }

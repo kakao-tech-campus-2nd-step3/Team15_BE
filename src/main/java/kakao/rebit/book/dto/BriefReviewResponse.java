@@ -5,7 +5,8 @@ import java.time.LocalDateTime;
 public record BriefReviewResponse(
         String briefReview,
         String briefReviewAuthor,
-        String briefReviewAuthorImage
+        String briefReviewAuthorImage,
+        LocalDateTime createdAt
 ) {
 
 }

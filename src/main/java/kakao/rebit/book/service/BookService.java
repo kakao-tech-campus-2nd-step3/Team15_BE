@@ -95,7 +95,8 @@ public class BookService {
                 .map(favoriteBook -> new BriefReviewResponse(
                         favoriteBook.getBriefReview(),
                         favoriteBook.getMember().getNickname(),
-                        favoriteBook.getMember().getImageKey()
+                        favoriteBook.getMember().getImageKey(),
+                        favoriteBook.getCreatedAt()
                 ));
     }
 
