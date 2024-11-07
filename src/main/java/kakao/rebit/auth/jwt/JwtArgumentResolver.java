@@ -1,6 +1,7 @@
 package kakao.rebit.auth.jwt;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.context.request.ServletWebRequest;
@@ -30,7 +31,7 @@ public class JwtArgumentResolver implements HandlerMethodArgumentResolver {
     public Object resolveArgument(MethodParameter parameter, ModelAndViewContainer mavContainer, NativeWebRequest webRequest,
             WebDataBinderFactory binderFactory) {
         HttpServletRequest request = ((ServletWebRequest) webRequest).getRequest();
-        String token = jwtTokenProvider.extractToken(request.getHeader("Authorization"));
+        String token = jwtTokenProvider.extractToken(request.getHeader(HttpHeaders.AUTHORIZATION));
         jwtTokenProvider.validateToken(token);
         return token;
     }
