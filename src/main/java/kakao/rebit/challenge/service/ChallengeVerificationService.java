@@ -44,7 +44,8 @@ public class ChallengeVerificationService {
     @Transactional(readOnly = true)
     public Page<ChallengeVerificationResponse> getChallengeVerificationsById(Long challengeId, Pageable pageable) {
         Challenge challenge = challengeService.findChallengeByIdOrThrow(challengeId);
-        Page<ChallengeVerification> challengeVerifications = challengeVerificationRepository.findAllByChallengeWithParticipants(challenge, pageable);
+        Page<ChallengeVerification> challengeVerifications =
+                challengeVerificationRepository.findAllByChallengeWithParticipants(challenge, pageable);
         return challengeVerifications.map(this::toChallengeVerificationResponse);
     }
 
@@ -57,8 +58,7 @@ public class ChallengeVerificationService {
     }
 
     private ChallengeVerification findByIdAndChallengeOrThrow(Long verificationId, Challenge challenge) {
-        return challengeVerificationRepository.findByIdAndChallengeParticipation_Challenge(verificationId,
-                        challenge)
+        return challengeVerificationRepository.findByIdAndChallengeParticipation_Challenge(verificationId, challenge)
                 .orElseThrow(() -> VerificationNotFoundException.EXCEPTION);
     }
 
@@ -72,8 +72,8 @@ public class ChallengeVerificationService {
             throw VerifyChallengeNotOngoingException.EXCEPTION;
         }
 
-        ChallengeParticipation challengeParticipation = challengeParticipationService.findChallengeParticipationByMemberAndChallengeOrThrow(
-                member, challenge);
+        ChallengeParticipation challengeParticipation =
+                challengeParticipationService.findChallengeParticipationByMemberAndChallengeOrThrow(member, challenge);
 
         if (challengeVerificationRepository.existsDailyVerification(challengeParticipation.getId(), LocalDateTime.now())) {
             throw VerifyChallengeAlreadyDoneTodayException.EXCEPTION;
