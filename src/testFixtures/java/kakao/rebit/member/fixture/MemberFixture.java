@@ -18,6 +18,19 @@ public class MemberFixture {
         return createWithRole(Role.ROLE_ADMIN);
     }
 
+    public static Member createCustomUser(String nickname) {
+        MemberDefaultValues defaults = MemberDefaultValues.INSTANCE;
+        return new Member(
+                nickname,
+                defaults.imageKey(),
+                defaults.bio(),
+                defaults.email(),
+                Role.ROLE_USER,
+                defaults.points(),
+                defaults.kakaoToken()
+        );
+    }
+
     public static Member createWithRole(Role role) {
         MemberDefaultValues defaults = MemberDefaultValues.INSTANCE;
         return new Member(
