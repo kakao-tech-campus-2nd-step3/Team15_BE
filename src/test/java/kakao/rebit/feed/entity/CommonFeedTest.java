@@ -1,11 +1,12 @@
 package kakao.rebit.feed.entity;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import kakao.rebit.book.entity.Book;
 import kakao.rebit.book.fixture.BookFixture;
 import kakao.rebit.feed.fixture.FeedFixture;
 import kakao.rebit.member.entity.Member;
 import kakao.rebit.member.fixture.MemberFixture;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 public class CommonFeedTest {
@@ -26,9 +27,9 @@ public class CommonFeedTest {
         boolean resultToStory = story.isWrittenBy(author);
 
         // then
-        Assertions.assertThat(resultToFavoriteBook).isTrue();
-        Assertions.assertThat(resultToMagazine).isTrue();
-        Assertions.assertThat(resultToStory).isTrue();
+        assertThat(resultToFavoriteBook).isTrue();
+        assertThat(resultToMagazine).isTrue();
+        assertThat(resultToStory).isTrue();
     }
 
     @Test
@@ -48,8 +49,8 @@ public class CommonFeedTest {
         boolean resultToStory = story.isWrittenBy(viewer);
 
         // then
-        Assertions.assertThat(resultToFavoriteBook).isFalse();
-        Assertions.assertThat(resultToMagazine).isFalse();
-        Assertions.assertThat(resultToStory).isFalse();
+        assertThat(resultToFavoriteBook).isFalse();
+        assertThat(resultToMagazine).isFalse();
+        assertThat(resultToStory).isFalse();
     }
 }

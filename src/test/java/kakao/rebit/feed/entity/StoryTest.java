@@ -1,11 +1,12 @@
 package kakao.rebit.feed.entity;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import kakao.rebit.book.entity.Book;
 import kakao.rebit.book.fixture.BookFixture;
 import kakao.rebit.feed.fixture.FeedFixture;
 import kakao.rebit.member.entity.Member;
 import kakao.rebit.member.fixture.MemberFixture;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 class StoryTest {
@@ -21,7 +22,7 @@ class StoryTest {
         Story.updateTextFields("변경할 컨텐츠");
 
         // then
-        Assertions.assertThat(Story.getContent()).isEqualTo("변경할 컨텐츠");
+        assertThat(Story.getContent()).isEqualTo("변경할 컨텐츠");
     }
 
     @Test
@@ -35,7 +36,7 @@ class StoryTest {
         boolean result = Story.isImageKeyUpdated("변경할 이미지");
 
         // then
-        Assertions.assertThat(result).isTrue();
+        assertThat(result).isTrue();
     }
 
     @Test
@@ -49,7 +50,7 @@ class StoryTest {
         boolean result = Story.isImageKeyUpdated(Story.getImageKey());
 
         // then
-        Assertions.assertThat(result).isFalse();
+        assertThat(result).isFalse();
     }
 
     @Test
@@ -63,7 +64,7 @@ class StoryTest {
         Story.changeImageKey("변경할 이미지");
 
         // then
-        Assertions.assertThat(Story.getImageKey()).isEqualTo("변경할 이미지");
+        assertThat(Story.getImageKey()).isEqualTo("변경할 이미지");
     }
 
     @Test
@@ -78,7 +79,7 @@ class StoryTest {
         story.changeBook(newBook);
 
         // then
-        Assertions.assertThat(story.getBook().getIsbn()).isEqualTo(newBook.getIsbn());
+        assertThat(story.getBook().getIsbn()).isEqualTo(newBook.getIsbn());
     }
 
     @Test
@@ -92,6 +93,6 @@ class StoryTest {
         story.changeBook(null);
 
         // then
-        Assertions.assertThat(story.getBook()).isNull();
+        assertThat(story.getBook()).isNull();
     }
 }
