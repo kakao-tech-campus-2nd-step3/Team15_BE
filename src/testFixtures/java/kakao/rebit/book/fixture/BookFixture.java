@@ -1,7 +1,7 @@
 package kakao.rebit.book.fixture;
 
 import kakao.rebit.book.entity.Book;
-import kakao.rebit.book.fixture.value.BookDefaultValues;
+import kakao.rebit.book.fixture.values.BookDefaultValues;
 
 public class BookFixture {
 

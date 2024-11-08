@@ -1,4 +1,4 @@
-package kakao.rebit.book.fixture.value;
+package kakao.rebit.book.fixture.values;
 
 public record BookDefaultValues(
 
