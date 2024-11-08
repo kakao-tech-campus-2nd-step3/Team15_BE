@@ -1,6 +1,7 @@
 package kakao.rebit.book.entity;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatList;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -53,9 +54,9 @@ class BookServiceTest {
         List<BookResponse> bookResponses = bookService.getAllBooks();
 
         // then
-        assertThat(bookResponses)
-                .extracting(BookResponse::isbn)
-                .containsExactly("isbn1", "isbn2", "isbn3");
+        assertThat(bookResponses).hasSize(books.size());
+        assertThatList(bookResponses).extracting(BookResponse::isbn)
+            .containsExactly("isbn1", "isbn2", "isbn3");
     }
 
     @Test
