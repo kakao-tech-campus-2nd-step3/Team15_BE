@@ -42,16 +42,21 @@ class BookServiceTest {
     @Test
     void 전체책_목록_조회_책_응답_리스트_반환() {
         // given
-        List<Book> books = List.of(BookFixture.createDefault());
+        List<Book> books = List.of(
+                BookFixture.createBookWithIsbn("isbn1"),
+                BookFixture.createBookWithIsbn("isbn2"),
+                BookFixture.createBookWithIsbn("isbn3")
+        );
         when(bookRepository.findAll()).thenReturn(books);
 
         // when
         List<BookResponse> bookResponses = bookService.getAllBooks();
 
         // then
-        assertThat(bookResponses).hasSize(1);
-        assertThat(bookResponses.get(0).isbn()).isEqualTo(books.get(0).getIsbn());
-        verify(bookRepository, times(1)).findAll();
+        assertThat(bookResponses).hasSize(books.size());
+        for (int i = 0; i < books.size(); i++) {
+            assertThat(bookResponses.get(i).isbn()).isEqualTo(books.get(i).getIsbn());
+        }
     }
 
     @Test

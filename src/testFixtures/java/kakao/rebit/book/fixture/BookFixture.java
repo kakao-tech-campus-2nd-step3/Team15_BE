@@ -19,6 +19,20 @@ public class BookFixture {
         );
     }
 
+    public static Book createBookWithIsbn(String isbn) {
+        BookDefaultValues defaults = BookDefaultValues.INSTANCE;
+        return new Book(
+                isbn,
+                defaults.title(),
+                defaults.description(),
+                defaults.author(),
+                defaults.publisher(),
+                defaults.cover(),
+                defaults.pubDate(),
+                defaults.link()
+        );
+    }
+
     public static Book createUpdateBook() {
         BookDefaultValues defaults = BookDefaultValues.INSTANCE;
         return new Book(
