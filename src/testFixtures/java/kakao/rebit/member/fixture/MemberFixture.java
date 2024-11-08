@@ -1,5 +1,6 @@
 package kakao.rebit.member.fixture;
 
+import kakao.rebit.member.dto.MemberResponse;
 import kakao.rebit.member.entity.Member;
 import kakao.rebit.member.entity.Role;
 import kakao.rebit.member.fixture.values.MemberDefaultValues;
@@ -54,6 +55,18 @@ public class MemberFixture {
                 Role.ROLE_USER,
                 points,
                 defaults.kakaoToken()
+        );
+    }
+
+    public static MemberResponse toMemberResponse(Member member) {
+        return new MemberResponse(
+                member.getId(),
+                member.getNickname(),
+                member.getImageKey(),
+                member.getBio(),
+                member.getEmail(),
+                member.getRole(),
+                member.getPoints()
         );
     }
 }
