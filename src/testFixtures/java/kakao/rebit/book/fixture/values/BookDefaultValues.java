@@ -10,7 +10,7 @@ public record BookDefaultValues(
         String cover,
         String pubDate,
         String link
-){
+) {
 
     public static final BookDefaultValues INSTANCE = new BookDefaultValues(
             "테스트 isbn",
