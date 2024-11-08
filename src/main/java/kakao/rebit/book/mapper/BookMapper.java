@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import kakao.rebit.book.dto.AladinApiResponseResponse;
 import kakao.rebit.book.dto.BookDetailResponse;
 import kakao.rebit.book.dto.BookResponse;
+import kakao.rebit.book.dto.BriefReviewResponse;
 import kakao.rebit.book.entity.Book;
 import kakao.rebit.feed.entity.FavoriteBook;
 
@@ -53,6 +54,15 @@ public class BookMapper {
                 topFavoriteBook.getMember().getNickname(),
                 topFavoriteBook.getMember().getImageKey(),
                 topFavoriteBook.getCreatedAt()
+        );
+    }
+
+    public static BriefReviewResponse toBriefReviewResponse(FavoriteBook favoriteBook) {
+        return new BriefReviewResponse(
+                favoriteBook.getBriefReview(),
+                favoriteBook.getMember().getNickname(),
+                favoriteBook.getMember().getImageKey(),
+                favoriteBook.getCreatedAt()
         );
     }
 }

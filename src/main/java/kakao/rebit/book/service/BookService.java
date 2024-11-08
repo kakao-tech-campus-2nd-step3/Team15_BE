@@ -92,12 +92,7 @@ public class BookService {
     @Transactional(readOnly = true)
     public Page<BriefReviewResponse> getBriefReviewsByIsbn(String isbn, Pageable pageable) {
         return favoriteBookRepository.findAllByBookIsbnOrderByLikesDesc(isbn, pageable)
-                .map(favoriteBook -> new BriefReviewResponse(
-                        favoriteBook.getBriefReview(),
-                        favoriteBook.getMember().getNickname(),
-                        favoriteBook.getMember().getImageKey(),
-                        favoriteBook.getCreatedAt()
-                ));
+                .map(BookMapper::toBriefReviewResponse);
     }
 
     @Transactional(readOnly = true)
