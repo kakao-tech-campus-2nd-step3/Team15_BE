@@ -53,10 +53,9 @@ class BookServiceTest {
         List<BookResponse> bookResponses = bookService.getAllBooks();
 
         // then
-        assertThat(bookResponses).hasSize(books.size());
-        for (int i = 0; i < books.size(); i++) {
-            assertThat(bookResponses.get(i).isbn()).isEqualTo(books.get(i).getIsbn());
-        }
+        assertThat(bookResponses)
+                .extracting(BookResponse::isbn)
+                .containsExactly("isbn1", "isbn2", "isbn3");
     }
 
     @Test
