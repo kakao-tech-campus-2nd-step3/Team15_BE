@@ -47,8 +47,8 @@ public class BookMapper {
                 book.getCover(),
                 book.getPubDate(),
                 book.getLink(),
-                topFavoriteBook != null ? topFavoriteBook.getFullReview() : "등록된 한줄평이 없습니다.",
-                topFavoriteBook != null ? topFavoriteBook.getBriefReview() : "등록된 서평이 없습니다.",
+                topFavoriteBook != null ? topFavoriteBook.getFullReview() : "등록된 서평이 없습니다.",
+                topFavoriteBook != null ? topFavoriteBook.getBriefReview() : "등록된 한줄평이 없습니다.",
                 topFavoriteBook != null ? topFavoriteBook.getMember().getNickname() : "등록된 이름이 없습니다.",
                 topFavoriteBook != null ? topFavoriteBook.getMember().getImageKey() : "등록된 이미지가 없습니다.",
                 topFavoriteBook != null ? topFavoriteBook.getCreatedAt(): null
