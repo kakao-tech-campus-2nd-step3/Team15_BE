@@ -6,6 +6,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import java.util.List;
 import kakao.rebit.feed.dto.response.FavoriteBookResponse;
 import kakao.rebit.feed.dto.response.FeedResponse;
@@ -85,7 +86,7 @@ public class MemberController {
     @PutMapping("/me")
     public ResponseEntity<Void> updateMyInfo(
             @Parameter(hidden = true) @MemberInfo MemberResponse memberResponse,
-            @RequestBody MemberRequest memberRequest) {
+            @Valid @RequestBody MemberRequest memberRequest) {
         memberService.updateMyMember(memberResponse.email(), memberRequest);
         return ResponseEntity.noContent().build();
     }
@@ -112,7 +113,7 @@ public class MemberController {
     public ResponseEntity<MemberProfileResponse> updateMember(
             @Parameter(hidden = true) @MemberInfo(allowedRoles = {Role.ROLE_ADMIN, Role.ROLE_EDITOR}) MemberResponse memberResponse,
             @PathVariable("member-id") Long memberId,
-            @RequestBody MemberRequest memberRequest) {
+            @Valid @RequestBody MemberRequest memberRequest) {
         memberService.updateMember(memberId, memberRequest);
         return ResponseEntity.noContent().build();
     }
