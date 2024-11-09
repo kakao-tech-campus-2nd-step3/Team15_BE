@@ -4,10 +4,10 @@ public record BookResponse(
         Long id,
         String isbn,
         String title,
-        String author,
-        String cover,
         String description,
+        String author,
         String publisher,
+        String cover,
         String pubDate,
         String link
 ) {
