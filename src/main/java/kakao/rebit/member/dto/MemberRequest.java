@@ -10,9 +10,10 @@ public record MemberRequest(
         String bio,
 
         @NotBlank(message = "이미지는 필수입니다.")
-        @Pattern(regexp = "^member" + ImageKeyAccessor.BASE_IMAGE_KEY_FORMAT, message = "피드 imageKey는 'feed/%s/%s' 형식이어야 합니다.")
+        @Pattern(regexp = "^member" + ImageKeyAccessor.BASE_IMAGE_KEY_FORMAT + "|^member/default_profile$", message = "멤버 imageKey는 'member/UUID/filename' 형식이어야 합니다.")
         String imageKey,
 
-        Integer point) {
+        Integer point
+) {
 
 }
