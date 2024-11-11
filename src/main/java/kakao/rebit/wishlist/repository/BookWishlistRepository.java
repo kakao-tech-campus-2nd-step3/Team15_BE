@@ -13,6 +13,7 @@ public interface BookWishlistRepository extends JpaRepository<BookWishlist, Long
 
     Page<BookWishlist> findByMemberId(Long memberId, Pageable pageable);
     Optional<BookWishlist> findByMemberAndBook(Member member, Book book);
+    boolean existsByMemberAndBook(Member member, Book book);
     default BookWishlist findByMemberAndBookOrThrow(Member member, Book book) {
         return findByMemberAndBook(member, book)
                 .orElseThrow(() -> BookWishlistNotFoundException.EXCEPTION);
