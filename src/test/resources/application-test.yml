@@ -3,6 +3,12 @@ spring:
     activate:
       on-profile: test
 
+  datasource:
+    url: jdbc:h2:mem:testdb;MODE=MySQL
+    username: sa
+    password:
+    driver-class-name: org.h2.Driver
+
   jpa:
     database-platform: org.hibernate.dialect.H2Dialect # 데이터베이스 문법(방언) 설정
     open-in-view: false # 트랜잭션이 종료된 후 연결을 유지하지 않도록 설정
@@ -14,9 +20,47 @@ spring:
     init:
       mode: never
 
+  # Redis 설정 제거 또는 테스트용 설정 추가
+  data:
+    redis:
+      host: localhost  # 테스트용 redis host
+      port: 6379       # 테스트용 redis port
+
+# 카카오 소셜 로그인을 위해 사용하는 정보들 설정
+# 테스트에 사용할 데이터로 환경변수 대신 임의의 값 넣기
+oauth:
+  kakao:
+    client-id:
+    url:
+      auth-url: kakao-auth-url
+      api-url: kakao-api-url
+      redirect-url: kakao-redirect-url
+      logout-redirect-url: kakao-logout-redirect-url
+      logout-url-template: kakao-logout-url-template
+
+# Jwt 시크릿 키 설정
+custom:
+  jwt:
+    secretKey: dGVzdC1zZWNyZXQta2V5LXRlc3Qtc2VjcmV0LWtleS10ZXN0LXNlY3JldC1rZXktdGVzdC1zZWNyZXQta2V5
+  aladin:
+    ttb-key: test-ttb-key
+
 logging:
   level:
     org.springframework:
       transaction.interceptor: trace    # 트랜잭션 로그 설정
 
     p6spy: info # p6spy 로그 레벨 설정
+
+# AWS S3 설정
+cloud:
+  aws:
+    credentials:
+      access-key: test-access-key
+      secret-key: test-secret-key
+    S3:
+      bucket: test-bucket
+    region:
+      static: ap-northeast-2
+    stack:
+      auto: false
