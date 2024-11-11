@@ -48,6 +48,9 @@ dependencies {
     // AWS S3 관련 의존성 추가
     implementation 'software.amazon.awssdk:s3:2.28.17'
 
+    // RestAssured
+    testImplementation 'io.rest-assured:rest-assured:5.5.0'
+
     // 테스트용
     implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
 }
