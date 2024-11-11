@@ -38,7 +38,8 @@ public class ChallengeParticipationService {
     @Transactional(readOnly = true)
     public Page<ChallengeParticipationMemberResponse> getChallengeParticipationsById(Long challengeId, Pageable pageable) {
         Challenge challenge = challengeService.findChallengeByIdOrThrow(challengeId);
-        Page<ChallengeParticipation> challengeParticipants = challengeParticipationRepository.findAllByChallengeWithMember(challenge, pageable);
+        Page<ChallengeParticipation> challengeParticipants =
+                challengeParticipationRepository.findAllByChallenge(challenge, pageable);
         return challengeParticipants.map(this::toParticipationMemberResponse);
     }
 

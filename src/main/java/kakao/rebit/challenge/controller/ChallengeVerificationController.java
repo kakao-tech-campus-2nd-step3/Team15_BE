@@ -59,8 +59,7 @@ public class ChallengeVerificationController {
             @Parameter(hidden = true) @MemberInfo MemberResponse memberResponse,
             @PathVariable("challenge-id") Long challengeId,
             @Valid @RequestBody ChallengeVerificationRequest challengeVerificationRequest) {
-       Long verificationId = challengeVerificationService.createChallengeVerification(memberResponse, challengeId,
-                challengeVerificationRequest);
+       Long verificationId = challengeVerificationService.createChallengeVerification(memberResponse, challengeId, challengeVerificationRequest);
         return ResponseEntity.created(URI.create("/challenges/" + challengeId + "/verifications/" + verificationId)).build();
     }
 

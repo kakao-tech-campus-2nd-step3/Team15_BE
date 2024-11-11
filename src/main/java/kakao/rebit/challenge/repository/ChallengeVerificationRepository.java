@@ -14,8 +14,7 @@ import org.springframework.data.repository.query.Param;
 public interface ChallengeVerificationRepository extends JpaRepository<ChallengeVerification, Long> {
 
     @EntityGraph(attributePaths = {"challengeParticipation", "challengeParticipation.member", "challengeParticipation.challenge"})
-    @Query("SELECT cv FROM ChallengeVerification cv WHERE cv.challengeParticipation.challenge = :challenge")
-    Page<ChallengeVerification> findAllByChallengeWithParticipants(@Param("challenge") Challenge challenge, Pageable pageable);
+    Page<ChallengeVerification> findAllByChallengeParticipation_Challenge(Challenge challenge, Pageable pageable);
 
     @EntityGraph(attributePaths = {"challengeParticipation", "challengeParticipation.member"})
     Optional<ChallengeVerification> findByIdAndChallengeParticipation_Challenge(Long verificationId, Challenge challenge);

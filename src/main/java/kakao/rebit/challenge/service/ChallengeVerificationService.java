@@ -45,7 +45,7 @@ public class ChallengeVerificationService {
     public Page<ChallengeVerificationResponse> getChallengeVerificationsById(Long challengeId, Pageable pageable) {
         Challenge challenge = challengeService.findChallengeByIdOrThrow(challengeId);
         Page<ChallengeVerification> challengeVerifications =
-                challengeVerificationRepository.findAllByChallengeWithParticipants(challenge, pageable);
+                challengeVerificationRepository.findAllByChallengeParticipation_Challenge(challenge, pageable);
         return challengeVerifications.map(this::toChallengeVerificationResponse);
     }
 
