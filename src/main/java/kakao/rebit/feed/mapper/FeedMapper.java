@@ -112,10 +112,10 @@ public class FeedMapper {
                 book.getId(),
                 book.getIsbn(),
                 book.getTitle(),
-                book.getDescription(),
                 book.getAuthor(),
-                book.getPublisher(),
                 book.getCover(),
+                book.getDescription(),
+                book.getPublisher(),
                 book.getPubDate()
         );
     }
