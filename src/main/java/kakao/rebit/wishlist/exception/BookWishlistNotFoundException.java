@@ -7,6 +7,6 @@ public class BookWishlistNotFoundException extends BusinessException {
     public static final BookWishlistNotFoundException EXCEPTION = new BookWishlistNotFoundException();
 
     private BookWishlistNotFoundException() {
-        super(WishlistErrorCode.WISHLIST_NOT_FOUND);
+        super(WishlistErrorCode.WISHLIST_BOOK_NOT_FOUND);
     }
 }
