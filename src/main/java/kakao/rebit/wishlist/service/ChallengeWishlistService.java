@@ -1,6 +1,7 @@
 package kakao.rebit.wishlist.service;
 
 import kakao.rebit.challenge.entity.Challenge;
+import kakao.rebit.challenge.exception.challenge.ChallengeNotFoundException;
 import kakao.rebit.challenge.repository.ChallengeRepository;
 import kakao.rebit.member.entity.Member;
 import kakao.rebit.member.repository.MemberRepository;
@@ -52,7 +53,7 @@ public class ChallengeWishlistService {
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new IllegalArgumentException("Member not found"));
         Challenge challenge = challengeRepository.findById(challengeId)
-                .orElseThrow(() -> new IllegalArgumentException("Challenge not found"));
+                .orElseThrow(() -> ChallengeNotFoundException.EXCEPTION);
 
         // 이미 위시리스트에 존재하는 경우 예외 던지기
         if (challengeWishlistRepository.existsByMemberAndChallenge(member, challenge)) {
