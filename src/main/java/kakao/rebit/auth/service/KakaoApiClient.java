@@ -18,19 +18,19 @@ public class KakaoApiClient {
 
     private static final String BEARER_PREFIX = "Bearer ";
 
-    @Value("${OAUTH_KAKAO_CLIENT_ID}")
+    @Value("${oauth.kakao.client-id}")
     private String clientId;
 
-    @Value("${OAUTH_KAKAO_REDIRECT_URI}")
+    @Value("${oauth.kakao.url.redirect-url}")
     private String redirectUri;
 
-    @Value("${OAUTH_KAKAO_AUTH_URL}")
+    @Value("${oauth.kakao.url.auth-url}")
     private String kakaoAuthUrl;
 
-    @Value("${OAUTH_KAKAO_API_URL}")
+    @Value("${oauth.kakao.url.api-url}")
     private String kakaoApiUrl;
 
-    @Value("${OAUTH_KAKAO_LOGOUT_URL_TEMPLATE}")
+    @Value("${oauth.kakao.url.logout-url-template}")
     private String logoutUrlTemplate;
 
     private final RestClient restClient;

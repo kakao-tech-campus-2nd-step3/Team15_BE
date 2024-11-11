@@ -20,10 +20,10 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @Tag(name = "인증 API", description = "카카오 로그인 관련 API")
 public class KakaoAuthController {
 
-    @Value("${OAUTH_KAKAO_CLIENT_ID}")
+    @Value("${oauth.kakao.client-id}")
     private String clientId;
 
-    @Value("${OAUTH_KAKAO_REDIRECT_URI}")
+    @Value("${oauth.kakao.url.redirect-url}")
     private String redirectUri;
 
     private final KakaoAuthService kakaoAuthService;

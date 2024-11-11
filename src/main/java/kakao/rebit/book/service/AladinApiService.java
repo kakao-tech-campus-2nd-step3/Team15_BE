@@ -12,7 +12,7 @@ import org.springframework.web.client.RestClient;
 @Service
 public class AladinApiService {
 
-    @Value("${TTB_KEY}")
+    @Value("${custom.aladin.ttb-key}")
     private String TTB_KEY;
 
     private static final String BASE_API_URL = "http://www.aladin.co.kr/ttb/api";
