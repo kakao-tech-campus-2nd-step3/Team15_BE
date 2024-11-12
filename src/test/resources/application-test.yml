@@ -3,16 +3,7 @@ spring:
     activate:
       on-profile: test
 
-  datasource:
-    url: jdbc:h2:mem:testdb;MODE=MySQL
-    username: sa
-    password:
-    driver-class-name: org.h2.Driver
-
   jpa:
-    database-platform: org.hibernate.dialect.H2Dialect # 데이터베이스 문법(방언) 설정
-    open-in-view: false # 트랜잭션이 종료된 후 연결을 유지하지 않도록 설정
-
     hibernate:
       ddl-auto: create
 
