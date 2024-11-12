@@ -2,24 +2,35 @@ package kakao.rebit.challenge.fixture;
 
 import kakao.rebit.challenge.dto.ChallengeRequest;
 import kakao.rebit.challenge.entity.Challenge;
+import kakao.rebit.challenge.entity.ChallengeType;
 import kakao.rebit.challenge.fixture.values.ChallengeDefaultValues;
 import kakao.rebit.member.entity.Member;
 
 public class ChallengeFixture {
 
-    public static ChallengeRequest createRequest() {
+    public static ChallengeRequest createDefaultRequest() {
+        ChallengeDefaultValues defaults = ChallengeDefaultValues.INSTANCE;
+        return createRequest(
+                defaults.title(),
+                defaults.content(),
+                defaults.challengeType()
+        );
+    }
+
+    public static ChallengeRequest createRequest(String title, String content, ChallengeType challengeType) {
+        ChallengeDefaultValues defaults = ChallengeDefaultValues.INSTANCE;
         return new ChallengeRequest(
-                ChallengeDefaultValues.INSTANCE.title(),
-                ChallengeDefaultValues.INSTANCE.content(),
-                ChallengeDefaultValues.INSTANCE.imageKey(),
-                ChallengeDefaultValues.INSTANCE.challengeType(),
-                ChallengeDefaultValues.INSTANCE.minimumEntryFee(),
-                ChallengeDefaultValues.INSTANCE.recruitmentStartDate(),
-                ChallengeDefaultValues.INSTANCE.recruitmentEndDate(),
-                ChallengeDefaultValues.INSTANCE.challengeStartDate(),
-                ChallengeDefaultValues.INSTANCE.challengeEndDate(),
-                ChallengeDefaultValues.INSTANCE.minHeadcount(),
-                ChallengeDefaultValues.INSTANCE.maxHeadcount()
+                title,
+                content,
+                defaults.imageKey(),
+                challengeType,
+                defaults.minimumEntryFee(),
+                defaults.recruitmentStartDate(),
+                defaults.recruitmentEndDate(),
+                defaults.challengeStartDate(),
+                defaults.challengeEndDate(),
+                defaults.minHeadcount(),
+                defaults.maxHeadcount()
         );
     }
 
