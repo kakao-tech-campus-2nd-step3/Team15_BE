@@ -1,15 +1,25 @@
 package kakao.rebit.member.entity;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import java.util.ArrayList;
+import java.util.List;
+import kakao.rebit.challenge.entity.Challenge;
+import kakao.rebit.challenge.entity.ChallengeParticipation;
 import kakao.rebit.common.domain.ImageKeyModifier;
 import kakao.rebit.common.persistence.BaseEntity;
+import kakao.rebit.diary.entity.Diary;
+import kakao.rebit.feed.entity.Feed;
+import kakao.rebit.feed.entity.Likes;
 import kakao.rebit.member.exception.NotEnoughPointsException;
+import kakao.rebit.wishlist.entity.Wishlist;
 
 @Entity
 @Table(name = "member")
@@ -33,6 +43,24 @@ public class Member extends BaseEntity implements ImageKeyModifier {
     private Integer points;
 
     private String kakaoToken;
+
+    @OneToMany(mappedBy = "member", cascade = {CascadeType.ALL}, orphanRemoval = true)
+    private final List<Challenge> challenges = new ArrayList<>();
+
+    @OneToMany(mappedBy = "member", cascade = {CascadeType.ALL}, orphanRemoval = true)
+    private final List<ChallengeParticipation> challengeParticipations = new ArrayList<>();
+
+    @OneToMany(mappedBy = "member", cascade = {CascadeType.ALL}, orphanRemoval = true)
+    private final List<Feed> feeds = new ArrayList<>();
+
+    @OneToMany(mappedBy = "member", cascade = {CascadeType.ALL}, orphanRemoval = true)
+    private final List<Diary> diaries = new ArrayList<>();
+
+    @OneToMany(mappedBy = "member", cascade = {CascadeType.ALL}, orphanRemoval = true)
+    private final List<Likes> likes = new ArrayList<>();
+
+    @OneToMany(mappedBy = "member", cascade = {CascadeType.ALL}, orphanRemoval = true)
+    private final List<Wishlist> wishlists = new ArrayList<>();
 
     protected Member() {
     }
