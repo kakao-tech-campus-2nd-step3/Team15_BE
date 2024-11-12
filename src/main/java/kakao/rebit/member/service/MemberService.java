@@ -44,8 +44,8 @@ public class MemberService {
     @Transactional(readOnly = true)
     public List<MemberProfileResponse> getAllMemberResponses() {
         return memberRepository.findAll().stream()
-            .map(memberMapper::toMemberProfileResponse)
-            .collect(Collectors.toList());
+                .map(memberMapper::toMemberProfileResponse)
+                .collect(Collectors.toList());
     }
 
     // ID로 특정 회원 정보 조회
@@ -66,14 +66,14 @@ public class MemberService {
     @Transactional(readOnly = true)
     public Member findMemberByIdOrThrow(Long memberId) {
         return memberRepository.findById(memberId)
-            .orElseThrow(() -> new IllegalArgumentException("회원 정보를 찾을 수 없습니다."));
+                .orElseThrow(() -> new IllegalArgumentException("회원 정보를 찾을 수 없습니다."));
     }
 
     // 이메일로 회원 조회
     @Transactional(readOnly = true)
     public Member findMemberByEmailOrThrow(String email) {
         return memberRepository.findByEmail(email)
-            .orElseThrow(() -> new IllegalArgumentException("이메일 " + email + "에 해당하는 회원을 찾을 수 없습니다."));
+                .orElseThrow(() -> new IllegalArgumentException("이메일 " + email + "에 해당하는 회원을 찾을 수 없습니다."));
     }
 
     // 회원 정보 업데이트
@@ -94,7 +94,7 @@ public class MemberService {
         member.updateNicknameAndBio(memberRequest.nickname(), memberRequest.bio());
 
         // imageKey가 변경된 경우, S3에 기존 이미지 삭제
-        if( member.isImageKeyUpdated(memberRequest.imageKey())){
+        if (member.isImageKeyUpdated(memberRequest.imageKey())) {
             s3Service.deleteObject(preImageKey);
         }
     }

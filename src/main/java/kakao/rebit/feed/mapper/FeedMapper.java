@@ -15,6 +15,7 @@ import kakao.rebit.feed.entity.FavoriteBook;
 import kakao.rebit.feed.entity.Feed;
 import kakao.rebit.feed.entity.Magazine;
 import kakao.rebit.feed.entity.Story;
+import kakao.rebit.feed.exception.feed.InvalidFeedFormatException;
 import kakao.rebit.member.entity.Member;
 import kakao.rebit.s3.service.S3Service;
 import org.springframework.stereotype.Component;
@@ -31,44 +32,48 @@ public class FeedMapper {
     /**
      * Entity -> DTO(Response) 변환
      */
-    public FeedResponse toFeedResponse(Feed feed) {
+    public FeedResponse toFeedResponse(boolean isLiked, Feed feed) {
         return switch (feed) {
-            case FavoriteBook favoriteBook -> toFavoriteBookResponse(favoriteBook);
-            case Magazine magazine -> toMagazineResponse(magazine);
-            case Story story -> toStoryResponse(story);
-            default -> throw new IllegalStateException("유효하지 않는 피드입니다.");
+            case FavoriteBook favoriteBook -> toFavoriteBookResponse(isLiked, favoriteBook);
+            case Magazine magazine -> toMagazineResponse(isLiked, magazine);
+            case Story story -> toStoryResponse(isLiked, story);
+            default -> throw InvalidFeedFormatException.EXCEPTION;
         };
     }
 
     /**
      * DTO(CreateRequest) -> Entity 변환
      */
-    public Feed toFeed(Member member, Book book, CreateFeedRequest feedRequest) {
+    public Feed toFeed(Member author, Book book, CreateFeedRequest feedRequest) {
         return switch (feedRequest) {
-            case CreateFavoriteBookRequest favoriteBookRequest -> createFavoriteBook(member, book, favoriteBookRequest);
-            case CreateMagazineRequest magazineRequest -> createMagazine(member, book, magazineRequest);
-            case CreateStoryRequest storyRequest -> createStory(member, book, storyRequest);
-            default -> throw new IllegalStateException("유효하지 않는 피드입니다.");
+            case CreateFavoriteBookRequest favoriteBookRequest -> toFavoriteBook(author, book, favoriteBookRequest);
+            case CreateMagazineRequest magazineRequest -> toMagazine(author, book, magazineRequest);
+            case CreateStoryRequest storyRequest -> toStory(author, book, storyRequest);
+            default -> throw InvalidFeedFormatException.EXCEPTION;
         };
     }
 
-    private FavoriteBookResponse toFavoriteBookResponse(FavoriteBook favoriteBook) {
+    private FavoriteBookResponse toFavoriteBookResponse(boolean isLiked, FavoriteBook favoriteBook) {
         return new FavoriteBookResponse(
                 favoriteBook.getId(),
                 this.toAuthorResponse(favoriteBook.getMember()),
                 this.toBookResponse(favoriteBook.getBook()),
-                favoriteBook.getType(), favoriteBook.getLikes(), favoriteBook.getBriefReview(),
+                favoriteBook.getType(),
+                favoriteBook.getLikes(),
+                isLiked,
+                favoriteBook.getBriefReview(),
                 favoriteBook.getFullReview()
         );
     }
 
-    private MagazineResponse toMagazineResponse(Magazine magazine) {
+    private MagazineResponse toMagazineResponse(boolean isLiked, Magazine magazine) {
         return new MagazineResponse(
                 magazine.getId(),
                 this.toAuthorResponse(magazine.getMember()),
                 this.toBookResponse(magazine.getBook()),
                 magazine.getType(),
                 magazine.getLikes(),
+                isLiked,
                 magazine.getName(),
                 magazine.getImageKey(),
                 s3Service.getDownloadUrl(magazine.getImageKey()).presignedUrl(),
@@ -76,25 +81,26 @@ public class FeedMapper {
         );
     }
 
-    private StoryResponse toStoryResponse(Story story) {
+    private StoryResponse toStoryResponse(boolean isLiked, Story story) {
         return new StoryResponse(
                 story.getId(),
                 this.toAuthorResponse(story.getMember()),
                 this.toBookResponse(story.getBook()),
                 story.getType(),
                 story.getLikes(),
+                isLiked,
                 story.getImageKey(),
                 s3Service.getDownloadUrl(story.getImageKey()).presignedUrl(),
                 story.getContent()
         );
     }
 
-    private FeedAuthorResponse toAuthorResponse(Member member) {
+    private FeedAuthorResponse toAuthorResponse(Member author) {
         return new FeedAuthorResponse(
-                member.getId(),
-                member.getNickname(),
-                member.getImageKey(),
-                s3Service.getDownloadUrl(member.getImageKey()).presignedUrl()
+                author.getId(),
+                author.getNickname(),
+                author.getImageKey(),
+                s3Service.getDownloadUrl(author.getImageKey()).presignedUrl()
         );
     }
 
@@ -114,19 +120,19 @@ public class FeedMapper {
         );
     }
 
-    private FavoriteBook createFavoriteBook(Member member, Book book,
+    private FavoriteBook toFavoriteBook(Member author, Book book,
             CreateFavoriteBookRequest request) {
         return new FavoriteBook(
-                member,
+                author,
                 book,
                 request.getBriefReview(),
                 request.getFullReview()
         );
     }
 
-    private Magazine createMagazine(Member member, Book book, CreateMagazineRequest request) {
+    private Magazine toMagazine(Member author, Book book, CreateMagazineRequest request) {
         return new Magazine(
-                member,
+                author,
                 book,
                 request.getName(),
                 request.getImageKey(),
@@ -134,9 +140,9 @@ public class FeedMapper {
         );
     }
 
-    private Story createStory(Member member, Book book, CreateStoryRequest request) {
+    private Story toStory(Member author, Book book, CreateStoryRequest request) {
         return new Story(
-                member,
+                author,
                 book,
                 request.getImageKey(),
                 request.getContent()

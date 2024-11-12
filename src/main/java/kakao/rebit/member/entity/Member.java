@@ -48,7 +48,7 @@ public class Member extends BaseEntity implements ImageKeyModifier {
         this.kakaoToken = kakaoToken;
     }
 
-    public static Member init(String nickname, String imageKey, String email, String accessToken) {
+    public static Member of(String nickname, String imageKey, String email, String accessToken) {
         return new Member(nickname, imageKey, "", email, Role.ROLE_USER, 0, accessToken);
     }
 
@@ -102,7 +102,7 @@ public class Member extends BaseEntity implements ImageKeyModifier {
     }
 
     @Override
-    public void changeImageKey(String imageKey){
+    public void changeImageKey(String imageKey) {
         this.imageKey = imageKey;
     }
 

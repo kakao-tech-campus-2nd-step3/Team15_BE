@@ -5,9 +5,9 @@ import java.util.List;
 import kakao.rebit.auth.jwt.JwtTokenProvider;
 import kakao.rebit.auth.jwt.exception.AccessDeniedException;
 import kakao.rebit.member.annotation.MemberInfo;
-import kakao.rebit.member.dto.MemberResponse;
 import kakao.rebit.member.entity.Member;
 import kakao.rebit.member.entity.Role;
+import kakao.rebit.member.mapper.MemberMapper;
 import kakao.rebit.member.service.MemberService;
 import org.springframework.core.MethodParameter;
 import org.springframework.stereotype.Component;
@@ -20,13 +20,13 @@ import org.springframework.web.method.support.ModelAndViewContainer;
 public class MemberInfoArgumentResolver implements HandlerMethodArgumentResolver {
 
     private static final String AUTHORIZATION_HEADER = "Authorization";
-    private static final String BEARER_PREFIX = "Bearer ";
     private final MemberService memberService;
+    private final MemberMapper memberMapper;
     private final JwtTokenProvider jwtTokenProvider;
 
-    public MemberInfoArgumentResolver(MemberService memberService,
-            JwtTokenProvider jwtTokenProvider) {
+    public MemberInfoArgumentResolver(MemberService memberService, MemberMapper memberMapper, JwtTokenProvider jwtTokenProvider) {
         this.memberService = memberService;
+        this.memberMapper = memberMapper;
         this.jwtTokenProvider = jwtTokenProvider;
     }
 
@@ -51,7 +51,7 @@ public class MemberInfoArgumentResolver implements HandlerMethodArgumentResolver
         // 예외처리추가
         checkMemberRole(member, parameter);
 
-        return toMemberResponse(member);
+        return memberMapper.toMemberResponse(member);
     }
 
     private void checkMemberRole(Member member, MethodParameter parameter) {
@@ -62,17 +62,5 @@ public class MemberInfoArgumentResolver implements HandlerMethodArgumentResolver
                 throw AccessDeniedException.EXCEPTION;
             }
         }
-    }
-
-    private MemberResponse toMemberResponse(Member member) {
-        return new MemberResponse(
-                member.getId(),
-                member.getNickname(),
-                member.getImageKey(),
-                member.getBio(),
-                member.getEmail(),
-                member.getRole(),
-                member.getPoints()
-        );
     }
 }

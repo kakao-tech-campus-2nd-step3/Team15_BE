@@ -2,8 +2,19 @@ package kakao.rebit.member.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
+import kakao.rebit.feed.dto.response.FavoriteBookResponse;
+import kakao.rebit.feed.dto.response.FeedResponse;
+import kakao.rebit.feed.dto.response.MagazineResponse;
+import kakao.rebit.feed.dto.response.StoryResponse;
+import kakao.rebit.feed.service.FavoriteBookService;
+import kakao.rebit.feed.service.FeedService;
+import kakao.rebit.feed.service.MagazineService;
+import kakao.rebit.feed.service.StoryService;
 import kakao.rebit.member.annotation.MemberInfo;
 import kakao.rebit.member.dto.ChargePointRequest;
 import kakao.rebit.member.dto.MemberProfileResponse;
@@ -11,6 +22,10 @@ import kakao.rebit.member.dto.MemberRequest;
 import kakao.rebit.member.dto.MemberResponse;
 import kakao.rebit.member.entity.Role;
 import kakao.rebit.member.service.MemberService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -27,9 +42,18 @@ import org.springframework.web.bind.annotation.RestController;
 public class MemberController {
 
     private final MemberService memberService;
+    private final FeedService feedService;
+    private final FavoriteBookService favoriteBookService;
+    private final MagazineService magazineService;
+    private final StoryService storyService;
 
-    public MemberController(MemberService memberService) {
+    public MemberController(MemberService memberService, FeedService feedService, FavoriteBookService favoriteBookService,
+            MagazineService magazineService, StoryService storyService) {
         this.memberService = memberService;
+        this.feedService = feedService;
+        this.favoriteBookService = favoriteBookService;
+        this.magazineService = magazineService;
+        this.storyService = storyService;
     }
 
     @Operation(summary = "포인트 조회", description = "사용자의 포인트를 조회합니다.")
@@ -100,5 +124,38 @@ public class MemberController {
             @PathVariable("member-id") Long memberId) {
         memberService.deleteMember(memberId);
         return ResponseEntity.noContent().build();
+    }
+
+    @Operation(summary = "내 피드 목록 조회", description = "본인이 작성한 피드 목록을 조회합니다.")
+    @ApiResponse(content = @Content(schema = @Schema(oneOf = {FavoriteBookResponse.class, MagazineResponse.class, StoryResponse.class})))
+    @GetMapping("/feeds")
+    public ResponseEntity<Page<FeedResponse>> getMyFeeds(
+            @Parameter(hidden = true) @MemberInfo MemberResponse memberResponse,
+            @PageableDefault(sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
+        return ResponseEntity.ok().body(feedService.getMyFeeds(memberResponse, pageable));
+    }
+
+    @Operation(summary = "내 인생책 목록 조회", description = "본인이 작성한 인생책 목록을 조회합니다.")
+    @GetMapping("/feeds/favorite-books")
+    public ResponseEntity<Page<FavoriteBookResponse>> getMyFavoriteBooks(
+            @Parameter(hidden = true) @MemberInfo MemberResponse memberResponse,
+            @PageableDefault(sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
+        return ResponseEntity.ok().body(favoriteBookService.getMyFavoriteBooks(memberResponse, pageable));
+    }
+
+    @Operation(summary = "내 메거진 목록 조회", description = "본인이 작성한 메거진 목록을 조회합니다.")
+    @GetMapping("/feeds/magazines")
+    public ResponseEntity<Page<MagazineResponse>> getMyMagazines(
+            @Parameter(hidden = true) @MemberInfo MemberResponse memberResponse,
+            @PageableDefault(sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
+        return ResponseEntity.ok().body(magazineService.getMyMagazines(memberResponse, pageable));
+    }
+
+    @Operation(summary = "내 인생책 목록 조회", description = "본인이 작성한 인생책 목록을 조회합니다.")
+    @GetMapping("/feeds/stories")
+    public ResponseEntity<Page<StoryResponse>> getMyStories(
+            @Parameter(hidden = true) @MemberInfo MemberResponse memberResponse,
+            @PageableDefault(sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
+        return ResponseEntity.ok().body(storyService.getMyStories(memberResponse, pageable));
     }
 }

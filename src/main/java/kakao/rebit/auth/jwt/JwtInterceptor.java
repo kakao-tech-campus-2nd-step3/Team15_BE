@@ -20,8 +20,7 @@ public class JwtInterceptor implements HandlerInterceptor {
     }
 
     @Override
-    public boolean preHandle(HttpServletRequest request, HttpServletResponse response,
-            Object handler) throws Exception {
+    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
 
         // CORS preflight 요청은 토큰 검증을 하지 않음
         if (CorsUtils.isPreFlightRequest(request)) {

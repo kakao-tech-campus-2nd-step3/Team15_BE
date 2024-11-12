@@ -1,5 +1,6 @@
 package kakao.rebit.feed.service;
 
+import java.util.Set;
 import kakao.rebit.book.entity.Book;
 import kakao.rebit.book.service.BookService;
 import kakao.rebit.feed.dto.request.update.UpdateMagazineRequest;
@@ -25,27 +26,48 @@ public class MagazineService {
     private final MemberService memberService;
     private final BookService bookService;
     private final FeedMapper feedMapper;
+    private final LikesService likesService;
     private final S3Service s3Service;
 
-    public MagazineService(MagazineRepository magazineRepository, MemberService memberService,
-            BookService bookService, FeedMapper feedMapper, S3Service s3Service) {
+    public MagazineService(MagazineRepository magazineRepository, MemberService memberService, BookService bookService, FeedMapper feedMapper,
+            LikesService likesService, S3Service s3Service) {
         this.magazineRepository = magazineRepository;
         this.memberService = memberService;
         this.bookService = bookService;
         this.feedMapper = feedMapper;
+        this.likesService = likesService;
         this.s3Service = s3Service;
     }
 
     @Transactional(readOnly = true)
-    public Page<MagazineResponse> getMagazines(Pageable pageable) {
-        Page<Magazine> magazines = magazineRepository.findAll(pageable);
-        return magazines.map(magazine -> (MagazineResponse) feedMapper.toFeedResponse(magazine));
+    public Page<MagazineResponse> getMagazines(MemberResponse memberResponse, Pageable pageable) {
+        Page<Magazine> feedPage = magazineRepository.findAll(pageable);
+
+        if (memberResponse != null) {
+            Member viewer = memberService.findMemberByIdOrThrow(memberResponse.id());
+            Set<Long> likedFeedIds = likesService.getLikedFeedIdsByMember(viewer); // 멤버가 좋아요를 누른 모든 피드를 가져온다.
+
+            return feedPage.map(feed -> (MagazineResponse)
+                    feedMapper.toFeedResponse(likesService.isLikedBySet(likedFeedIds, feed), feed));
+        }
+
+        return feedPage.map(feed -> (MagazineResponse) feedMapper.toFeedResponse(false, feed));
     }
 
     @Transactional(readOnly = true)
-    public MagazineResponse getMagazineById(Long magazineId) {
+    public Page<MagazineResponse> getMyMagazines(MemberResponse memberResponse, Pageable pageable) {
+        Member author = memberService.findMemberByIdOrThrow(memberResponse.id());
+        Set<Long> likedFeedIds = likesService.getLikedFeedIdsByMember(author);
+
+        return magazineRepository.findAllByMember(author, pageable)
+                .map(feed -> (MagazineResponse) feedMapper.toFeedResponse(likesService.isLikedBySet(likedFeedIds, feed), feed));
+    }
+
+    @Transactional(readOnly = true)
+    public MagazineResponse getMagazineById(MemberResponse memberResponse, Long magazineId) {
+        Member viewer = memberService.findMemberByIdOrThrow(memberResponse.id());
         Magazine magazine = findMagazineByIdOrThrow(magazineId);
-        return (MagazineResponse) feedMapper.toFeedResponse(magazine);
+        return (MagazineResponse) feedMapper.toFeedResponse(likesService.isLiked(viewer, magazine), magazine);
     }
 
     @Transactional(readOnly = true)
@@ -55,12 +77,11 @@ public class MagazineService {
     }
 
     @Transactional
-    public void updateMagazine(MemberResponse memberResponse, Long magazineId,
-            UpdateMagazineRequest updateRequest) {
-        Member member = memberService.findMemberByIdOrThrow(memberResponse.id());
+    public void updateMagazine(MemberResponse memberResponse, Long magazineId, UpdateMagazineRequest updateRequest) {
+        Member author = memberService.findMemberByIdOrThrow(memberResponse.id());
         Magazine magazine = findMagazineByIdOrThrow(magazineId);
 
-        if (!magazine.isWrittenBy(member)) {
+        if (!magazine.isWrittenBy(author)) {
             throw UpdateNotAuthorizedException.EXCEPTION;
         }
 

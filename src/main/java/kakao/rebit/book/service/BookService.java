@@ -7,6 +7,7 @@ import kakao.rebit.book.dto.AladinApiResponseListResponse;
 import kakao.rebit.book.dto.AladinApiResponseResponse;
 import kakao.rebit.book.dto.BookDetailResponse;
 import kakao.rebit.book.dto.BookResponse;
+import kakao.rebit.book.dto.BriefReviewResponse;
 import kakao.rebit.book.entity.Book;
 import kakao.rebit.book.exception.book.BookNotFoundException;
 import kakao.rebit.book.mapper.BookMapper;
@@ -89,9 +90,9 @@ public class BookService {
     }
 
     @Transactional(readOnly = true)
-    public Page<String> getBriefReviewsByIsbn(String isbn, Pageable pageable) {
+    public Page<BriefReviewResponse> getBriefReviewsByIsbn(String isbn, Pageable pageable) {
         return favoriteBookRepository.findAllByBookIsbnOrderByLikesDesc(isbn, pageable)
-                .map(FavoriteBook::getBriefReview);
+                .map(BookMapper::toBriefReviewResponse);
     }
 
     @Transactional(readOnly = true)

@@ -3,6 +3,7 @@ package kakao.rebit.feed.repository;
 import java.util.Optional;
 import kakao.rebit.book.entity.Book;
 import kakao.rebit.feed.entity.FavoriteBook;
+import kakao.rebit.member.entity.Member;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -15,4 +16,5 @@ public interface FavoriteBookRepository extends JpaRepository<FavoriteBook, Long
     // ISBN으로 책을 찾아서 좋아요 순으로 한줄평을 정렬
     Page<FavoriteBook> findAllByBookIsbnOrderByLikesDesc(String isbn, Pageable pageable);
 
+    Page<FavoriteBook> findAllByMember(Member member, Pageable pageable);
 }

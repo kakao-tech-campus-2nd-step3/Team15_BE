@@ -3,9 +3,8 @@ package kakao.rebit.auth.service;
 import jakarta.transaction.Transactional;
 import kakao.rebit.auth.dto.KakaoUserInfo;
 import kakao.rebit.auth.dto.LoginResponse;
-import kakao.rebit.auth.jwt.JwtTokenProvider;
-import kakao.rebit.auth.jwt.TokenBlacklistRepository;
 import kakao.rebit.auth.event.RegisteredEvent;
+import kakao.rebit.auth.jwt.JwtTokenProvider;
 import kakao.rebit.auth.token.AuthToken;
 import kakao.rebit.auth.token.AuthTokenGenerator;
 import kakao.rebit.member.entity.Member;
@@ -21,22 +20,19 @@ public class KakaoAuthService {
     private final MemberRepository memberRepository;
     private final AuthTokenGenerator authTokensGenerator;
     private final JwtTokenProvider jwtTokenProvider;
-    private final TokenBlacklistRepository tokenBlacklistRepository;
     private final ApplicationEventPublisher publisher;
-  
+
     public KakaoAuthService(
-        KakaoApiClient kakaoApiClient,
-        MemberRepository memberRepository,
-        AuthTokenGenerator authTokensGenerator,
-        JwtTokenProvider jwtTokenProvider,
-        TokenBlacklistRepository tokenBlacklistRepository,
-        ApplicationEventPublisher publisher
+            KakaoApiClient kakaoApiClient,
+            MemberRepository memberRepository,
+            AuthTokenGenerator authTokensGenerator,
+            JwtTokenProvider jwtTokenProvider,
+            ApplicationEventPublisher publisher
     ) {
         this.kakaoApiClient = kakaoApiClient;
         this.memberRepository = memberRepository;
         this.authTokensGenerator = authTokensGenerator;
         this.jwtTokenProvider = jwtTokenProvider;
-        this.tokenBlacklistRepository = tokenBlacklistRepository;
         this.publisher = publisher;
     }
 
@@ -73,7 +69,7 @@ public class KakaoAuthService {
         String email = userInfo.kakaoAccount().email();
 
         Member newMember = memberRepository.save(
-                Member.init(nickname, DEFAULT_PROFILE_IMAGE_KEY, email, accessToken)); // 새로운 멤버 생성 후 저장
+                Member.of(nickname, DEFAULT_PROFILE_IMAGE_KEY, email, accessToken)); // 새로운 멤버 생성 후 저장
 
         publisher.publishEvent(RegisteredEvent.init(email, profileImageUrl));
 
@@ -88,15 +84,9 @@ public class KakaoAuthService {
         );
     }
 
-    private void downloadImageAndUploadS3(String imageUrl, S3UploadKeyRequest s3UploadKeyRequest) {
-        DownloadImageInfo downloadImageInfo = imageDownloader.downloadImageFromUrl(imageUrl); // imageUrl로부터 이미지 가져오기
-        s3Service.putObject(s3UploadKeyRequest, downloadImageInfo); // S3에 저장
-    }
-
     public void kakaoLogout(String jwtToken) {
         // 전달받은 JWT 토큰을 블랙리스트에 추가
-        String token = jwtTokenProvider.extractToken(jwtToken);
-        jwtTokenProvider.addToBlacklist(token);
+        jwtTokenProvider.addToBlacklist(jwtToken);
 
         // 카카오 API를 사용하여 카카오 로그아웃 수행
         kakaoApiClient.logout();

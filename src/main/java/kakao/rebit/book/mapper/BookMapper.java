@@ -1,8 +1,10 @@
 package kakao.rebit.book.mapper;
 
+import java.time.LocalDateTime;
 import kakao.rebit.book.dto.AladinApiResponseResponse;
 import kakao.rebit.book.dto.BookDetailResponse;
 import kakao.rebit.book.dto.BookResponse;
+import kakao.rebit.book.dto.BriefReviewResponse;
 import kakao.rebit.book.entity.Book;
 import kakao.rebit.feed.entity.FavoriteBook;
 
@@ -17,7 +19,8 @@ public class BookMapper {
                 book.getCover(),
                 book.getDescription(),
                 book.getPublisher(),
-                book.getPubDate()
+                book.getPubDate(),
+                book.getLink()
         );
     }
 
@@ -29,16 +32,13 @@ public class BookMapper {
                 response.author(),
                 response.publisher(),
                 response.cover(),
-                response.pubDate()
+                response.pubDate(),
+                response.link()
         );
     }
 
-    public static BookDetailResponse toBookDetailResponse(Book book, FavoriteBook topFavoriteBook) {
-        String briefReview =
-                topFavoriteBook != null ? topFavoriteBook.getBriefReview() : "한줄평이 없습니다.";
-        String topFullReview =
-                topFavoriteBook != null ? topFavoriteBook.getFullReview() : "서평이 없습니다.";
 
+    public static BookDetailResponse toBookDetailResponse(Book book, FavoriteBook topFavoriteBook) {
         return new BookDetailResponse(
                 book.getId(),
                 book.getIsbn(),
@@ -48,7 +48,21 @@ public class BookMapper {
                 book.getDescription(),
                 book.getPublisher(),
                 book.getPubDate(),
-                topFullReview
+                book.getLink(),
+                topFavoriteBook.getFullReview(),
+                topFavoriteBook.getBriefReview(),
+                topFavoriteBook.getMember().getNickname(),
+                topFavoriteBook.getMember().getImageKey(),
+                topFavoriteBook.getCreatedAt()
+        );
+    }
+
+    public static BriefReviewResponse toBriefReviewResponse(FavoriteBook favoriteBook) {
+        return new BriefReviewResponse(
+                favoriteBook.getBriefReview(),
+                favoriteBook.getMember().getNickname(),
+                favoriteBook.getMember().getImageKey(),
+                favoriteBook.getCreatedAt()
         );
     }
 }

@@ -2,7 +2,7 @@ package kakao.rebit.member.dto;
 
 import kakao.rebit.member.entity.Role;
 
-public record MemberProfileResponse (
+public record MemberProfileResponse(
         Long id,
         String nickname,
         String imageKey,
@@ -11,6 +11,6 @@ public record MemberProfileResponse (
         String email,
         Role role,
         Integer point
-){
+) {
 
 }

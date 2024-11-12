@@ -20,4 +20,3 @@ public class TokenBlacklistRepository {
         return redisTemplate.hasKey(token);
     }
 }
-

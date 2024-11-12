@@ -30,9 +30,13 @@ public class Likes extends BaseEntity {
     protected Likes() {
     }
 
-    public Likes(Member member, Feed feed) {
+    private Likes(Member member, Feed feed) {
         this.member = member;
         this.feed = feed;
+    }
+
+    public static Likes of(Member member, Feed feed) {
+        return new Likes(member, feed);
     }
 
     public Long getId() {

@@ -7,7 +7,8 @@ public record AladinApiResponseResponse(
         String author,
         String publisher,
         String cover,
-        String pubDate
+        String pubDate,
+        String link
 ) {
 
 }

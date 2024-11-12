@@ -9,6 +9,7 @@ import kakao.rebit.feed.dto.request.update.UpdateFavoriteBookRequest;
 import kakao.rebit.feed.dto.response.FavoriteBookResponse;
 import kakao.rebit.feed.service.FavoriteBookService;
 import kakao.rebit.member.annotation.MemberInfo;
+import kakao.rebit.member.annotation.MemberInfoIfPresent;
 import kakao.rebit.member.dto.MemberResponse;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -37,15 +38,17 @@ public class FavoriteBookController {
     @AllowAnonymous
     @GetMapping
     public ResponseEntity<Page<FavoriteBookResponse>> getFavoriteBooks(
+            @Parameter(hidden = true) @MemberInfoIfPresent MemberResponse memberResponse,
             @PageableDefault(sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
-        return ResponseEntity.ok().body(favoriteBookService.getFavoriteBooks(pageable));
+        return ResponseEntity.ok().body(favoriteBookService.getFavoriteBooks(memberResponse, pageable));
     }
 
     @Operation(summary = "인생책 조회", description = "인생책을 조회합니다.")
     @GetMapping("/{favorite-id}")
     public ResponseEntity<FavoriteBookResponse> getFavoriteBook(
+            @Parameter(hidden = true) @MemberInfo MemberResponse memberResponse,
             @PathVariable("favorite-id") Long favoriteId) {
-        return ResponseEntity.ok().body(favoriteBookService.getFavoriteBookById(favoriteId));
+        return ResponseEntity.ok().body(favoriteBookService.getFavoriteBookById(memberResponse, favoriteId));
     }
 
     @Operation(summary = "인생책 수정", description = "인생책을 수정합니다.")

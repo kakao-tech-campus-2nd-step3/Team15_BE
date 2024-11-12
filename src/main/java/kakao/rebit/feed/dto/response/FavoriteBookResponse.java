@@ -11,9 +11,10 @@ public class FavoriteBookResponse extends FeedResponse {
     public FavoriteBookResponse(Long id, FeedAuthorResponse author, FeedBookResponse book,
             String type,
             int likes,
+            boolean isLiked,
             String briefReview,
             String fullReview) {
-        super(id, author, book, type, likes);
+        super(id, author, book, type, likes, isLiked);
         this.briefReview = briefReview;
         this.fullReview = fullReview;
     }
