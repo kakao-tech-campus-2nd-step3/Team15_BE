@@ -21,8 +21,9 @@ public class TestKakaoAuthService extends KakaoAuthService {
 
     @Override
     public LoginResponse kakaoLogin(String code) {
-        Member member = MemberFixture.createDefault();
-        memberRepository.save(member);
+        Member member = MemberFixture.createRandomEmail();
+        member = memberRepository.findByEmail(member.getEmail())
+                .orElse(memberRepository.save(member));
 
         AuthToken token = authTokenGenerator.generate(member.getId().toString(), member.getEmail(), member.getRole().toString());
 
