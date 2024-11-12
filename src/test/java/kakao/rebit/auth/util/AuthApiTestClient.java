@@ -4,11 +4,10 @@ import static io.restassured.RestAssured.given;
 
 import io.restassured.http.ContentType;
 import kakao.rebit.auth.dto.LoginResponse;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 
 public class AuthApiTestClient {
-    private static final String BEARER_PREFIX = "Bearer ";
+
     private static final String AUTH_URL = "/api/auth";
     private static final String LOGIN_URL = "/login/oauth/kakao";
 
@@ -23,15 +22,5 @@ public class AuthApiTestClient {
                 .statusCode(HttpStatus.OK.value())
                 .extract()
                 .as(LoginResponse.class);
-    }
-
-    public static void logout(int port, String accessToken) {
-        given()
-                .port(port)
-                .header(HttpHeaders.AUTHORIZATION, BEARER_PREFIX + accessToken)
-                .when()
-                .post(AUTH_URL + "/logout")
-                .then()
-                .log().all();
     }
 }
