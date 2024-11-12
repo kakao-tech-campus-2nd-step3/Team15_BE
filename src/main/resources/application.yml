@@ -25,7 +25,7 @@ spring:
 # 카카오 소셜 로그인을 위해 사용하는 정보들 설정
 oauth:
   kakao:
-    client-id: ${OAUTH_KAKAO_CLIENT_ID}
+    client-id: ${OAUTH_KAKAO_CLIENT_ID:test-client-id}
     url:
       auth-url: ${OAUTH_KAKAO_AUTH_URL}
       api-url: ${OAUTH_KAKAO_API_URL}
