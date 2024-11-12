@@ -2,6 +2,7 @@ package kakao.rebit.challenge.service;
 
 import kakao.rebit.challenge.dto.ChallengeParticipationMemberResponse;
 import kakao.rebit.challenge.dto.ChallengeParticipationRequest;
+import kakao.rebit.challenge.dto.ChallengeResponse;
 import kakao.rebit.challenge.entity.Challenge;
 import kakao.rebit.challenge.entity.ChallengeParticipation;
 import kakao.rebit.challenge.exception.participation.ParticipationAlreadyExistsException;
@@ -100,5 +101,13 @@ public class ChallengeParticipationService {
                 challengeParticipation.getCreatedAt(),
                 challengeParticipation.getEntryFee()
         );
+    }
+
+    public Page<ChallengeResponse> getMyChallenges(MemberResponse memberResponse, Pageable pageable) {
+        Member member = memberService.findMemberByIdOrThrow(memberResponse.id());
+        Page<ChallengeParticipation> challengeParticipations =
+                challengeParticipationRepository.findAllByMember(member, pageable);
+        return challengeParticipations.map(ChallengeParticipation::getChallenge)
+                .map(challengeService::toChallengeResponse);
     }
 }

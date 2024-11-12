@@ -7,9 +7,9 @@ import kakao.rebit.challenge.dto.CreatorResponse;
 import kakao.rebit.challenge.entity.Challenge;
 import kakao.rebit.challenge.entity.HeadcountLimit;
 import kakao.rebit.challenge.entity.Period;
+import kakao.rebit.challenge.exception.challenge.ChallengeNotFoundException;
 import kakao.rebit.challenge.exception.challenge.DeleteNotAllowedException;
 import kakao.rebit.challenge.exception.challenge.DeleteNotAuthorizedException;
-import kakao.rebit.challenge.exception.challenge.ChallengeNotFoundException;
 import kakao.rebit.challenge.repository.ChallengeRepository;
 import kakao.rebit.member.dto.MemberResponse;
 import kakao.rebit.member.entity.Member;
@@ -78,7 +78,7 @@ public class ChallengeService {
         s3Service.deleteObject(challenge.getImageKey());
     }
 
-    private ChallengeResponse toChallengeResponse(Challenge challenge) {
+    public ChallengeResponse toChallengeResponse(Challenge challenge) {
         return new ChallengeResponse(
                 challenge.getId(),
                 toCreatorResponse(challenge.getMember()),
