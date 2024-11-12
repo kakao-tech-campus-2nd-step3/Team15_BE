@@ -18,4 +18,7 @@ public interface ChallengeParticipationRepository extends JpaRepository<Challeng
 
     @EntityGraph(attributePaths = {"member", "challenge"})
     Optional<ChallengeParticipation> findByMemberAndChallenge(Member member, Challenge challenge);
+
+    @EntityGraph(attributePaths = {"challenge", "challenge.member"})
+    Page<ChallengeParticipation> findAllByMember(Member member, Pageable pageable);
 }
