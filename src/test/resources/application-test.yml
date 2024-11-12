@@ -21,12 +21,10 @@ spring:
 # 테스트에 사용할 데이터로 환경변수 대신 임의의 값 넣기
 oauth:
   kakao:
-    client-id:
     url:
       auth-url: kakao-auth-url
       api-url: kakao-api-url
       redirect-url: kakao-redirect-url
-      logout-redirect-url: kakao-logout-redirect-url
       logout-url-template: kakao-logout-url-template
 
 # Jwt 시크릿 키 설정
