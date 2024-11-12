@@ -8,6 +8,8 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import java.util.List;
+import kakao.rebit.challenge.dto.ChallengeResponse;
+import kakao.rebit.challenge.service.ChallengeParticipationService;
 import kakao.rebit.feed.dto.response.FavoriteBookResponse;
 import kakao.rebit.feed.dto.response.FeedResponse;
 import kakao.rebit.feed.dto.response.MagazineResponse;
@@ -47,14 +49,16 @@ public class MemberController {
     private final FavoriteBookService favoriteBookService;
     private final MagazineService magazineService;
     private final StoryService storyService;
+    private final ChallengeParticipationService challengeParticipationService;
 
     public MemberController(MemberService memberService, FeedService feedService, FavoriteBookService favoriteBookService,
-            MagazineService magazineService, StoryService storyService) {
+            MagazineService magazineService, StoryService storyService, ChallengeParticipationService challengeParticipationService) {
         this.memberService = memberService;
         this.feedService = feedService;
         this.favoriteBookService = favoriteBookService;
         this.magazineService = magazineService;
         this.storyService = storyService;
+        this.challengeParticipationService = challengeParticipationService;
     }
 
     @Operation(summary = "포인트 조회", description = "사용자의 포인트를 조회합니다.")
@@ -158,5 +162,13 @@ public class MemberController {
             @Parameter(hidden = true) @MemberInfo MemberResponse memberResponse,
             @PageableDefault(sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
         return ResponseEntity.ok().body(storyService.getMyStories(memberResponse, pageable));
+    }
+
+    @Operation(summary = "내 챌린지 목록 조회", description = "본인이 참여한 챌린지 목록을 조회합니다.")
+    @GetMapping("/challenges")
+    public ResponseEntity<Page<ChallengeResponse>> getMyChallenges(
+            @Parameter(hidden = true) @MemberInfo MemberResponse memberResponse,
+            @PageableDefault(sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
+        return ResponseEntity.ok().body(challengeParticipationService.getMyChallenges(memberResponse, pageable));
     }
 }
