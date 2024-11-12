@@ -1,5 +1,6 @@
 package kakao.rebit.feed.entity;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
@@ -16,6 +17,7 @@ public class Magazine extends Feed implements ImageKeyModifier {
 
     private String imageKey;
 
+    @Column(length = 1000)
     private String content;
 
     protected Magazine() {

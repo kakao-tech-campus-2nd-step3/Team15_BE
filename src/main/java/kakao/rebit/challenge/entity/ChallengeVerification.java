@@ -1,5 +1,6 @@
 package kakao.rebit.challenge.entity;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -26,6 +27,7 @@ public class ChallengeVerification extends BaseEntity implements ImageKeyAccesso
 
     private String imageKey;
 
+    @Column(length = 1000)
     private String content;
 
     @ManyToOne(fetch = FetchType.LAZY)

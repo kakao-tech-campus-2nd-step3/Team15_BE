@@ -1,5 +1,6 @@
 package kakao.rebit.feed.entity;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;
 import kakao.rebit.book.entity.Book;
@@ -12,6 +13,7 @@ public class Story extends Feed implements ImageKeyModifier {
 
     private String imageKey;
 
+    @Column(length = 1000)
     private String content;
 
     protected Story() {
