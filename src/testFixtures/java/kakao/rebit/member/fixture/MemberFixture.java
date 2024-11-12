@@ -1,11 +1,26 @@
 package kakao.rebit.member.fixture;
 
+import static java.util.UUID.randomUUID;
+
 import kakao.rebit.member.dto.MemberResponse;
 import kakao.rebit.member.entity.Member;
 import kakao.rebit.member.entity.Role;
 import kakao.rebit.member.fixture.values.MemberDefaultValues;
 
 public class MemberFixture {
+
+    public static Member createRandomEmail() {
+        MemberDefaultValues defaults = MemberDefaultValues.INSTANCE;
+        return new Member(
+                defaults.nickname(),
+                defaults.imageKey(),
+                defaults.bio(),
+                randomUUID() + "@test.com",
+                Role.ROLE_ADMIN,
+                defaults.points(),
+                defaults.kakaoToken()
+        );
+    }
 
     public static Member createDefault() {
         return createWithRole(Role.ROLE_USER);
