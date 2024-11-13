@@ -23,7 +23,7 @@ public class DiaryService {
     private final BookRepository bookRepository;
 
     public DiaryService(DiaryRepository diaryRepository, MemberService memberService,
-        BookRepository bookRepository) {
+            BookRepository bookRepository) {
         this.diaryRepository = diaryRepository;
         this.memberService = memberService;
         this.bookRepository = bookRepository;
@@ -32,17 +32,17 @@ public class DiaryService {
     @Transactional(readOnly = true)
     public Page<DiaryResponse> getDiaries(Long memberId, Pageable pageable) {
         return diaryRepository.findByMemberId(memberId, pageable)
-            .map(diary -> new DiaryResponse(diary.getId(), diary.getContent(),
-                diary.getMember().getId(),
-                diary.getBook().getIsbn()));
+                .map(diary -> new DiaryResponse(diary.getId(), diary.getContent(),
+                        diary.getMember().getId(),
+                        diary.getBook().getIsbn(), diary.getEntryDate()));
     }
 
     @Transactional(readOnly = true)
     public DiaryResponse getDiaryById(Long memberId, Long id) {
         Diary diary = diaryRepository.findByIdAndMemberId(id, memberId)
-            .orElseThrow(() -> DiaryNotFoundException.EXCEPTION);
+                .orElseThrow(() -> DiaryNotFoundException.EXCEPTION);
         return new DiaryResponse(diary.getId(), diary.getContent(), diary.getMember().getId(),
-            diary.getBook().getIsbn());
+                diary.getBook().getIsbn(), diary.getEntryDate());
     }
 
     @Transactional
@@ -50,9 +50,9 @@ public class DiaryService {
         Member member = memberService.findMemberByIdOrThrow(memberId);
 
         Book book = bookRepository.findByIsbn(diaryRequest.isbn())
-            .orElseThrow(() -> BookNotFoundException.EXCEPTION);
+                .orElseThrow(() -> BookNotFoundException.EXCEPTION);
 
-        Diary diary = new Diary(diaryRequest.content(), member, book);
+        Diary diary = new Diary(diaryRequest.content(), member, book, diaryRequest.entryDate());
         Diary savedDiary = diaryRepository.save(diary);
         return savedDiary.getId();
     }
@@ -60,18 +60,18 @@ public class DiaryService {
     @Transactional
     public void updateDiary(Long memberId, Long id, DiaryRequest diaryRequest) {
         Diary diary = diaryRepository.findByIdAndMemberId(id, memberId)
-            .orElseThrow(() -> DiaryNotFoundException.EXCEPTION);
+                .orElseThrow(() -> DiaryNotFoundException.EXCEPTION);
 
         Book book = bookRepository.findByIsbn(diaryRequest.isbn())
-            .orElseThrow(() -> BookNotFoundException.EXCEPTION);
+                .orElseThrow(() -> BookNotFoundException.EXCEPTION);
 
-        diary.updateDiary(diaryRequest.content(), book);
+        diary.updateDiary(diaryRequest.content(), book, diaryRequest.entryDate());
     }
 
     @Transactional
     public void deleteDiary(Long memberId, Long id) {
         Diary diary = diaryRepository.findByIdAndMemberId(id, memberId)
-            .orElseThrow(() -> DiaryNotFoundException.EXCEPTION);
+                .orElseThrow(() -> DiaryNotFoundException.EXCEPTION);
         diaryRepository.delete(diary);
     }
 }
