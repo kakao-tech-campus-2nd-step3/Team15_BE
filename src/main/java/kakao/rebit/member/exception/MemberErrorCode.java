@@ -5,7 +5,7 @@ import org.springframework.http.HttpStatus;
 
 public enum MemberErrorCode implements ErrorCode {
     NOT_ENOUGH_POINTS("M001", HttpStatus.BAD_REQUEST, "포인트가 부족합니다."),
-    ;
+    MEMBER_NOT_FOUND("M002", HttpStatus.NOT_FOUND, "회원을 찾을 수 없습니다.");
 
     private final String code;
     private final HttpStatus httpStatus;
