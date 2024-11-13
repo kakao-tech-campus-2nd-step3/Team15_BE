@@ -10,7 +10,9 @@ public record MemberProfileResponse(
         String bio,
         String email,
         Role role,
-        Integer point
+        Integer point,
+        String coverImageKey,
+        String coverPresignedUrl
 ) {
 
 }

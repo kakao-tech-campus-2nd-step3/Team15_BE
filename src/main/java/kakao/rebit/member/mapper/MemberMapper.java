@@ -17,17 +17,18 @@ public class MemberMapper {
 
     public MemberResponse toMemberResponse(Member member) {
         return new MemberResponse(
-            member.getId(),
-            member.getNickname(),
-            member.getImageKey(),
-            member.getBio(),
-            member.getEmail(),
-            member.getRole(),
-            member.getPoints()
+                member.getId(),
+                member.getNickname(),
+                member.getImageKey(),
+                member.getBio(),
+                member.getEmail(),
+                member.getRole(),
+                member.getPoints(),
+                member.getCoverImageKey()
         );
     }
 
-    public MemberProfileResponse toMemberProfileResponse(Member member){
+    public MemberProfileResponse toMemberProfileResponse(Member member) {
         return new MemberProfileResponse(
                 member.getId(),
                 member.getNickname(),
@@ -36,7 +37,9 @@ public class MemberMapper {
                 member.getBio(),
                 member.getEmail(),
                 member.getRole(),
-                member.getPoints()
+                member.getPoints(),
+                member.getCoverImageKey(),
+                s3Service.getDownloadUrl(member.getCoverImageKey()).presignedUrl()
         );
     }
 }
