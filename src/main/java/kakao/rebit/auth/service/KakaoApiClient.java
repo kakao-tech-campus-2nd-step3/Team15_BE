@@ -3,6 +3,7 @@ package kakao.rebit.auth.service;
 import java.util.Objects;
 import kakao.rebit.auth.dto.KakaoToken;
 import kakao.rebit.auth.dto.KakaoUserInfo;
+import kakao.rebit.auth.exception.UserInfoNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
@@ -74,7 +75,7 @@ public class KakaoApiClient {
 
         KakaoUserInfo userInfo = response.getBody();
         if (userInfo == null) {
-            throw new RuntimeException("사용자 정보가 비어 있습니다.");
+            throw UserInfoNotFoundException.EXCEPTION;
         }
 
         return userInfo;
