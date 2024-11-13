@@ -4,7 +4,8 @@ import kakao.rebit.common.exception.ErrorCode;
 import org.springframework.http.HttpStatus;
 
 public enum MemberErrorCode implements ErrorCode {
-    NOT_ENOUGH_POINTS("M001", HttpStatus.BAD_REQUEST, "포인트가 부족합니다."),
+    NOT_FOUND("M001", HttpStatus.NOT_FOUND, "유저를 찾을 수 없습니다."),
+    NOT_ENOUGH_POINTS("M002", HttpStatus.BAD_REQUEST, "포인트가 부족합니다."),
     ;
 
     private final String code;
