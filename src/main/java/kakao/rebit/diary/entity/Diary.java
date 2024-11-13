@@ -32,13 +32,16 @@ public class Diary extends BaseEntity {
     @JoinColumn(name = "isbn")
     private Book book;
 
+    private String date;
+
     protected Diary() {
     }
 
-    public Diary(String content, Member member, Book book) {
+    public Diary(String content, Member member, Book book, String date) {
         this.content = content;
         this.member = member;
         this.book = book;
+        this.date = date;
     }
 
     public Long getId() {
@@ -55,6 +58,10 @@ public class Diary extends BaseEntity {
 
     public Book getBook() {
         return book;
+    }
+
+    public String getDate() {
+        return date;
     }
 
     public void updateDiary(String content, Book book) {
