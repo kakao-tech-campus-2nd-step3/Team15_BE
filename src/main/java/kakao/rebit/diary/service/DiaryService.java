@@ -32,19 +32,15 @@ public class DiaryService {
     @Transactional(readOnly = true)
     public Page<DiaryResponse> getDiaries(Long memberId, Pageable pageable) {
         return diaryRepository.findByMemberId(memberId, pageable)
-                .map(diary -> new DiaryResponse(diary.getId(), diary.getContent(),
-                        diary.getMember().getId(),
-                        diary.getBook().getIsbn(),
-                        diary.getCreatedAt()
-                ));
+                .map(this::toDiaryResponse);
     }
 
     @Transactional(readOnly = true)
     public DiaryResponse getDiaryById(Long memberId, Long id) {
         Diary diary = diaryRepository.findByIdAndMemberId(id, memberId)
                 .orElseThrow(() -> DiaryNotFoundException.EXCEPTION);
-        return new DiaryResponse(diary.getId(), diary.getContent(), diary.getMember().getId(),
-                diary.getBook().getIsbn(), diary.getCreatedAt());
+
+        return toDiaryResponse(diary);
     }
 
     @Transactional
@@ -54,8 +50,9 @@ public class DiaryService {
         Book book = bookRepository.findByIsbn(diaryRequest.isbn())
                 .orElseThrow(() -> BookNotFoundException.EXCEPTION);
 
-        Diary diary = new Diary(diaryRequest.content(), member, book);
+        Diary diary = toDiary(member, book, diaryRequest);
         Diary savedDiary = diaryRepository.save(diary);
+
         return savedDiary.getId();
     }
 
@@ -75,5 +72,14 @@ public class DiaryService {
         Diary diary = diaryRepository.findByIdAndMemberId(id, memberId)
                 .orElseThrow(() -> DiaryNotFoundException.EXCEPTION);
         diaryRepository.delete(diary);
+    }
+
+    private Diary toDiary(Member member, Book book, DiaryRequest diaryRequest) {
+        return new Diary(diaryRequest.content(), member, book, diaryRequest.date());
+    }
+
+    private DiaryResponse toDiaryResponse(Diary diary) {
+        return new DiaryResponse(diary.getId(), diary.getContent(), diary.getMember().getId(),
+                diary.getBook().getIsbn(), diary.getDate());
     }
 }
