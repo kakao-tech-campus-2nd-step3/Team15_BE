@@ -156,7 +156,7 @@ public class MemberController {
         return ResponseEntity.ok().body(magazineService.getMyMagazines(memberResponse, pageable));
     }
 
-    @Operation(summary = "내 인생책 목록 조회", description = "본인이 작성한 인생책 목록을 조회합니다.")
+    @Operation(summary = "내 스토리 목록 조회", description = "본인이 작성한 스토리 목록을 조회합니다.")
     @GetMapping("/feeds/stories")
     public ResponseEntity<Page<StoryResponse>> getMyStories(
             @Parameter(hidden = true) @MemberInfo MemberResponse memberResponse,
