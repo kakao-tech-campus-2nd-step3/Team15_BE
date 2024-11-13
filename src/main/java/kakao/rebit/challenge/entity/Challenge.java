@@ -69,7 +69,7 @@ public class Challenge extends BaseEntity implements ImageKeyAccessor {
     private int currentHeadcount;
 
     @Basic(fetch = FetchType.LAZY)
-    @Formula("(SELECT SUM(cp.entry_fee) FROM challenge_participation cp WHERE cp.challenge_id = id)")
+    @Formula("(SELECT COALESCE(SUM(cp.entry_fee), 0) FROM challenge_participation cp WHERE cp.challenge_id = id)")
     private int totalEntryFee;
 
     private boolean isRewardDistributed;
