@@ -1,5 +1,6 @@
 package kakao.rebit.challenge.repository;
 
+import java.util.List;
 import java.util.Optional;
 import kakao.rebit.challenge.entity.Challenge;
 import kakao.rebit.challenge.entity.ChallengeParticipation;
@@ -21,4 +22,7 @@ public interface ChallengeParticipationRepository extends JpaRepository<Challeng
 
     @EntityGraph(attributePaths = {"challenge", "challenge.member"})
     Page<ChallengeParticipation> findAllByMember(Member member, Pageable pageable);
+
+    @EntityGraph(attributePaths = {"challenge", "challenge.member"})
+    List<ChallengeParticipation> findAllByChallenge(Challenge challenge);
 }
