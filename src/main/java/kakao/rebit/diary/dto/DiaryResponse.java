@@ -4,7 +4,7 @@ public record DiaryResponse(
         Long id,
         String content,
         Long memberId,
-        String isbn,
+        DiaryBookResponse book,
         String date
 ) {
 

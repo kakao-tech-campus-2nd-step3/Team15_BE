@@ -3,6 +3,7 @@ package kakao.rebit.diary.service;
 import kakao.rebit.book.entity.Book;
 import kakao.rebit.book.exception.book.BookNotFoundException;
 import kakao.rebit.book.repository.BookRepository;
+import kakao.rebit.diary.dto.DiaryBookResponse;
 import kakao.rebit.diary.dto.DiaryRequest;
 import kakao.rebit.diary.dto.DiaryResponse;
 import kakao.rebit.diary.entity.Diary;
@@ -80,6 +81,19 @@ public class DiaryService {
 
     private DiaryResponse toDiaryResponse(Diary diary) {
         return new DiaryResponse(diary.getId(), diary.getContent(), diary.getMember().getId(),
-                diary.getBook().getIsbn(), diary.getDate());
+                toDiaryBookResponse(diary.getBook()), diary.getDate());
+    }
+
+    private DiaryBookResponse toDiaryBookResponse(Book book) {
+        return new DiaryBookResponse(
+                book.getId(),
+                book.getIsbn(),
+                book.getTitle(),
+                book.getDescription(),
+                book.getAuthor(),
+                book.getPublisher(),
+                book.getCover(),
+                book.getPubDate(),
+                book.getLink());
     }
 }
