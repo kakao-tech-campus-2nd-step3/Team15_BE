@@ -4,6 +4,7 @@ import kakao.rebit.challenge.entity.Challenge;
 import kakao.rebit.challenge.exception.challenge.ChallengeNotFoundException;
 import kakao.rebit.challenge.repository.ChallengeRepository;
 import kakao.rebit.member.entity.Member;
+import kakao.rebit.member.exception.MemberNotFoundException;
 import kakao.rebit.member.repository.MemberRepository;
 import kakao.rebit.member.service.MemberService;
 import kakao.rebit.challenge.service.ChallengeService;
@@ -51,7 +52,7 @@ public class ChallengeWishlistService {
     @Transactional
     public void addChallengeWishlist(Long memberId, Long challengeId) {
         Member member = memberRepository.findById(memberId)
-                .orElseThrow(() -> new IllegalArgumentException("Member not found"));
+                .orElseThrow(() -> MemberNotFoundException.EXCEPTION);
         Challenge challenge = challengeRepository.findById(challengeId)
                 .orElseThrow(() -> ChallengeNotFoundException.EXCEPTION);
 
