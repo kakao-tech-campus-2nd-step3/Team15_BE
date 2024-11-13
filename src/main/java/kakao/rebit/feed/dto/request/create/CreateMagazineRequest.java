@@ -19,8 +19,8 @@ public class CreateMagazineRequest extends CreateFeedRequest {
     private CreateMagazineRequest() {
     }
 
-    public CreateMagazineRequest(Long bookId, String name, String imageKey, String content) {
-        super(bookId);
+    public CreateMagazineRequest(String type, Long bookId, String name, String imageKey, String content) {
+        super(type, bookId);
         this.name = name;
         this.imageKey = imageKey;
         this.content = content;

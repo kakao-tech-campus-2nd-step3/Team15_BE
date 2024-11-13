@@ -16,8 +16,8 @@ public class CreateStoryRequest extends CreateFeedRequest {
     private CreateStoryRequest() {
     }
 
-    public CreateStoryRequest(Long bookId, String imageKey, String content) {
-        super(bookId);
+    public CreateStoryRequest(String type, Long bookId, String imageKey, String content) {
+        super(type, bookId);
         this.imageKey = imageKey;
         this.content = content;
     }
