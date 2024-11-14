@@ -2,6 +2,10 @@ package kakao.rebit.member.service;
 
 import java.util.List;
 import java.util.stream.Collectors;
+import kakao.rebit.challenge.repository.ChallengeParticipationRepository;
+import kakao.rebit.diary.repository.DiaryRepository;
+import kakao.rebit.feed.repository.FeedRepository;
+import kakao.rebit.member.dto.MemberActivitySummaryResponse;
 import kakao.rebit.member.dto.MemberProfileResponse;
 import kakao.rebit.member.dto.MemberRequest;
 import kakao.rebit.member.entity.Member;
@@ -17,12 +21,20 @@ public class MemberService {
     private final MemberRepository memberRepository;
     private final S3Service s3Service;
     private final MemberMapper memberMapper;
+    private final ChallengeParticipationRepository challengeParticipationRepository;
+    private final FeedRepository feedRepository;
+    private final DiaryRepository diaryRepository;
 
-    public MemberService(MemberRepository memberRepository, S3Service s3Service,
-            MemberMapper memberMapper) {
+    public MemberService(MemberRepository memberRepository, S3Service s3Service, MemberMapper memberMapper,
+            ChallengeParticipationRepository challengeParticipationRepository,
+            FeedRepository feedRepository,
+            DiaryRepository diaryRepository) {
         this.memberRepository = memberRepository;
         this.s3Service = s3Service;
         this.memberMapper = memberMapper;
+        this.challengeParticipationRepository = challengeParticipationRepository;
+        this.feedRepository = feedRepository;
+        this.diaryRepository = diaryRepository;
     }
 
     // 포인트 조회
@@ -107,5 +119,15 @@ public class MemberService {
 
         // S3에 저장된 이미지 삭제
         s3Service.deleteObject(member.getImageKey());
+    }
+
+    public MemberActivitySummaryResponse getMemberActivitySummary(String email) {
+        Member member = findMemberByEmailOrThrow(email);
+
+        long challengeCount = challengeParticipationRepository.countByMember(member);
+        long feedCount = feedRepository.countByMember(member);
+        long diaryCount = diaryRepository.countByMember(member);
+
+        return new MemberActivitySummaryResponse(challengeCount, feedCount, diaryCount);
     }
 }
