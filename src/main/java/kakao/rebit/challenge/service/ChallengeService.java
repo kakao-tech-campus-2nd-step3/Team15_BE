@@ -1,7 +1,6 @@
 package kakao.rebit.challenge.service;
 
 import java.time.LocalDateTime;
-import kakao.rebit.challenge.dto.ChallengeParticipationRequest;
 import kakao.rebit.challenge.dto.ChallengeRequest;
 import kakao.rebit.challenge.dto.ChallengeResponse;
 import kakao.rebit.challenge.dto.CreatorResponse;
@@ -25,17 +24,12 @@ import org.springframework.transaction.annotation.Transactional;
 public class ChallengeService {
 
     private final ChallengeRepository challengeRepository;
-    private final ChallengeParticipationService challengeParticipationService;
     private final MemberService memberService;
     private final S3Service s3Service;
 
-    public ChallengeService(
-            ChallengeRepository challengeRepository,
-            ChallengeParticipationService challengeParticipationService,
-            MemberService memberService,
+    public ChallengeService(ChallengeRepository challengeRepository, MemberService memberService,
             S3Service s3Service) {
         this.challengeRepository = challengeRepository;
-        this.challengeParticipationService = challengeParticipationService;
         this.memberService = memberService;
         this.s3Service = s3Service;
     }
@@ -61,12 +55,8 @@ public class ChallengeService {
     @Transactional
     public Long createChallenge(MemberResponse memberResponse, ChallengeRequest challengeRequest) {
         Member member = memberService.findMemberByIdOrThrow(memberResponse.id());
-        Challenge challenge = challengeRepository.save(toChallenge(member, challengeRequest));
-
-        challengeParticipationService.createChallengeParticipation(memberResponse, challenge.getId(),
-                new ChallengeParticipationRequest(challenge.getMinimumEntryFee()));
-
-        return challenge.getId();
+        Challenge challenge = toChallenge(member, challengeRequest);
+        return challengeRepository.save(challenge).getId();
     }
 
     @Transactional
