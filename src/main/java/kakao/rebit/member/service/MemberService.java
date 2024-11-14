@@ -2,6 +2,8 @@ package kakao.rebit.member.service;
 
 import java.util.List;
 import java.util.stream.Collectors;
+
+import kakao.rebit.member.dto.AdminMemberRequest;
 import kakao.rebit.challenge.repository.ChallengeParticipationRepository;
 import kakao.rebit.diary.repository.DiaryRepository;
 import kakao.rebit.feed.repository.FeedRepository;
@@ -9,6 +11,7 @@ import kakao.rebit.member.dto.MemberActivitySummaryResponse;
 import kakao.rebit.member.dto.MemberProfileResponse;
 import kakao.rebit.member.dto.MemberRequest;
 import kakao.rebit.member.entity.Member;
+import kakao.rebit.member.exception.MemberNotFoundException;
 import kakao.rebit.member.mapper.MemberMapper;
 import kakao.rebit.member.repository.MemberRepository;
 import kakao.rebit.s3.service.S3Service;
@@ -17,6 +20,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class MemberService {
+    private static final String DEFAULT_PROFILE_IMAGE_KEY = "member/default_image";
+    private static final String DEFAULT_COVER_IMAGE_KEY = "cover/default_image";
 
     private final MemberRepository memberRepository;
     private final S3Service s3Service;
@@ -78,22 +83,22 @@ public class MemberService {
     @Transactional(readOnly = true)
     public Member findMemberByIdOrThrow(Long memberId) {
         return memberRepository.findById(memberId)
-                .orElseThrow(() -> new IllegalArgumentException("회원 정보를 찾을 수 없습니다."));
+                .orElseThrow(() -> MemberNotFoundException.EXCEPTION);
     }
 
     // 이메일로 회원 조회
     @Transactional(readOnly = true)
     public Member findMemberByEmailOrThrow(String email) {
         return memberRepository.findByEmail(email)
-                .orElseThrow(() -> new IllegalArgumentException("이메일 " + email + "에 해당하는 회원을 찾을 수 없습니다."));
+                .orElseThrow(() -> MemberNotFoundException.EXCEPTION);
     }
 
     // 회원 정보 업데이트
     @Transactional
-    public void updateMember(Long memberId, MemberRequest memberRequest) {
+    public void updateMember(Long memberId, AdminMemberRequest adminMemberRequest) {
         Member member = findMemberByIdOrThrow(memberId);
-        member.updateNicknameAndBio(memberRequest.nickname(), memberRequest.bio());
-        member.addPoints(memberRequest.point());
+        member.updateNicknameAndBio(adminMemberRequest.nickname(), adminMemberRequest.bio());
+        member.addPoints(adminMemberRequest.point());
     }
 
     // 본인 정보 업데이트
@@ -102,12 +107,19 @@ public class MemberService {
         Member member = findMemberByEmailOrThrow(email);
 
         String preImageKey = member.getImageKey();
+        String preCoverImage = member.getCoverImageKey();
         member.changeImageKey(memberRequest.imageKey());
+        member.changeCoverImageKey(memberRequest.coverImageKey());
+
         member.updateNicknameAndBio(memberRequest.nickname(), memberRequest.bio());
 
         // imageKey가 변경된 경우, S3에 기존 이미지 삭제
-        if (member.isImageKeyUpdated(memberRequest.imageKey())) {
+        if (!preImageKey.equals(DEFAULT_PROFILE_IMAGE_KEY) && member.isImageKeyUpdated(preImageKey)) {
             s3Service.deleteObject(preImageKey);
+        }
+
+        if (!preCoverImage.equals(DEFAULT_COVER_IMAGE_KEY) && member.isCoverImageChanged(preCoverImage)){
+            s3Service.deleteObject(preCoverImage);
         }
     }
 
@@ -119,6 +131,7 @@ public class MemberService {
 
         // S3에 저장된 이미지 삭제
         s3Service.deleteObject(member.getImageKey());
+        s3Service.deleteObject(member.getCoverImageKey());
     }
 
     public MemberActivitySummaryResponse getMemberActivitySummary(String email) {

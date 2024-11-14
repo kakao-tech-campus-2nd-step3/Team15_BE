@@ -15,7 +15,8 @@ import org.springframework.stereotype.Service;
 @Service
 public class KakaoAuthService {
 
-    private static final String DEFAULT_PROFILE_IMAGE_KEY = "member/default_profile";
+    private static final String DEFAULT_PROFILE_IMAGE_KEY = "member/default_image";
+    private static final String DEFAULT_COVER_IMAGE_KEY = "cover/default_image";
     private final KakaoApiClient kakaoApiClient;
     private final MemberRepository memberRepository;
     private final AuthTokenGenerator authTokensGenerator;
@@ -69,7 +70,7 @@ public class KakaoAuthService {
         String email = userInfo.kakaoAccount().email();
 
         Member newMember = memberRepository.save(
-                Member.of(nickname, DEFAULT_PROFILE_IMAGE_KEY, email, accessToken)); // 새로운 멤버 생성 후 저장
+                Member.of(nickname, DEFAULT_PROFILE_IMAGE_KEY, email, accessToken, DEFAULT_COVER_IMAGE_KEY)); // 새로운 멤버 생성 후 저장
 
         publisher.publishEvent(RegisteredEvent.init(email, profileImageUrl));
 

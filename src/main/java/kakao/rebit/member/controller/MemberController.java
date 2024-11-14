@@ -19,6 +19,7 @@ import kakao.rebit.feed.service.FeedService;
 import kakao.rebit.feed.service.MagazineService;
 import kakao.rebit.feed.service.StoryService;
 import kakao.rebit.member.annotation.MemberInfo;
+import kakao.rebit.member.dto.AdminMemberRequest;
 import kakao.rebit.member.dto.ChargePointRequest;
 import kakao.rebit.member.dto.MemberActivitySummaryResponse;
 import kakao.rebit.member.dto.MemberProfileResponse;
@@ -118,8 +119,8 @@ public class MemberController {
     public ResponseEntity<MemberProfileResponse> updateMember(
             @Parameter(hidden = true) @MemberInfo(allowedRoles = {Role.ROLE_ADMIN, Role.ROLE_EDITOR}) MemberResponse memberResponse,
             @PathVariable("member-id") Long memberId,
-            @Valid @RequestBody MemberRequest memberRequest) {
-        memberService.updateMember(memberId, memberRequest);
+            @Valid @RequestBody AdminMemberRequest adminMemberRequest) {
+        memberService.updateMember(memberId, adminMemberRequest);
         return ResponseEntity.noContent().build();
     }
 
