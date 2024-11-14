@@ -30,7 +30,7 @@ import org.springframework.test.context.ActiveProfiles;
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("test")
 @DisplayName("인생책 E2E 테스트")
-public class FavoriteBookE2ETest {
+class FavoriteBookE2ETest {
 
     @LocalServerPort
     private int port;
