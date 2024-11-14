@@ -1,5 +1,7 @@
 package kakao.rebit.diary.service;
 
+import java.time.LocalDate;
+import java.util.List;
 import kakao.rebit.book.entity.Book;
 import kakao.rebit.book.exception.book.BookNotFoundException;
 import kakao.rebit.book.repository.BookRepository;
@@ -11,8 +13,6 @@ import kakao.rebit.diary.exception.DiaryNotFoundException;
 import kakao.rebit.diary.repository.DiaryRepository;
 import kakao.rebit.member.entity.Member;
 import kakao.rebit.member.service.MemberService;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -31,9 +31,11 @@ public class DiaryService {
     }
 
     @Transactional(readOnly = true)
-    public Page<DiaryResponse> getDiaries(Long memberId, Pageable pageable) {
-        return diaryRepository.findByMemberId(memberId, pageable)
-                .map(this::toDiaryResponse);
+    public List<DiaryResponse> getDiaries(Long memberId, LocalDate date) {
+        int year = date.getYear();
+        int month = date.getMonthValue();
+        return diaryRepository.findByMemberIdAndYearAndMonth(memberId, year, month)
+                .stream().map(this::toDiaryResponse).toList();
     }
 
     @Transactional(readOnly = true)
