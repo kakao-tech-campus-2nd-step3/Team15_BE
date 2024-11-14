@@ -7,8 +7,10 @@ import kakao.rebit.book.fixture.BookFixture;
 import kakao.rebit.feed.fixture.FeedFixture;
 import kakao.rebit.member.entity.Member;
 import kakao.rebit.member.fixture.MemberFixture;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+@DisplayName("인생책 테스트")
 class FavoriteBookTest {
 
     @Test

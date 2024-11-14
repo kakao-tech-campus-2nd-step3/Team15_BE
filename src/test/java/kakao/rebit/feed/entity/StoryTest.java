@@ -7,8 +7,10 @@ import kakao.rebit.book.fixture.BookFixture;
 import kakao.rebit.feed.fixture.FeedFixture;
 import kakao.rebit.member.entity.Member;
 import kakao.rebit.member.fixture.MemberFixture;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+@DisplayName("스토리 테스트")
 class StoryTest {
 
     @Test
@@ -16,13 +18,13 @@ class StoryTest {
         // given
         Member author = MemberFixture.createDefault();
         Book book = BookFixture.createDefault();
-        Story Story = FeedFixture.createStory(author, book);
+        Story story = FeedFixture.createStory(author, book);
 
         // when
-        Story.updateTextFields("변경할 컨텐츠");
+        story.updateTextFields("변경할 컨텐츠");
 
         // then
-        assertThat(Story.getContent()).isEqualTo("변경할 컨텐츠");
+        assertThat(story.getContent()).isEqualTo("변경할 컨텐츠");
     }
 
     @Test
@@ -30,10 +32,10 @@ class StoryTest {
         // given
         Member author = MemberFixture.createDefault();
         Book book = BookFixture.createDefault();
-        Story Story = FeedFixture.createStory(author, book);
+        Story story = FeedFixture.createStory(author, book);
 
         // when
-        boolean result = Story.isImageKeyUpdated("변경할 이미지");
+        boolean result = story.isImageKeyUpdated("변경할 이미지");
 
         // then
         assertThat(result).isTrue();
@@ -44,10 +46,10 @@ class StoryTest {
         // given
         Member author = MemberFixture.createDefault();
         Book book = BookFixture.createDefault();
-        Story Story = FeedFixture.createStory(author, book);
+        Story story = FeedFixture.createStory(author, book);
 
         // when
-        boolean result = Story.isImageKeyUpdated(Story.getImageKey());
+        boolean result = story.isImageKeyUpdated(story.getImageKey());
 
         // then
         assertThat(result).isFalse();
@@ -58,13 +60,13 @@ class StoryTest {
         // given
         Member author = MemberFixture.createDefault();
         Book book = BookFixture.createDefault();
-        Story Story = FeedFixture.createStory(author, book);
+        Story story = FeedFixture.createStory(author, book);
 
         // when
-        Story.changeImageKey("변경할 이미지");
+        story.changeImageKey("변경할 이미지");
 
         // then
-        assertThat(Story.getImageKey()).isEqualTo("변경할 이미지");
+        assertThat(story.getImageKey()).isEqualTo("변경할 이미지");
     }
 
     @Test

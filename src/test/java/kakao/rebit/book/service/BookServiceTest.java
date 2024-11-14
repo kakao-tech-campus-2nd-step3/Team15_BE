@@ -16,6 +16,7 @@ import kakao.rebit.book.exception.book.BookNotFoundException;
 import kakao.rebit.book.fixture.BookFixture;
 import kakao.rebit.book.repository.BookRepository;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -23,6 +24,7 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 
+@DisplayName("책 서비스 테스트")
 class BookServiceTest {
 
     @InjectMocks
@@ -55,7 +57,7 @@ class BookServiceTest {
         // then
         assertThat(bookResponses).hasSize(books.size());
         assertThatList(bookResponses).extracting(BookResponse::isbn)
-            .containsExactly("isbn1", "isbn2", "isbn3");
+                .containsExactly("isbn1", "isbn2", "isbn3");
     }
 
     @Test

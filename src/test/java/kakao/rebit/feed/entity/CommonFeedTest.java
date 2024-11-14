@@ -7,9 +7,11 @@ import kakao.rebit.book.fixture.BookFixture;
 import kakao.rebit.feed.fixture.FeedFixture;
 import kakao.rebit.member.entity.Member;
 import kakao.rebit.member.fixture.MemberFixture;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-public class CommonFeedTest {
+@DisplayName("피드 공통 테스트")
+class CommonFeedTest {
 
     @Test
     void 피드_작성자_확인_성공() {
