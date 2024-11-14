@@ -3,22 +3,23 @@ package kakao.rebit.diary.e2e;
 import static kakao.rebit.auth.util.AuthApiTestClient.login;
 import static kakao.rebit.auth.util.DiaryApiTestClient.createDiary;
 import static kakao.rebit.auth.util.DiaryApiTestClient.deleteDiary;
-import static kakao.rebit.auth.util.DiaryApiTestClient.getDiary;
 import static kakao.rebit.auth.util.DiaryApiTestClient.getDiaries;
+import static kakao.rebit.auth.util.DiaryApiTestClient.getDiary;
 import static kakao.rebit.auth.util.DiaryApiTestClient.updateDiary;
 import static kakao.rebit.auth.util.MemberApiTestClient.deleteMember;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import io.restassured.RestAssured;
 import io.restassured.common.mapper.TypeRef;
+import java.time.LocalDate;
 import java.util.List;
 import kakao.rebit.auth.dto.LoginResponse;
 import kakao.rebit.book.entity.Book;
 import kakao.rebit.book.fixture.BookFixture;
 import kakao.rebit.book.repository.BookRepository;
-import kakao.rebit.common.PageTemplate;
 import kakao.rebit.diary.dto.DiaryRequest;
 import kakao.rebit.diary.dto.DiaryResponse;
+import kakao.rebit.diary.fixture.DiaryFixture;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -57,9 +58,9 @@ class DiaryE2ETest {
         defaultBook = bookRepository.save(BookFixture.createDefault());
 
         List<DiaryRequest> diaryRequests = List.of(
-                new DiaryRequest("일기1", defaultBook.getIsbn(), "2024-11-01"),
-                new DiaryRequest("일기2", defaultBook.getIsbn(), "2024-11-02"),
-                new DiaryRequest("일기3", defaultBook.getIsbn(), "2024-11-03")
+                DiaryFixture.createDiaryRequestWithContentAndDate("일기1", defaultBook.getIsbn(), LocalDate.of(2024, 12, 10)),
+                DiaryFixture.createDiaryRequestWithContentAndDate("일기2", defaultBook.getIsbn(), LocalDate.of(2024, 12, 11)),
+                DiaryFixture.createDiaryRequestWithContentAndDate("일기3", defaultBook.getIsbn(), LocalDate.of(2024, 11, 12))
         );
 
         diaryRequests.forEach(request -> createDiary(port, accessToken, request));
@@ -73,8 +74,7 @@ class DiaryE2ETest {
 
     @Test
     void 독서일기_생성() {
-        DiaryRequest request = new DiaryRequest("새로운 일기", defaultBook.getIsbn(), "2024-11-04");
-
+        DiaryRequest request = DiaryFixture.createDiaryRequestWithContentAndDate("새로운 일기", defaultBook.getIsbn(), LocalDate.of(2024, 11, 15));
         String location = createDiary(port, accessToken, request)
                 .statusCode(HttpStatus.CREATED.value())
                 .extract()
@@ -89,27 +89,25 @@ class DiaryE2ETest {
 
     @Test
     void 독서일기_목록_조회() {
-        PageTemplate<DiaryResponse> diaryResponses = getDiaries(port, accessToken)
+        List<DiaryResponse> diaryResponses = getDiaries(port, accessToken, LocalDate.of(2024, 12, 10))
                 .statusCode(HttpStatus.OK.value())
                 .extract()
                 .as(new TypeRef<>() {
                 });
 
-        List<DiaryResponse> content = diaryResponses.getContent();
-        assertThat(content).hasSize(3);
-        assertThat(content).extracting(DiaryResponse::content)
-                .containsExactly("일기1", "일기2", "일기3");
-        assertThat(content).extracting(DiaryResponse::date)
-                .containsExactly("2024-11-01", "2024-11-02", "2024-11-03");
+        assertThat(diaryResponses).hasSize(2);
+        assertThat(diaryResponses).extracting(DiaryResponse::content)
+                .containsExactly("일기1", "일기2");
+        assertThat(diaryResponses).extracting(DiaryResponse::date)
+                .containsExactly(LocalDate.of(2024, 12, 10), LocalDate.of(2024, 12, 11));
     }
 
     @Test
     void 독서일기_상세_조회() {
-        PageTemplate<DiaryResponse> diaryResponses = getDiaries(port, accessToken).extract().as(new TypeRef<>() {
+        List<DiaryResponse> diaryResponses = getDiaries(port, accessToken, LocalDate.of(2024, 12, 10)).extract().as(new TypeRef<>() {
         });
-        List<DiaryResponse> content = diaryResponses.getContent();
 
-        for (DiaryResponse diaryResponse : content) {
+        for (DiaryResponse diaryResponse : diaryResponses) {
             DiaryResponse response = getDiary(port, accessToken, diaryResponse.id())
                     .statusCode(HttpStatus.OK.value())
                     .extract()
@@ -121,15 +119,15 @@ class DiaryE2ETest {
 
     @Test
     void 독서일기_수정() {
-        PageTemplate<DiaryResponse> diaryResponses = getDiaries(port, accessToken)
+        List<DiaryResponse> diaryResponses = getDiaries(port, accessToken, LocalDate.of(2024, 12, 10))
                 .statusCode(HttpStatus.OK.value())
                 .extract()
                 .as(new TypeRef<>() {
                 });
-        List<DiaryResponse> content = diaryResponses.getContent();
-        DiaryResponse diaryToEdit = content.get(0);
 
-        DiaryRequest updatedRequest = new DiaryRequest("수정된 일기 내용", diaryToEdit.book().isbn(), diaryToEdit.date());
+        DiaryResponse diaryToEdit = diaryResponses.getFirst();
+        DiaryRequest updatedRequest = DiaryFixture.createDiaryRequestWithContentAndDate("수정된 일기 내용", defaultBook.getIsbn(),
+                LocalDate.of(2024, 12, 10));
 
         // 다이어리 수정 요청
         updateDiary(port, accessToken, diaryToEdit.id(), updatedRequest)
@@ -147,19 +145,18 @@ class DiaryE2ETest {
 
     @Test
     void 독서일기_삭제() {
-        PageTemplate<DiaryResponse> diaryResponses = getDiaries(port, accessToken).extract().as(new TypeRef<>() {
-        });
-        List<DiaryResponse> content = diaryResponses.getContent();
+        List<DiaryResponse> diaryResponses = getDiaries(port, accessToken, LocalDate.of(2024, 12, 10)).extract()
+                .as(new TypeRef<>() {
+                });
 
-        for (DiaryResponse diaryResponse : content) {
+        for (DiaryResponse diaryResponse : diaryResponses) {
             deleteDiary(port, accessToken, diaryResponse.id())
                     .statusCode(HttpStatus.NO_CONTENT.value());
         }
 
-        PageTemplate<DiaryResponse> emptyDiaryResponses = getDiaries(port, accessToken).extract().as(new TypeRef<>() {
+        List<DiaryResponse> emptyDiaryResponses = getDiaries(port, accessToken, LocalDate.of(2024, 12, 10)).extract().as(new TypeRef<>() {
         });
-        List<DiaryResponse> emptyContent = emptyDiaryResponses.getContent();
 
-        assertThat(emptyContent).isEmpty();
+        assertThat(emptyDiaryResponses).isEmpty();
     }
 }

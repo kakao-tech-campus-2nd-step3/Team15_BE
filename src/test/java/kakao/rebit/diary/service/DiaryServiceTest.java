@@ -1,5 +1,17 @@
 package kakao.rebit.diary.service;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+import java.time.LocalDate;
+import java.util.List;
+import java.util.Optional;
 import kakao.rebit.book.entity.Book;
 import kakao.rebit.book.exception.book.BookNotFoundException;
 import kakao.rebit.book.fixture.BookFixture;
@@ -17,16 +29,6 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-
-import java.util.List;
-import java.util.Optional;
-
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
 
 class DiaryServiceTest {
 
@@ -53,21 +55,23 @@ class DiaryServiceTest {
         member = MemberFixture.createDefault();
         book = BookFixture.createDefault();
         diary = DiaryFixture.createDefaultDiary(member, book);
-        diaryRequest = new DiaryRequest("기본 내용", book.getIsbn(), "2024-11-13");
+        diaryRequest = new DiaryRequest("기본 내용", book.getIsbn(), LocalDate.of(2024, 12, 10));
     }
 
     @Test
     void 독서일기_목록_조회_성공() {
         // given
-        Pageable pageable = PageRequest.of(0, 10);
-        when(diaryRepository.findByMemberId(member.getId(), pageable))
-                .thenReturn(new PageImpl<>(List.of(diary)));
+        LocalDate date = LocalDate.of(2024, 12, 10);
+        int year = date.getYear();
+        int month = date.getMonthValue();
+        when(diaryRepository.findByMemberIdAndYearAndMonth(member.getId(), year, month))
+                .thenReturn(List.of(diary));
 
         // when
-        Page<?> result = diaryService.getDiaries(member.getId(), pageable);
+        List<?> result = diaryService.getDiaries(member.getId(), date);
 
         // then
-        assertEquals(1, result.getTotalElements());
+        assertThat(result).hasSize(1);
     }
 
     @Test

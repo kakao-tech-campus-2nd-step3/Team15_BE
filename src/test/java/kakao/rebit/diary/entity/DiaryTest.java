@@ -1,14 +1,14 @@
 package kakao.rebit.diary.entity;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import kakao.rebit.book.entity.Book;
-import kakao.rebit.member.entity.Member;
-import kakao.rebit.diary.fixture.DiaryFixture;
 import kakao.rebit.book.fixture.BookFixture;
+import kakao.rebit.diary.fixture.DiaryFixture;
+import kakao.rebit.member.entity.Member;
 import kakao.rebit.member.fixture.MemberFixture;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 class DiaryTest {
 

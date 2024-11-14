@@ -4,6 +4,7 @@ import static io.restassured.RestAssured.given;
 
 import io.restassured.http.ContentType;
 import io.restassured.response.ValidatableResponse;
+import java.time.LocalDate;
 import kakao.rebit.diary.dto.DiaryRequest;
 import org.springframework.http.HttpHeaders;
 
@@ -24,11 +25,12 @@ public class DiaryApiTestClient {
                 .log().all();
     }
 
-    public static ValidatableResponse getDiaries(int port, String accessToken) {
+    public static ValidatableResponse getDiaries(int port, String accessToken, LocalDate date) {
         return given()
                 .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
                 .port(port)
                 .when()
+                .queryParam("date", date.toString())
                 .get(DIARY_URL)
                 .then()
                 .log().all();
