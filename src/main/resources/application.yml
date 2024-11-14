@@ -95,3 +95,16 @@ spring:
     init:
       mode: never
 
+---
+spring:
+  config:
+    activate:
+      on-profile: test
+
+  jpa:
+    hibernate:
+      ddl-auto: create
+
+  sql:
+    init:
+      mode: never
