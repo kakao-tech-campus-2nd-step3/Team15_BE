@@ -2,7 +2,6 @@ package kakao.rebit.book.service;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 import kakao.rebit.book.dto.AladinApiResponseListResponse;
 import kakao.rebit.book.dto.AladinApiResponseResponse;
 import kakao.rebit.book.dto.BookDetailResponse;
@@ -38,7 +37,7 @@ public class BookService {
     public List<BookResponse> getAllBooks() {
         return bookRepository.findAll().stream()
                 .map(BookMapper::toBookResponse)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     @Transactional
@@ -52,7 +51,7 @@ public class BookService {
 
         List<BookResponse> bookResponses = foundBooks.stream()
                 .map(BookMapper::toBookResponse)
-                .collect(Collectors.toList());
+                .toList();
 
         return new PageImpl<>(bookResponses, pageable, bookList.item().size());
     }
