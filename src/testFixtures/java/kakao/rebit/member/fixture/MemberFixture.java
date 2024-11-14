@@ -18,7 +18,8 @@ public class MemberFixture {
                 randomUUID() + "@test.com",
                 Role.ROLE_ADMIN,
                 defaults.points(),
-                defaults.kakaoToken()
+                defaults.kakaoToken(),
+                defaults.coverImageKey()
         );
     }
 
@@ -43,7 +44,8 @@ public class MemberFixture {
                 defaults.email(),
                 Role.ROLE_USER,
                 defaults.points(),
-                defaults.kakaoToken()
+                defaults.kakaoToken(),
+                defaults.coverImageKey()
         );
     }
 
@@ -56,7 +58,8 @@ public class MemberFixture {
                 defaults.email(),
                 role,
                 defaults.points(),
-                defaults.kakaoToken()
+                defaults.kakaoToken(),
+                defaults.coverImageKey()
         );
     }
 
@@ -69,7 +72,8 @@ public class MemberFixture {
                 defaults.email(),
                 Role.ROLE_USER,
                 points,
-                defaults.kakaoToken()
+                defaults.kakaoToken(),
+                defaults.coverImageKey()
         );
     }
 
@@ -81,7 +85,8 @@ public class MemberFixture {
                 member.getBio(),
                 member.getEmail(),
                 member.getRole(),
-                member.getPoints()
+                member.getPoints(),
+                member.getCoverImageKey()
         );
     }
 }

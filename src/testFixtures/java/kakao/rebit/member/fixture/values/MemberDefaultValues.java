@@ -10,7 +10,8 @@ public record MemberDefaultValues(
         String email,
         Role role,
         Integer points,
-        String kakaoToken
+        String kakaoToken,
+        String coverImageKey
 ) {
 
     public static final MemberDefaultValues INSTANCE = new MemberDefaultValues(
@@ -21,6 +22,7 @@ public record MemberDefaultValues(
             "test@email.com",
             Role.ROLE_USER,
             1000,
-            "kakao-token"
+            "kakao-token",
+            "default-cover-image-key"
     );
 }
