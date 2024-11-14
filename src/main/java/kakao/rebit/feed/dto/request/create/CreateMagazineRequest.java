@@ -1,10 +1,9 @@
 package kakao.rebit.feed.dto.request.create;
 
-import static kakao.rebit.common.domain.ImageKeyModifier.*;
+import static kakao.rebit.common.domain.ImageKeyModifier.BASE_IMAGE_KEY_FORMAT;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
-import kakao.rebit.common.domain.ImageKeyModifier;
 
 public class CreateMagazineRequest extends CreateFeedRequest {
 
@@ -18,7 +17,7 @@ public class CreateMagazineRequest extends CreateFeedRequest {
     @NotBlank(message = "본문은 필수 입력 값입니다.")
     private String content;
 
-    private CreateMagazineRequest() {
+    protected CreateMagazineRequest() {
     }
 
     public CreateMagazineRequest(String type, Long bookId, String name, String imageKey, String content) {
