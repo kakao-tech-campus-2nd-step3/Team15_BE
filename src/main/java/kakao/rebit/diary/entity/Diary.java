@@ -30,7 +30,7 @@ public class Diary extends BaseEntity {
     private Member member;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "isbn")
+    @JoinColumn(name = "book_id")
     private Book book;
 
     private LocalDate date;
