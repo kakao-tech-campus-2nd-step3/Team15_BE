@@ -94,7 +94,9 @@ public class ChallengeService {
                 challenge.getChallengePeriod().getEndDate(),
                 challenge.getHeadcountLimit().getMinHeadcount(),
                 challenge.getHeadcountLimit().getMaxHeadcount(),
-                challenge.getCreatedAt()
+                challenge.getCreatedAt(),
+                challenge.getCurrentHeadcount(),
+                challenge.getTotalEntryFee()
         );
     }
 

@@ -68,6 +68,12 @@ public class Challenge extends BaseEntity implements ImageKeyAccessor {
     @Formula("(SELECT COUNT(1) FROM challenge_participation cp WHERE cp.challenge_id = id)")
     private int currentHeadcount;
 
+    @Basic(fetch = FetchType.LAZY)
+    @Formula("(SELECT COALESCE(SUM(cp.entry_fee), 0) FROM challenge_participation cp WHERE cp.challenge_id = id)")
+    private int totalEntryFee;
+
+    private boolean isRewardDistributed;
+
     protected Challenge() {
     }
 
@@ -152,6 +158,18 @@ public class Challenge extends BaseEntity implements ImageKeyAccessor {
 
     public boolean isFull() {
         return headcountLimit.isFull(currentHeadcount);
+    }
+
+    public int getTotalEntryFee() {
+        return totalEntryFee;
+    }
+
+    public boolean isRewardDistributed() {
+        return isRewardDistributed;
+    }
+
+    public void markAsRewardDistributed() {
+        isRewardDistributed = true;
     }
 
     public void validateParticipate(Integer entryFee) {
