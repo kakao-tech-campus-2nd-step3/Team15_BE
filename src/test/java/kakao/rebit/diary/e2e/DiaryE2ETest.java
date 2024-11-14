@@ -68,6 +68,7 @@ class DiaryE2ETest {
     @AfterEach
     void tearDown() {
         deleteMember(port, accessToken, memberId);
+        bookRepository.deleteById(defaultBook.getId());
     }
 
     @Test

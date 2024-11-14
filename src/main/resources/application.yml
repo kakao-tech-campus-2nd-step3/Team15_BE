@@ -19,25 +19,24 @@ spring:
 
   data:
     redis:
-      host: ${REDIS_HOST}
-      port: ${REDIS_PORT}
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
 
 # 카카오 소셜 로그인을 위해 사용하는 정보들 설정
 oauth:
   kakao:
     client-id: ${OAUTH_KAKAO_CLIENT_ID:test-client-id}
     url:
-      auth-url: ${OAUTH_KAKAO_AUTH_URL}
-      api-url: ${OAUTH_KAKAO_API_URL}
-      redirect-url: ${OAUTH_KAKAO_REDIRECT_URI}
-      logout-redirect-url: ${OAUTH_KAKAO_LOGOUT_REDIRECT_URI}
-      logout-url-template: ${OAUTH_KAKAO_LOGOUT_URL_TEMPLATE}
+      auth-url: ${OAUTH_KAKAO_AUTH_URL:kakao-auth-url}
+      api-url: ${OAUTH_KAKAO_API_URL:kakao-api-url}
+      redirect-url: ${OAUTH_KAKAO_REDIRECT_URI:kakao-redirect-url}
+      logout-url-template: ${OAUTH_KAKAO_LOGOUT_URL_TEMPLATE:kakao-logout-url-template}
 
 custom:
   jwt:  # Jwt 시크릿 키 설정
-    secretKey: ${JWT_SECRET_KEY}
+    secretKey: ${JWT_SECRET_KEY:dGVzdC1zZWNyZXQta2V5LXRlc3Qtc2VjcmV0LWtleS10ZXN0LXNlY3JldC1rZXktdGVzdC1zZWNyZXQta2V5}
   aladin: # 알라딘 API 키 설정
-    ttb-key: ${TTB_KEY}
+    ttb-key: ${TTB_KEY:test-ttb-key}
 
 logging:
   level:
@@ -59,12 +58,12 @@ decorator:
 cloud:
   aws:
     credentials: # IAM으로 생성한 키 정보 입력
-      access-key: ${S3_ACCESS_KEY}
-      secret-key: ${S3_SECRET_KEY}
+      access-key: ${S3_ACCESS_KEY:test-access-key}
+      secret-key: ${S3_SECRET_KEY:test-secret-key}
     S3:
-      bucket: ${S3_BUCKET_NAME} # 버켓 이름 설정
+      bucket: ${S3_BUCKET_NAME:test-bucket} # 버켓 이름 설정
     region:
-      static: ${S3_REGION} # 버켓이 위치한 region 설정
+      static: ${S3_REGION:ap-northeast-2} # 버켓이 위치한 region 설정
     stack:
       auto: false # 자동 스택 생성 기능 사용 여부
 
@@ -95,3 +94,4 @@ spring:
   sql:
     init:
       mode: never
+
