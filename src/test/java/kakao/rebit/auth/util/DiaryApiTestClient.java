@@ -44,6 +44,18 @@ public class DiaryApiTestClient {
                 .log().all();
     }
 
+    public static ValidatableResponse updateDiary(int port, String accessToken, Long diaryId, DiaryRequest diaryRequest) {
+        return given()
+                .port(port)
+                .header(HttpHeaders.AUTHORIZATION, BEARER_PREFIX + accessToken)
+                .contentType(ContentType.JSON)
+                .body(diaryRequest)
+                .when()
+                .put(DIARY_URL + "/" + diaryId)
+                .then()
+                .log().all();
+    }
+
     public static ValidatableResponse deleteDiary(int port, String accessToken, Long diaryId) {
         return given()
                 .port(port)
