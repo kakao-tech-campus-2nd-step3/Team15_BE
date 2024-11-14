@@ -33,7 +33,7 @@ import org.springframework.test.context.ActiveProfiles;
 
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("test")
-@DisplayName("다이어리 E2E 테스트")
+@DisplayName("독서일기 E2E 테스트")
 class DiaryE2ETest {
 
     @LocalServerPort
@@ -71,7 +71,7 @@ class DiaryE2ETest {
     }
 
     @Test
-    void 다이어리_생성() {
+    void 독서일기_생성() {
         DiaryRequest request = new DiaryRequest("새로운 일기", defaultBook.getIsbn(), "2024-11-04");
 
         String location = createDiary(port, accessToken, request)
@@ -87,7 +87,7 @@ class DiaryE2ETest {
     }
 
     @Test
-    void 다이어리_목록_조회() {
+    void 독서일기_목록_조회() {
         PageTemplate<DiaryResponse> diaryResponses = getDiaries(port, accessToken)
                 .statusCode(HttpStatus.OK.value())
                 .extract()
@@ -103,7 +103,7 @@ class DiaryE2ETest {
     }
 
     @Test
-    void 다이어리_상세_조회() {
+    void 독서일기_상세_조회() {
         PageTemplate<DiaryResponse> diaryResponses = getDiaries(port, accessToken).extract().as(new TypeRef<>() {
         });
         List<DiaryResponse> content = diaryResponses.getContent();
@@ -119,7 +119,7 @@ class DiaryE2ETest {
     }
 
     @Test
-    void 다이어리_수정() {
+    void 독서일기_수정() {
         PageTemplate<DiaryResponse> diaryResponses = getDiaries(port, accessToken)
                 .statusCode(HttpStatus.OK.value())
                 .extract()
@@ -145,7 +145,7 @@ class DiaryE2ETest {
     }
 
     @Test
-    void 다이어리_삭제() {
+    void 독서일기_삭제() {
         PageTemplate<DiaryResponse> diaryResponses = getDiaries(port, accessToken).extract().as(new TypeRef<>() {
         });
         List<DiaryResponse> content = diaryResponses.getContent();
