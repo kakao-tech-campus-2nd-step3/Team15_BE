@@ -20,6 +20,7 @@ import kakao.rebit.feed.service.MagazineService;
 import kakao.rebit.feed.service.StoryService;
 import kakao.rebit.member.annotation.MemberInfo;
 import kakao.rebit.member.dto.ChargePointRequest;
+import kakao.rebit.member.dto.MemberActivitySummaryResponse;
 import kakao.rebit.member.dto.MemberProfileResponse;
 import kakao.rebit.member.dto.MemberRequest;
 import kakao.rebit.member.dto.MemberResponse;
@@ -170,5 +171,13 @@ public class MemberController {
             @Parameter(hidden = true) @MemberInfo MemberResponse memberResponse,
             @PageableDefault(sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
         return ResponseEntity.ok().body(challengeParticipationService.getMyChallenges(memberResponse, pageable));
+    }
+
+    @Operation(summary = "내 참여 활동 수 조회", description = "본인이 참여한 챌린지, 작성한 피드,작성한 다이어리 개수를 조회합니다.")
+    @GetMapping("/me/activity-summary")
+    public ResponseEntity<MemberActivitySummaryResponse> getMyActivitySummary(
+            @Parameter(hidden = true) @MemberInfo MemberResponse memberResponse) {
+        MemberActivitySummaryResponse response = memberService.getMemberActivitySummary(memberResponse.email());
+        return ResponseEntity.ok().body(response);
     }
 }
