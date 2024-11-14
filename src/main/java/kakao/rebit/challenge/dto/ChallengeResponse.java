@@ -18,7 +18,9 @@ public record ChallengeResponse(
         LocalDateTime challengeEndDate,
         Integer minHeadcount,
         Integer maxHeadcount,
-        LocalDateTime createdAt
+        LocalDateTime createdAt,
+        Integer currentHeadcount,
+        Integer totalEntryFee
 ) {
 
 }

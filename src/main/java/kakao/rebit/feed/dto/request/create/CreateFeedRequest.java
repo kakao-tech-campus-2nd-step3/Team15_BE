@@ -17,14 +17,21 @@ public abstract class CreateFeedRequest {
 
     private Long bookId;
 
+    private String type;
+
     protected CreateFeedRequest() {
     }
 
-    public CreateFeedRequest(Long bookId) {
+    public CreateFeedRequest(String type, Long bookId) {
+        this.type = type;
         this.bookId = bookId;
     }
 
     public Long getBookId() {
         return bookId;
+    }
+
+    public String getType() {
+        return type;
     }
 }

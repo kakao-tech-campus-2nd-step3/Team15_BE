@@ -3,6 +3,7 @@ package kakao.rebit.challenge.repository;
 import java.time.LocalDateTime;
 import java.util.Optional;
 import kakao.rebit.challenge.entity.Challenge;
+import kakao.rebit.challenge.entity.ChallengeParticipation;
 import kakao.rebit.challenge.entity.ChallengeVerification;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -23,4 +24,6 @@ public interface ChallengeVerificationRepository extends JpaRepository<Challenge
             "WHERE cv.challengeParticipation.id = :participationId " +
             "AND FUNCTION('DATE', cv.createdAt) = FUNCTION('DATE', :now))")
     boolean existsDailyVerification(@Param("participationId") Long participationId, @Param("now") LocalDateTime now);
+
+    long countByChallengeParticipation(ChallengeParticipation participation);
 }

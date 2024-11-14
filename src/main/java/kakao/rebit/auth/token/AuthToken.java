@@ -1,5 +1,7 @@
 package kakao.rebit.auth.token;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public class AuthToken {
 
     private String accessToken;
@@ -7,7 +9,12 @@ public class AuthToken {
     private String grantType;
     private Long expiresIn;
 
-    public AuthToken(String accessToken, String refreshToken, String grantType, Long expiresIn) {
+    public AuthToken(
+            @JsonProperty("accessToken") String accessToken,
+            @JsonProperty("refreshToken") String refreshToken,
+            @JsonProperty("grantType") String grantType,
+            @JsonProperty("expiresIn") Long expiresIn
+    ) {
         this.accessToken = accessToken;
         this.refreshToken = refreshToken;
         this.grantType = grantType;

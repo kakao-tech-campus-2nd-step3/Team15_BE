@@ -12,8 +12,8 @@ public class CreateFavoriteBookRequest extends CreateFeedRequest {
     private CreateFavoriteBookRequest() {
     }
 
-    public CreateFavoriteBookRequest(Long bookId, String briefReview, String fullReview) {
-        super(bookId);
+    public CreateFavoriteBookRequest(String type, Long bookId, String briefReview, String fullReview) {
+        super(type, bookId);
         this.briefReview = briefReview;
         this.fullReview = fullReview;
     }

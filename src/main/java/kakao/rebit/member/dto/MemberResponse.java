@@ -9,7 +9,8 @@ public record MemberResponse(
         String bio,
         String email,
         Role role,
-        Integer point
+        Integer point,
+        String coverImageKey
 ) {
 
 }
