@@ -29,8 +29,8 @@ import org.springframework.test.context.ActiveProfiles;
 
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("test")
-@DisplayName("메거진 E2E 테스트")
-public class MagazineE2ETest {
+@DisplayName("매거진 E2E 테스트")
+class MagazineE2ETest {
 
     @LocalServerPort
     private int port;
@@ -60,7 +60,7 @@ public class MagazineE2ETest {
     }
 
     @Test
-    void 메거진_생성() {
+    void 매거진_생성() {
         CreateMagazineRequest request = FeedFixture.createMagazineRequestWithBookId(bookId);
 
         String location = createMagazine(port, accessToken, request)
@@ -78,8 +78,8 @@ public class MagazineE2ETest {
     }
 
     @Test
-    void 메거진_수정() {
-        // 메거진 생성
+    void 매거진_수정() {
+        // 매거진 생성
         CreateMagazineRequest createRequest = FeedFixture.createMagazineRequestWithBookId(bookId);
         String location = createMagazine(port, accessToken, createRequest).extract().header(HttpHeaders.LOCATION);
         String magazineId = location.substring(location.lastIndexOf("/") + 1);

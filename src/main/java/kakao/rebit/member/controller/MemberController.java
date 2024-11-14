@@ -150,7 +150,7 @@ public class MemberController {
         return ResponseEntity.ok().body(favoriteBookService.getMyFavoriteBooks(memberResponse, pageable));
     }
 
-    @Operation(summary = "내 메거진 목록 조회", description = "본인이 작성한 메거진 목록을 조회합니다.")
+    @Operation(summary = "내 매거진 목록 조회", description = "본인이 작성한 매거진 목록을 조회합니다.")
     @GetMapping("/feeds/magazines")
     public ResponseEntity<Page<MagazineResponse>> getMyMagazines(
             @Parameter(hidden = true) @MemberInfo MemberResponse memberResponse,

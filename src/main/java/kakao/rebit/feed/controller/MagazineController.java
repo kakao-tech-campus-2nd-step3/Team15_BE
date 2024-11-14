@@ -25,7 +25,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/feeds/magazines")
-@Tag(name = "메거진 피드 API", description = "메거진 피드 관련 API")
+@Tag(name = "매거진 피드 API", description = "매거진 피드 관련 API")
 public class MagazineController {
 
     private final MagazineService magazineService;
@@ -34,7 +34,7 @@ public class MagazineController {
         this.magazineService = magazineService;
     }
 
-    @Operation(summary = "메거진 목록 조회", description = "메거진 목록을 조회합니다.")
+    @Operation(summary = "매거진 목록 조회", description = "매거진 목록을 조회합니다.")
     @AllowAnonymous
     @GetMapping
     public ResponseEntity<Page<MagazineResponse>> getMagazines(
@@ -43,7 +43,7 @@ public class MagazineController {
         return ResponseEntity.ok().body(magazineService.getMagazines(memberResponseIfPresent, pageable));
     }
 
-    @Operation(summary = "메거진 조회", description = "메거진을 조회합니다.")
+    @Operation(summary = "매거진 조회", description = "매거진을 조회합니다.")
     @GetMapping("/{magazine-id}")
     public ResponseEntity<MagazineResponse> getMagazine(
             @Parameter(hidden = true) @MemberInfo MemberResponse memberResponse,
@@ -51,7 +51,7 @@ public class MagazineController {
         return ResponseEntity.ok().body(magazineService.getMagazineById(memberResponse, magazineId));
     }
 
-    @Operation(summary = "메거진 수정", description = "메거진을 수정합니다.")
+    @Operation(summary = "매거진 수정", description = "매거진을 수정합니다.")
     @PutMapping("/{magazine-id}")
     public ResponseEntity<Void> updateMagazine(
             @Parameter(hidden = true) @MemberInfo MemberResponse memberResponse,

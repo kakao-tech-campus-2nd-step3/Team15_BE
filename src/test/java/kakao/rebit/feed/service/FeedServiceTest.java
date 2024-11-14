@@ -218,7 +218,7 @@ class FeedServiceTest {
     }
 
     @Test
-    void 메거진_피드_삭제() {
+    void 매거진_피드_삭제() {
         // given
         MemberResponse memberResponse = mock(MemberResponse.class);
         given(memberResponse.id()).willReturn(1L);

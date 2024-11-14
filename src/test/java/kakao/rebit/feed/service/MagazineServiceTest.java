@@ -24,7 +24,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
-@DisplayName("메거진 서비스 테스트")
+@DisplayName("매거진 서비스 테스트")
 class MagazineServiceTest {
 
     @InjectMocks
@@ -41,7 +41,7 @@ class MagazineServiceTest {
 
 
     @Test
-    void 메거진_수정_테스트() {
+    void 매거진_수정_테스트() {
         //given
         MemberResponse memberResponse = mock(MemberResponse.class);
         given(memberResponse.id()).willReturn(1L);
