@@ -45,10 +45,10 @@ public class DiaryController {
     }
 
     @Operation(summary = "특정 독서일기 조회", description = "특정 ID의 독서일기를 조회합니다.")
-    @GetMapping("/{diaryId}")
+    @GetMapping("/{diary-id}")
     public ResponseEntity<DiaryResponse> getDiaryById(
             @Parameter(hidden = true) @MemberInfo MemberResponse memberResponse,
-            @PathVariable("diaryId") Long diaryId) {
+            @PathVariable("diary-id") Long diaryId) {
         DiaryResponse diary = diaryService.getDiaryById(memberResponse.id(), diaryId);
         return ResponseEntity.ok(diary);
     }
@@ -63,20 +63,20 @@ public class DiaryController {
     }
 
     @Operation(summary = "독서일기 수정", description = "특정 ID의 독서일기를 수정합니다.")
-    @PutMapping("/{diaryId}")
+    @PutMapping("/{diary-id}")
     public ResponseEntity<Void> updateDiary(
             @Parameter(hidden = true) @MemberInfo MemberResponse memberResponse,
-            @PathVariable("diaryId") Long diaryId,
+            @PathVariable("diary-id") Long diaryId,
             @Valid @RequestBody DiaryRequest diaryRequest) {
         diaryService.updateDiary(memberResponse.id(), diaryId, diaryRequest);
         return ResponseEntity.noContent().build();
     }
 
     @Operation(summary = "독서일기 삭제", description = "특정 ID의 독서일기를 삭제합니다.")
-    @DeleteMapping("/{diaryId}")
+    @DeleteMapping("/{diary-id}")
     public ResponseEntity<Void> deleteDiary(
             @Parameter(hidden = true) @MemberInfo MemberResponse memberResponse,
-            @PathVariable("diaryId") Long diaryId) {
+            @PathVariable("diary-id") Long diaryId) {
         diaryService.deleteDiary(memberResponse.id(), diaryId);
         return ResponseEntity.noContent().build();
     }
